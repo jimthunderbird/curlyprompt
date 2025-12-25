@@ -25,7 +25,7 @@ for final_word {
 }
 
 for final_word {
-  wrap it in an html div tag with id "wrapper"
+  wrap it in an html div tag with id "container"
 }
 
 print "This is the final word: {final_word}"
