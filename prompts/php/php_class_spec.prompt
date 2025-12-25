@@ -1,0 +1,7 @@
+@context(../../context/php_expert.instruction.md)
+
+mymd5(string text) {
+  return md5 hash of text
+}
+
+print mymd5("test")

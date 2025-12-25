@@ -1,0 +1,27 @@
+@context(../context/laravel_12_expert.md)
+
+if (the file laravel/webapp/artisan does not exist yet) {
+  use the following command to create a laravel project:
+  composer create-project --prefer-dist laravel/laravel laravel/webapp
+}
+
+create the following routes in api.php, remember {
+  if a route has name attribute defined, make it a named route
+  each route definition maps to only one route, do not create extra routes
+  show me the files that it changed in the following format:
+  File Name: {file_name}
+}
+
+route {
+  name: "api_hello"
+  path: "api/hello/{id}" 
+  logic {
+    var user is {
+      use ORM to find user with id {id}
+    }
+    return json response {
+      success: 1
+      message: "merry christmas and happy new year 2026 {user.name}"
+    }
+  }
+}

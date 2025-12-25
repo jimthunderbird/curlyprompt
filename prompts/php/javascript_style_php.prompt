@@ -1,0 +1,15 @@
+@context(../../context/php_expert.instruction.md)
+
+# do not generate class or function
+
+for text "happy new year" {
+  replace "new year" with "2026"
+  replace "happy" with "super happy"
+  append " jim"
+  prepend "wish you "
+  split " "
+  join by "*"
+  replace "w" with "m"
+} as final_word
+
+print "This is the final word: {final_word}"

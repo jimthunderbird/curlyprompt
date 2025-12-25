@@ -1,0 +1,163 @@
+# role: python 3.11 expert
+
+# objective: create a python script, return the codeblock immediately
+
+# constraints: {
+#   do not include ```python and ```
+#}
+
+# specification and logic
+let script_name = the base name of the current script file
+
+if (there is less than one command line argument) {
+  print "usage: "
+  print "agent <prompt_file>"
+  print "python agent.py <prompt_file>"
+  terminate and return
+} 
+
+let config = get the config from config.toml
+let prompt_cache_directory = get config.promptcache.directory
+let agent = get config.codegen.agent
+let mode = config.agent.{agent}.mode
+let model = config.agent.{agent}.model
+let python_version = config.python.version
+
+let prompt_file = first cli argument
+let prompt_file_basename = basename of {prompt_file}
+let prompt_file_dir = full absolute directory path of {prompt_file}
+let prompt_file_content = the content of {prompt_file}
+
+let current_directory = full directory path of this script
+let prompt_base_directory = {current_directory}/prompts/, remember the ending forward slash! 
+let prompt_non_base_directory = in prompt_file_dir replace "{prompt_base_directory}" to empty string
+
+if ({prompt_non_base_directory} is the same as {prompt_file_dir}) {
+  //this means the prompt file dir does not include prompt_base_directory
+  prompt_non_base_directory = ""
+}
+
+let prompt_file_fullpath_in_cache_directory = {current_directory}/{prompt_cache_directory}{prompt_non_base_directory}
+let prompt_file_fullpath_in_cache = {current_directory}/{prompt_cache_directory}{prompt_non_base_directory}/{prompt_file_basename}
+let prompt_file_fullpath_in_cache_script = {current_directory}/{prompt_cache_directory}{prompt_non_base_directory}/{prompt_file_basename}.py
+let prompt_file_fullpath_in_cache_output = {current_directory}/{prompt_cache_directory}{prompt_non_base_directory}/{prompt_file_basename}.output
+
+create the directory {prompt_file_fullpath_in_cache_directory} if does not exit
+create directory of {prompt_file_fullpath_in_cache} if does not exit
+
+for (each {pattern} matching regex '/@context\((.*?)\)/' against {prompt_file_content}){
+  let context_file = {pattern} without any single quotes or double quotes
+  let context_file = {prompt_file_dir}/{context_file}
+  let context_file_content = content of {context_file} 
+  let prompt_file_content = (
+    replace {pattern} to empty string
+    return prompt_file_content
+  )
+  let prompt_file_content = "(context_file_content)\n{prompt_file_content}"
+}  
+
+let prompt_file_content = trim all the spaces around {prompt_file_content}
+
+let prompt_file_content_in_cache = ""
+let prompt_file_output_content = get file contens from {prompt_file_fullpath_in_cache_output}
+let prompt_file_output_content = trim all spaces
+
+if ({prompt_file_fullpath_in_cache} exists) {
+  let prompt_file_content_in_cache = get file content of {prompt_file_fullpath_in_cache}
+}
+
+if ({prompt_file_content} is the same as {prompt_file_content_in_cache}) {
+  if ({prompt_file_fullpath_in_cache} already exists) {
+    let non_python_runtime = ""
+    let first_line = first line of {prompt_file_output_content}
+    if (first_line is not "```python") {
+      non_python_runtime = first_line.replace("```","").trim()
+    }
+
+    if ({non_python_runtime} is not an empty string) {
+      run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script} > {prompt_file_fullpath_in_cache_script}.output; {non_python_runtime} {prompt_file_fullpath_in_cache_script}.output"
+    } else {
+      run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script}"
+    }
+    terminate the script with a status code of 1
+  }
+}
+
+save {prompt_file_content} to "{prompt_cache_directory}/_realtime_prompt.prompt"
+save {prompt_file_content} to {prompt_file_fullpath_in_cache} 
+
+if (mode is "cli") {
+  let command = config.agent.{agent}.command
+
+  let command = (
+    replace <model> with model
+    repace <version> with config.python.version
+    replace <prompt_file_content> with prompt_file_content
+    replace <prompt_cache_directory> with prompt_cache_directory
+  )
+
+  let prompt_output = execute the cli command: {command}
+
+  save {prompt_output} to {prompt_file_fullpath_in_cache_output}
+
+  let prompt_output = trim all spaces around {prompt_output}
+
+  let is_python_script = false
+
+  let non_python_runtime = ""
+
+  let first_line_of_prompt_output = first line of {prompt_output}
+
+  if (first line of {prompt_output} start with "```") {
+    if (first line of {prompt_output} start with "```python") {
+      let is_python_script = true 
+    } else {
+      in {first_line_of_prompt_output} {
+        replace ``` to "" 
+        trim the space
+        save the output to {non_python_runtime}
+      }
+    }
+
+    let prompt_output = (
+      remove first line 
+      remove last line 
+      trim all spaces around
+      return prompt_output
+    )
+  }
+
+  if (last line of {prompt_output} is "```") {
+    let prompt_output = (
+      remove last line
+      trim all spaces around
+      return prompt_output
+    )
+  }
+
+  let prompt_output = replace backslash to double backslahes
+  save {prompt_output} to {prompt_cache_directory}/_realtime_prompt.codeblock 
+
+  if ({is_python_script} is false) {
+    let prompt_output = get file content from {prompt_cache_directory}/_realtime_prompt.codeblock
+    let prompt_output = "print(\"\"\"{prompt_output}\"\"\")";
+  } 
+
+  //cache the prompt script
+  save {prompt_output} to {prompt_cache_directory}/_realtime_prompt_script.py 
+  save {prompt_output} to {prompt_file_fullpath_in_cache_script}
+  try {
+    if ({is_python_script} is true) {
+      run the cli command python{python_version} {prompt_cache_directory}/_realtime_prompt_script.py, remember to stream the output line by line
+      as the output is streaming, append the line to {prompt_cache_directory}/_realtime_prompt.output
+    }
+
+    if ({is_python_script} is false) { 
+      let prompt_output = run the cli command python{python_version} {prompt_cache_directory}/_realtime_prompt_script.py
+      save {prompt_output} to {prompt_cache_directory}/_realtime_prompt.output
+      run the cli command "{non_python_runtime} {prompt_cache_directory}/{_realtime_prompt.output}"
+    }
+  } catch (error) {
+    print the error message
+  }
+}
