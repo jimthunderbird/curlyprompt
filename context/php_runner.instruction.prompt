@@ -25,7 +25,7 @@ specification {
     save the generated php code to {prompt_cache_directory}/tmp_{timestamp}.php
     run cli command: php {prompt_cache_directory}/tmp_{timestamp}.php
     remove {prompt_cache_directory}/tmp_{timestamp}.php
-  }
+  }  
 }
 
-now generate the php code base on the following
+generate the php code base on the following
