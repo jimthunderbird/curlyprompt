@@ -8,8 +8,16 @@ constraint: {
   for the php code {
     always use PHP_EOL as the new line
     When a class is defined as A.B.C.<class>, map it to php namespace A.B.C and php class <class>
+    When a class extends A.B.C.<parent_class>, map it to php namespace A.B.C and php class <parent_class> with the "using" statement
+    Show PHPDoc required for every method or function
+    Use strict defensive coding when accessing JSON data.
+    Use strict defensive coding when accessing nested array data.
+    Map this.{name} to php this->{name}
+    Map parent.{name} to php parent::{name}
+    When there is pattern like this.{method}(...) or parent.{method}(...),always assume they already exist, do not define {method}
   }
   no explantion and no extra words
-  after the codeblock is generated, save it to tmp.php
+  after the codeblock is generated, save it to ./tmp.php
+  always use php_code="""{the php code}""" in python
   use python to run cli command: php tmp.php
 }

@@ -16,5 +16,5 @@ class Factory.Car
   }
 }
 
-let car = new Car()
+let car = new Car(2016, "Ford")
 car.hello()
