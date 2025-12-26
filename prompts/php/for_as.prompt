@@ -13,8 +13,6 @@ for "happy new year" {
   concat with " and wish you in great health"
 } as final_word
 
-print "final_word: {final_word}"
-
 for final_word {
   replace "*" with " "
   append " and luck"
