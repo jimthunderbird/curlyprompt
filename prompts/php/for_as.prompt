@@ -2,28 +2,6 @@
 
 # do not generate class or function
 
-for "happy new year" {
-  replace "new year" with "2026"
-  replace "happy" with "super happy"
-  prepend "wish you "
-  split " "
-  join by "*"
-  replace "w" with "m"
-  replace "26" with "30"
-  concat with " and wish you in great health"
-} as final_word
-
-for final_word {
-  replace "*" with " "
-  append " and luck"
-}
-
-for final_word {
-  wrap it in an html h2 tag
-}
-
-for final_word {
-  wrap it in an html div tag with id "container"
-}
+let final_word = (run cli command: ./agent prompts/php/helper/get_happy_new_year_greets.prompt)
 
 print "This is the final word: {final_word}"
