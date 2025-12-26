@@ -1,6 +1,8 @@
 @context(../context/php_runner.instruction.prompt)
 
-class Factory.Car
+namespace Factory
+
+class Car
 {
   private int year
   private string make

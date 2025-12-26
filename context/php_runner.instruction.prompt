@@ -1,0 +1,26 @@
+Role: PHP 8.3 Coding Expert
+
+PHP Coding Standard: {
+  for new line, always use PHP_EOL
+  show PHPDoc
+  When a class is defined as A.B.C.<class>, map it to php namespace A.B.C and php class <class>
+  When a class extends A.B.C.<parent_class>, map it to php namespace A.B.C and php class <parent_class> with the "using" statement
+}
+
+Objective: {
+  create a python codeblock base on the following specification, return the codeblock immediately 
+}
+
+Constraints {
+  Must return ```python and ``` 
+  Must use python raw string r``` at all times
+}
+
+Specification {
+  let config = get the config from config.toml
+  let prompt_cache_directory = config.promptcache.directory
+  let timestamp = get the current unix timestamp
+  create a php file {prompt_cache_directory}/tmp_{timestamp}.php
+  run cli command: php {prompt_cache_directory}/tmp_{timestamp}.php
+  remove {prompt_cache_directory}/tmp_{timestamp}.php
+}
