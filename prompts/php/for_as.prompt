@@ -1,4 +1,4 @@
-@context(../../context/php_expert.instruction.md)
+@context(../../context/php_runner.instruction.prompt)
 
 # do not generate class or function
 

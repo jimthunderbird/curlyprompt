@@ -1,4 +1,4 @@
-@context(../../context/php_expert.instruction.md)
+@context(../../context/php_runner.instruction.prompt)
 
 mymd5(string text) {
   return md5 hash of text
