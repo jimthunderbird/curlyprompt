@@ -1,4 +1,4 @@
-Role: PHP 8.3 Coding Expert
+role: PHP 8.3 Coding Expert
 
 PHP Coding Standard: {
   for new line, always use PHP_EOL
@@ -7,16 +7,16 @@ PHP Coding Standard: {
   When a class extends A.B.C.<parent_class>, map it to php namespace A.B.C and php class <parent_class> with the "using" statement
 }
 
-Objective: {
+objective: {
   create a python codeblock base on the following specification, return the codeblock immediately 
 }
 
-Constraints {
+constraint {
   Must return ```python and ``` 
   Must use python raw string r``` at all times
 }
 
-Specification {
+specification {
   after the php code is generated {
     let config = get the config from config.toml
     let prompt_cache_directory = config.promptcache.directory
@@ -28,4 +28,4 @@ Specification {
   }
 }
 
-Now generate the php code base on the following
+now generate the php code base on the following
