@@ -57,7 +57,6 @@ for (each {pattern} matching regex '/@context\((.*?)\)/' against {prompt_file_co
 let prompt_file_content = trim all the spaces around {prompt_file_content}
 
 let prompt_file_content_in_cache = ""
-let prompt_file_output_content = get file contens from {prompt_file_fullpath_in_cache_output}
 let prompt_file_output_content = trim all spaces
 
 if ({prompt_file_fullpath_in_cache} exists) {
@@ -66,17 +65,7 @@ if ({prompt_file_fullpath_in_cache} exists) {
 
 if ({prompt_file_content} is the same as {prompt_file_content_in_cache}) {
   if ({prompt_file_fullpath_in_cache} already exists) {
-    let non_python_runtime = ""
-    let first_line = first line of {prompt_file_output_content}
-    if (first_line is not "```python") {
-      non_python_runtime = first_line.replace("```","").trim()
-    }
-
-    if ({non_python_runtime} is not an empty string) {
-      run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script} > {prompt_file_fullpath_in_cache_script}.output; {non_python_runtime} {prompt_file_fullpath_in_cache_script}.output"
-    } else {
-      run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script}"
-    }
+    run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script}"
     terminate the script with a status code of 1
   }
 }
