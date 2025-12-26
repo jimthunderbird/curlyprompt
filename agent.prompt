@@ -133,7 +133,6 @@ if (mode is "cli") {
     )
   }
 
-  let prompt_output = replace backslash to double backslahes
   save {prompt_output} to {prompt_cache_directory}/_realtime_prompt.codeblock 
 
   if ({is_python_script} is false) {
