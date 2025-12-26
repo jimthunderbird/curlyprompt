@@ -2,19 +2,7 @@
 
 class Car
 {
-  private string year
-  private string make
-
-  public constructor(string year, string make) {
+  public function constructor(int year) {
     this.year = year
-    this.make = make 
-    print "this is a new car {year} {make}"
-  }
-
-  public function get_year() {
-    return this.year
   }
 }
-
-car = new Car("2026", "jetta")
-print car.get_year()
