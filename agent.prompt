@@ -7,8 +7,6 @@
 #}
 
 # specification and logic
-let script_name = the base name of the current script file
-
 if (there is less than one command line argument) {
   print "usage: "
   print "agent <prompt_file>"
