@@ -1,11 +1,9 @@
-# generate the python 3.11 code base on the following:
+@context(../../context/python_script_runner.instruction.prompt)
 
-final_word = {
-  run cli command: ./agent prompts/php/helper/get_happy_new_year_greets.prompt
-}
+let final_word = (run cli command: ./agent prompts/php/helper/get_happy_new_year_greets.prompt)
 
 for final_word {
-  prepend "This is the message from the helper: "
+  prepend "This is the message from the helper, for 2026: "
 }
 
 print {final_word}
