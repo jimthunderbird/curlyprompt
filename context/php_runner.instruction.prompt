@@ -17,10 +17,15 @@ Constraints {
 }
 
 Specification {
-  let config = get the config from config.toml
-  let prompt_cache_directory = config.promptcache.directory
-  let timestamp = get the current unix timestamp
-  create a php file {prompt_cache_directory}/tmp_{timestamp}.php
-  run cli command: php {prompt_cache_directory}/tmp_{timestamp}.php
-  remove {prompt_cache_directory}/tmp_{timestamp}.php
+  after the php code is generated {
+    let config = get the config from config.toml
+    let prompt_cache_directory = config.promptcache.directory
+    let timestamp = get the current unix timestamp
+    create a php file {prompt_cache_directory}/tmp_{timestamp}.php
+    save the generated php code to {prompt_cache_directory}/tmp_{timestamp}.php
+    run cli command: php {prompt_cache_directory}/tmp_{timestamp}.php
+    remove {prompt_cache_directory}/tmp_{timestamp}.php
+  }
 }
+
+Now generate the php code base on the following

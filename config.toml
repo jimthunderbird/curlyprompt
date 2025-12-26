@@ -9,5 +9,5 @@ agent = "ollama_qwen"
 
 [agent.ollama_qwen]
 mode = "cli"
-model = "qwen3-coder:30b"
+model = "qwen3-coder:30b-determin"
 command = 'cat <prompt_cache_directory>/_realtime_prompt.prompt | ollama run <model>'
