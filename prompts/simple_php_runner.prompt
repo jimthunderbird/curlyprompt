@@ -1,17 +1,6 @@
-role: you are python 3.11 expert
+@context(../context/php_runner.instruction.prompt)
 
-object: {
-  create a python codeblock to generate php code base on the following
-}
-
-constraint: {
-  for the php code, always use PHP_EOL as the new line
-  no explantion and no extra words
-  after the codeblock is generated, save it to tmp.php
-  run cli command: php tmp.php
-}
-
-class Car
+class Factory.Car
 {
   private int year
   private string make
@@ -23,7 +12,7 @@ class Car
   }
 
   public function hello() {
-    print "hello from car {this.year} {this.make}"
+    print "hello from factory vehicle {this.year} {this.make}"
   }
 }
 

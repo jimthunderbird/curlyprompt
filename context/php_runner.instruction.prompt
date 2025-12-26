@@ -1,0 +1,15 @@
+role: you are python 3.11 expert
+
+object: {
+  create a python codeblock to generate php 8.3 code base on the following
+}
+
+constraint: {
+  for the php code {
+    always use PHP_EOL as the new line
+    When a class is defined as A.B.C.<class>, map it to php namespace A.B.C and php class <class>
+  }
+  no explantion and no extra words
+  after the codeblock is generated, save it to tmp.php
+  use python to run cli command: php tmp.php
+}
