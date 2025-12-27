@@ -9,7 +9,6 @@ let result_components = []
 
 for each {helper} in {helpers} {
   result_components.push((run cli command: ./agent {helper}))
- 
 }
 
 let result = join result_components with ":"
