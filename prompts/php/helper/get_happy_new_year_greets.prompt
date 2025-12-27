@@ -16,17 +16,19 @@ for "happy new year" {
 for final_word {
   replace "*" with " "
   append " and luck"
-}
+} as final_word
 
 for final_word {
   replace "*" with " "
   append " and luck"
-}
+} as final_word
 
 for final_word {
   wrap it in an html h2 tag
-}
+} as final_word
 
 for final_word {
   wrap it in an html div tag with id "container"
-}
+} as final_word
+
+print {final_word}
