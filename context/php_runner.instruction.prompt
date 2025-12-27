@@ -20,9 +20,4 @@ objective {
   }
 }
 
-constraint {
-  Must return ```python and ``` 
-  Must use python raw string r``` at all times
-}
-
 <php_code_logic>
