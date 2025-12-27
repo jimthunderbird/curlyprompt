@@ -6,4 +6,6 @@ for final_word {
   prepend "This is the message from the helper, for 2026: "
 }
 
-print {final_word}
+let md5hash = (run cli command: ./agent prompts/php/helper/md5_for_test.prompt)
+
+print {final_word} . ":" . {md5hash}
