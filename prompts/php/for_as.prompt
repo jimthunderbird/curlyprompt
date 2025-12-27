@@ -1,11 +1,17 @@
 @context(../../context/python_script_runner.instruction.prompt)
 
-let final_word = (run cli command: ./agent prompts/php/helper/get_happy_new_year_greets.prompt)
+let helpers = [
+  prompts/php/helper/get_happy_new_year_greets.prompt
+  prompts/php/helper/md5_for_test.prompt
+]
 
-for final_word {
-  prepend "This is the message from the helper, for 2026: "
+let result_components = []
+
+for each {helper} in {helpers} {
+  result_components.push((run cli command: ./agent {helper}))
+ 
 }
 
-let md5hash = (run cli command: ./agent prompts/php/helper/md5_for_test.prompt)
+let result = join result_components with ":"
 
-print {final_word} . ":" . {md5hash}
+print result
