@@ -1,1 +1,3 @@
 # generate the python 3.11 code base on the following, no explnation and no extra words
+# use Popen to achieve non-blocking execution
+# apply defensive coding to check the process before adding output 
