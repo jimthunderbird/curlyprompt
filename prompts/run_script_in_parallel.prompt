@@ -1,4 +1,4 @@
-@context(../../context/python_script_runner.instruction.prompt)
+@context(../context/python_script_runner.instruction.prompt)
 
 let helpers = [
   prompts/php/helper/get_happy_new_year_greets.prompt
