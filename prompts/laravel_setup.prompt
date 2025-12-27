@@ -6,8 +6,6 @@ if (the file laravel/webapp/artisan does not exist yet) {
 }
 
 create the following routes in api.php, remember {
-  if a route has name attribute defined, make it a named route
-  each route definition maps to only one route, do not create extra routes
   show me the files that it changed in the following format:
   File Name: {file_name}
 }
