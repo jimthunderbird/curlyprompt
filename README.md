@@ -8,6 +8,7 @@ A prompting language for generating prompts for LLM
 - Prompt result caching
 - Prompt script monitoring
 - Use @context directory to include different context
+- By default, it runs on the ollama qwen3-coder:30b model, meaning everything can be run locally without the concern of token usage.
 
 ## Example
 * A simple php script
@@ -19,7 +20,7 @@ print "hello"
 ./agent hello.prompt
 ```
 
-* Running multiple agents in parallel
+* Running multiple sub agents in parallel
 ```prompt run_scripts_in_parallel.prompt
 @context(../context/python_script_runner.instruction.prompt)
 
