@@ -16,6 +16,7 @@ objective {
     create a php file {prompt_cache_directory}/tmp_{timestamp}.php
     save {php_code} to {prompt_cache_directory}/tmp_{timestamp}.php
     run cli command: php {prompt_cache_directory}/tmp_{timestamp}.php
+    remove {prompt_cache_directory}/tmp_{timestamp}.php
   }
 }
 
