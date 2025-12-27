@@ -16,11 +16,6 @@ for "happy new year" {
 for final_word {
   replace "*" with " "
   append " and luck"
-} 
-
-for final_word {
-  replace "*" with " "
-  append " and luck"
 }
 
 for final_word {
