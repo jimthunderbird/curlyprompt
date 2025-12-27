@@ -10,6 +10,7 @@ A prompting language for generating prompts for LLM
 - Use @context directory to include different context
 
 ## Example
+A simple php script
 ```prompt hello.prompt
 @context(php_runner.instruction.prompt)
 print "hello"
