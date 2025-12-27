@@ -1,4 +1,4 @@
-@context(../context/laravel_12_expert.md)
+@context(../context/laravel_12_runner.instruction.prompt)
 
 if (the file laravel/webapp/artisan does not exist yet) {
   use the following command to create a laravel project:
