@@ -1,7 +1,9 @@
 @context(../../context/php_runner.instruction.prompt)
 
-mymd5(string text) {
-  return md5 hash of text
+class Util {
+  public static mymd5(string text) {
+    return md5 hash of text
+  }
 }
 
-print "md5 of test: " . mymd5("test")
+print Util::md5("test")
