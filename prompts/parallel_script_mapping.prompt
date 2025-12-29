@@ -1,5 +1,6 @@
 @context(../context/python_script_runner.instruction.prompt)
 
+//run an array of helpers and get their output
 print [
   prompts/php/helper/get_happy_new_year_greets.prompt
   prompts/php/helper/md5_for_test.prompt
