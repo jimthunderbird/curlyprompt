@@ -1,0 +1,7 @@
+@context(../context/python_script_runner.instruction.prompt)
+
+print [
+  prompts/php/helper/get_happy_new_year_greets.prompt
+  prompts/php/helper/md5_for_test.prompt
+].map(helper => run cli command: ./agent {helper})
+.join(":")
