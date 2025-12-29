@@ -1,19 +1,13 @@
-@context(../../../context/laravel_12_runner.instruction.prompt)
-
-the laravel's webapp is located in laravel/webapp
-
-in the laravel app above, create the following routes in api.php, remember {
-  show me the files that it changed in the following format:
-  File Name: {file_name}
-}
+@context(../../../context/laravel_12_route_creator.instruction.prompt)
 
 route {
+  app_directory: "laravel/webapp"
   name: "api_hello"
   path: "/api/hello" 
   logic {
     return json response {
       success: 1
-      message: "merry christmas and happy new year 2026"
+      message: "wish you a happy holiday 2026"
     }
   }
 }
