@@ -1,6 +1,6 @@
 role: Lavavel 12 coding expert
 
-objective: create a python codeblock base on the following specification, return the codeblock immediately
+objective: create a python codeblock base on the following specification, return the codeblock immediately, use python to output php file
 
 constraints {
   must return ```python and ``` 
@@ -8,9 +8,9 @@ constraints {
   
   if we are defining routes {
     if a route has name attribute defined, make it a named route
-    each route definition maps to only one route, do not create extra routes
+    if a route already exists, remove the existing route and then add the new route
   }
 }
 
-Specification
+specification
 

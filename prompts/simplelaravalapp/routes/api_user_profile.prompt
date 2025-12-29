@@ -1,0 +1,27 @@
+@context(../../../context/laravel_12_runner.instruction.prompt)
+
+the laravel's webapp is located in laravel/webapp
+
+in the laravel app above, create the following routes in api.php, remember {
+  show me the files that it changed in the following format:
+  File Name: {file_name}
+}
+
+route {
+  name: "api_user_profile"
+  path: "/api/user/profile/{id}" 
+  logic {
+    var user is {
+      use ORM to find user with id {id}
+    }
+    return json response {
+      success: 1
+      message: {
+        first_name: user.first_name 
+        last_name: user.last_name 
+        email: user.email 
+        website: user.website 
+      }
+    }
+  }
+}
