@@ -115,11 +115,10 @@ if (mode is "cli") {
   }
 
   if (last line of {prompt_output} is "```") {
-    let prompt_output = (
+    for {prompt_output} {
       remove last line
       trim all spaces around
-      return prompt_output
-    )
+    }
   }
 
   save {prompt_output} to {prompt_cache_directory}/_realtime_prompt.codeblock 
