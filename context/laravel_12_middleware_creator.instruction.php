@@ -1,4 +1,4 @@
-role: Lavavel 12 coding expert
+role: Laravel 12 coding expert
 
 objective: create a python codeblock base on the following <middleware_specification>, return the codeblock immediately, use python to output php code and then save the code to a php file
 

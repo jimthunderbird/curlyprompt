@@ -5,7 +5,7 @@ route {
     use JWT token
     use the following middlewares {
       auth:jwt, 
-      can:access-admin-panel 
+      class:EnsureTokenIsValid
     }
     must use Route Model Binding by type-hinting {user}
     must use Route-Level Customization with .missing

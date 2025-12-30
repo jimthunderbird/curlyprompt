@@ -1,4 +1,4 @@
-role: Lavavel 12 coding expert
+role: Laravel 12 coding expert
 
 objective: create a python codeblock base on the following <route_specification>, return the codeblock immediately, use python to output php code and then save the code to a php file
 
@@ -18,6 +18,10 @@ constraints {
   show me the files that it changed in the following format:
 
   changed file: {file_name}
+}
+
+constraints {
+  if we are planning to use middleware class class:{middleware class name}, just import the middleware class at the top of the route file
 }
 
 <route_specification>
