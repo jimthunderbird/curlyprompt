@@ -21,7 +21,10 @@ constraints {
 }
 
 constraints {
-  if we are planning to use middleware class class:{middleware class name}, just import the middleware class at the top of the route file
+  if we are planning to use middleware class class:{middleware class name} {
+    assume the middleware class is located at {route.app_directory}/app/Http/Middleware/{middleware class name}
+    import the middleware class at the top of the route file
+  }
 }
 
 <route_specification>

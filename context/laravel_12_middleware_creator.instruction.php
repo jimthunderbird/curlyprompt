@@ -9,8 +9,6 @@ constraints {
 
   the middleware_specification must contain one and only one middleware definition
 
-  each middleware must have name attribute defined and we should make it as a named middleware
-
   let middleware_name = {middleware.name}
 
   we must then create {middleware_name}.php file under the {middleware.app_directory}/app/Http/Middleware directory
