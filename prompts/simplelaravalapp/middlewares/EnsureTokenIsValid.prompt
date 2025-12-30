@@ -1,0 +1,14 @@
+@context(../../../context/laravel_12_middleware_creator.instruction.php)
+
+middleware {
+  app_directory: "laravel/webapp"
+  name: EnsureTokenIsValid
+  logic {
+    if the 'token' header does not matche "123456" {
+      return json response {
+        success: 0
+        message: Invalid Token
+      }
+    }
+  }
+}

@@ -29,6 +29,7 @@ route {
           website: user.website
           logo: user.logo
           instagram: user.instagram
+          facebook: user.facebook
           repo: user.repo
           jwt_access_token: the bearer token string that is already sent in the header
         }
