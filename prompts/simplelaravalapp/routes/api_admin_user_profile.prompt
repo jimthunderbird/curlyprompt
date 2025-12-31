@@ -4,7 +4,7 @@ route {
   requirement {
     use JWT token
     use the following middlewares {
-      auth:jwt, 
+      "auth:jwt",
       class:EnsureTokenIsValid
     }
     must use Route Model Binding by type-hinting {user}
