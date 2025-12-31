@@ -4,8 +4,8 @@ objective: create a python codeblock base on the following <route_specification>
 
 constraints {
   must return ```python and ``` 
-  must use python raw string r""" at all times, example:
-  new_route = r"""..."""
+  must use python f-string and raw string fr""" at all times, example:
+  new_route = fr"""..."""
 }
 
 constraints {

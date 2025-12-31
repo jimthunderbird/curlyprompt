@@ -4,8 +4,8 @@ objective: create a python codeblock base on the following <middleware_specifica
 
 constraints {
   must return ```python and ```
-  must use python raw string r""" at all times, example:
-  new_middleware = r"""..."""
+  must use python f-string and raw string fr""" at all times, example:
+  new_middleware = fr"""..."""
 
   the middleware_specification must contain one and only one middleware definition
 
