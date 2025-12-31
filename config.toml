@@ -5,7 +5,7 @@ directory = ".promptcache"
 version = "3.11"
 
 [codegen]
-agent = "ollama_qwen"
+agent = "copilot_cli"
 
 [agent.ollama_qwen]
 mode = "cli"

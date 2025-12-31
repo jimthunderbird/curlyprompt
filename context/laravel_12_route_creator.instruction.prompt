@@ -21,12 +21,16 @@ constraints {
   in the php code, {route.name} and {route.path} should always be wrapped in double quotes
 }
 
-constraints {
-  if we are planning to use middleware class class:{middleware class name} {
-    assume the middleware class is located at {route.app_directory}/app/Http/Middleware/{middleware class name}
-    import the middleware class at the top of the route file
-  }
-}
-
 <route_specification>
 
+route {
+  requirement {
+    must use all middlewares defined in the .middlewares section
+    if a middleware starts with class:{middleware_name} {
+      assume the middleware is App\Http\Middleware\{middleware_name}, and presented as format: {middleware_name}::class
+      remember to import App\Http\Middleware\{middleware_name}
+    } else {
+      assume the middleware is a custom string
+    }
+  }
+}
