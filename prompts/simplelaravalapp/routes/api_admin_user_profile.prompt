@@ -12,6 +12,7 @@ route {
     class:EnsureTokenIsValid
   }
   params: {
+    Request {request}
     User {user}
   }
   app_directory: "laravel/webapp"

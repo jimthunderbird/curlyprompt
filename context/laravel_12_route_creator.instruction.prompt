@@ -1,6 +1,10 @@
 role: Laravel 12 coding expert
 
-objective: create a python codeblock base on the following <route_specification>, return the codeblock immediately, use python to output php code and then save the code to a php file
+objective {
+  create a python codeblock base on the following <route_specification>
+  return the codeblock immediately
+  use python to output php code and then save the code to a php file
+}
 
 constraints {
   must return ```python and ``` 
