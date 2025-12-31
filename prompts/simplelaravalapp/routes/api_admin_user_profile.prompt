@@ -8,9 +8,6 @@ route {
       class:EnsureTokenIsValid
     ]
     must use Route Model Binding by type-hinting {user}
-    must use Route-Level Customization with .missing
-    must include the .missing method call since we want to modify the default output of laravel
-    do not do redundant null check for {user}, since we are using type-hinting (App\Models\User $user), Laravel will automatically try to find that user. If it fails, it will trigger the .missing() method or throw a 404
   }
   params: {
     User {user}
@@ -34,11 +31,10 @@ route {
       }
     }
   }
-}
-missing: {
-  return json response with 404 {
-    success: 0
-    message: invalid user
+  missing {
+    return json response with 404 {
+      success: 0
+      message: invalid user
+    }
   }
-}
 }
