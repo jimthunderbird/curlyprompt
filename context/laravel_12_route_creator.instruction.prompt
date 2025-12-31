@@ -6,17 +6,14 @@ constraints {
   must return ```python and ``` 
   must use python raw string r""" at all times, example:
   new_route = r"""..."""
+}
 
+constraints {
   the route_specification must contain one and only one route definition
-
   each route must have name attribute defined and we should make it as a named route
-
   let route_name = {route.name}
-
   we must then create {route_name}.php file under the {route.app_directory}/routes directory
-
   show me the files that it changed in the following format:
-
   changed file: {file_name}
 }
 
