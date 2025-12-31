@@ -3,10 +3,10 @@
 route {
   requirement {
     use JWT token
-    use the following middlewares {
+    use the following middlewares [
       "auth:jwt",
       class:EnsureTokenIsValid
-    }
+    ]
     must use Route Model Binding by type-hinting {user}
     must use Route-Level Customization with .missing
     must include the .missing method call since we want to modify the default output of laravel
@@ -19,26 +19,26 @@ route {
   name: "api_admin_user_profile"
   path: "/api/admin/user/profile/{user}" 
   logic { 
-      return json response {
-        success: 1
-        message: {
-          first_name: user.first_name 
-          last_name: user.last_name 
-          email: user.email 
-          website: user.website
-          logo: user.logo
-          instagram: user.instagram
-          facebook: user.facebook
-          repo: user.repo
-          jwt_access_token: the bearer token string that is already sent in the header
-        }
+    return json response {
+      success: 1
+      message: {
+        first_name: user.first_name 
+        last_name: user.last_name 
+        email: user.email 
+        website: user.website
+        logo: user.logo
+        instagram: user.instagram
+        facebook: user.facebook
+        repo: user.repo
+        jwt_access_token: the bearer token string that is already sent in the header
       }
     }
   }
-  missing: {
-    return json response with 404 {
-      success: 0
-      message: invalid user
-    }
+}
+missing: {
+  return json response with 404 {
+    success: 0
+    message: invalid user
   }
+}
 }
