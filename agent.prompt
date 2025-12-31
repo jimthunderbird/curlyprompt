@@ -1,18 +1,25 @@
 # role: python 3.11 expert
 
-# objective: create a python script, return the codeblock immediately
+# objective: create a python codeblock base on <specification>, return the codeblock immediately
 
 # constraints: {
 #   do not include ```python and ```
 #}
 
-# specification and logic
+<specification>
+
 if (there is less than one command line argument) {
   print "usage: "
   print "agent <prompt_file>"
   print "python agent.py <prompt_file>"
   terminate and return
 } 
+
+let rerun = false
+
+if (one of the cli args equals "--rerun") {
+  rerun = true
+}
 
 let config = get the config from config.toml
 let prompt_cache_directory = get config.promptcache.directory
@@ -63,10 +70,12 @@ if ({prompt_file_fullpath_in_cache} exists) {
   let prompt_file_content_in_cache = get file content of {prompt_file_fullpath_in_cache}
 }
 
-if ({prompt_file_content} is the same as {prompt_file_content_in_cache}) {
-  if ({prompt_file_fullpath_in_cache} already exists) {
-    run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script}"
-    terminate the script with a status code of 1
+if (rerun is false) {
+  if ({prompt_file_content} is the same as {prompt_file_content_in_cache}) {
+    if ({prompt_file_fullpath_in_cache} already exists) {
+      run the cli command: "python{python_version} {prompt_file_fullpath_in_cache_script}"
+      terminate the script with a status code of 1
+    }
   }
 }
 
