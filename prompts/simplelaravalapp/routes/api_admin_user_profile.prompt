@@ -3,13 +3,14 @@
 route {
   requirement {
     use JWT token
-    must use Route Model Binding by type-hinting {user}
+    must use route model binding by type-hinting {user}
+    must use route level customization with .missing
     do not do redundant null check for {user}, since we are using type-hinting (App\Models\User $user), Laravel will automatically try to find that user. If it fails, it will trigger the .missing() method or throw a 404
   }
-  middlewares [
-    "auth:jwt",
+  middlewares {
+    "auth:jwt"
     class:EnsureTokenIsValid
-  ]
+  }
   params: {
     User {user}
   }
