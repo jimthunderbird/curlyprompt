@@ -15,6 +15,7 @@ for "happy new year" {
 
 for final_word {
   replace "*" with " "
+  replace "m" to "w"
   append " and luck"
 }
 
