@@ -4,7 +4,7 @@ objective: create a python codeblock base on the following <route_specification>
 
 constraints {
   must return ```python and ``` 
-  must use python f-string and raw string fr""" at all times, example:
+  must use python raw string fr""" at all times, example:
   new_route = fr"""..."""
 }
 
@@ -15,6 +15,10 @@ constraints {
   we must then create {route_name}.php file under the {route.app_directory}/routes directory
   show me the files that it changed in the following format:
   changed file: {file_name}
+}
+
+constraints {
+  in the php code, {route.name} and {route.path} should always be wrapped in double quotes
 }
 
 constraints {
