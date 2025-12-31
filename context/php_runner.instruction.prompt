@@ -7,7 +7,7 @@ PHP Coding Standard {
 }
 
 objective {
-  use python's print(r"""...""") to generate valid php code base on the <php_code_logic> below
+  use python's print(fr"""...""") to generate valid php code base on the <php_code_logic> below
   after the php code is generated {
     let php_code = generate the php code base on <php_code_logic>
     let config = get the config from config.toml
