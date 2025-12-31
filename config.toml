@@ -15,4 +15,4 @@ command = 'cat <prompt_cache_directory>/_realtime_prompt.prompt | ollama run <mo
 [agent.copilot_cli]
 mode = "cli"
 model = ""
-command = 'copilot -p "$(cat <prompt_cache_directory>/_realtime_prompt.prompt)"'
+command = 'cat <prompt_cache_directory>/_realtime_prompt.prompt | copilot'
