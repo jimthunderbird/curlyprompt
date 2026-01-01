@@ -6,7 +6,11 @@ requirement {
   save the javascript to web1.js
 }
 
-meta.keywords = ["demo","simple","php"]
+meta.keywords = {
+  demo
+  simple
+  php
+}
 
 title: "clicking components demo"
 
@@ -37,7 +41,7 @@ ul#numbers-list {
   }
 
   php {
-    numbers = ManagerSpaces.NumberManager.getNumbersRangingFrom(1,150)
+    numbers = get 10 random numbers between 1 to 150
     for each numbers as number {
       if (number is odd) {
         li {
