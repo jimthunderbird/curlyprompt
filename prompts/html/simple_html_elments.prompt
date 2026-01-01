@@ -10,13 +10,19 @@ style {
 
 body {
   div#container {
+    
+    div#displayer {
+    }
+
     button#button1 {
       data {
         counter = 0
       }
       @click {
         increment {data.counter} by 1
-        alert({data.counter})
+        for div#displayer {
+          set inner html to "buton 1 counter {data.counter}"
+        }
       }
       text: "button 1"
     }
@@ -27,7 +33,9 @@ body {
       }
       @click {
         increment {data.counter} by 1
-        alert({data.counter})
+        for div#displayer {
+          set inner html to "buton 2 counter {data.counter}"
+        }
       }
       text: "button 2"
     }
@@ -38,7 +46,9 @@ body {
       }
       @click {
         increment {data.counter} by 1
-        alert({data.counter})
+        for div#displayer {
+          set inner html to "buton 3 counter {data.counter}"
+        }
       }
       text: "button 3"
     }
@@ -49,7 +59,9 @@ body {
       }
       @click {
         increment {data.counter} by 2
-        alert({data.counter})
+        for div#displayer {
+          set inner html to "paragraph 1 counter {data.counter}"
+        }
       }
       text: "paragraph 1"
     }
