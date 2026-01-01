@@ -5,7 +5,7 @@ logic {
   html_code = fr"""
   the html_code here ... 
   """
-  save html_code to index.html
+  save html_code to index.html, do not print html_code!
   if (save successfully) {
     print "successfully generated index.html"
   }
