@@ -1,7 +1,7 @@
 @context(../../context/html_runner.instruction.prompt)
 
 php {
-  let numbers = (5 random numbers between 1 to 100)
+  let numbers = (10 random numbers between 1 to 100)
 }
 
 header {
@@ -26,6 +26,9 @@ body {
                   set inner html to "clicked on odd number {number} in the list"
                 }       
               }
+              @hover {
+                change mouse to hand
+              }
             }
           } else {
             li {
@@ -34,6 +37,9 @@ body {
                 for div#displayer {
                   set inner html to "clicked on even number {number} in the list"
                 }       
+              }
+              @hover {
+                change mouse to hand
               }
             }
           }

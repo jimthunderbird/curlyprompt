@@ -1,3 +1,9 @@
+<?php
+$numbers = [];
+for ($i = 0; $i < 10; $i++) {
+    $numbers[] = rand(1, 100);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,19 +11,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>clicking components demo</title>
     <link rel="stylesheet" href="/web.css">
+    <style>
+        #numbers-list li {
+            cursor: pointer;
+        }
+        #paragraph1 {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <?php
-    $numbers = [];
-    for ($i = 0; $i < 5; $i++) {
-        $numbers[] = rand(1, 100);
-    }
-    ?>
-    
     <div id="container">
         <ul id="numbers-list">
             <?php foreach ($numbers as $number): ?>
-                <?php if ($number % 2 != 0): ?>
+                <?php if ($number % 2 !== 0): ?>
                     <li data-number="<?php echo $number; ?>">odd number <?php echo $number; ?></li>
                 <?php else: ?>
                     <li data-number="<?php echo $number; ?>">even number <?php echo $number; ?></li>
@@ -35,45 +42,49 @@
     </div>
     
     <script>
-    (function() {
-        const numbersListItems = document.querySelectorAll('#numbers-list li');
-        numbersListItems.forEach(function(li) {
-            li.addEventListener('click', function() {
-                const number = this.getAttribute('data-number');
-                const isOdd = parseInt(number) % 2 !== 0;
-                const oddEven = isOdd ? 'odd' : 'even';
-                document.querySelector('#displayer').innerHTML = `clicked on ${oddEven} number ${number} in the list`;
+        (function() {
+            const numbersList = document.getElementById('numbers-list');
+            numbersList.addEventListener('click', function(e) {
+                if (e.target.tagName === 'LI') {
+                    const number = e.target.getAttribute('data-number');
+                    const isOdd = parseInt(number) % 2 !== 0;
+                    const type = isOdd ? 'odd' : 'even';
+                    document.getElementById('displayer').innerHTML = `clicked on ${type} number ${number} in the list`;
+                }
             });
-        });
+        })();
         
-        const button1 = document.querySelector('#button1');
-        let button1Counter = 0;
-        button1.addEventListener('click', function() {
-            button1Counter += 1;
-            document.querySelector('#displayer').innerHTML = `buton 1 counter ${button1Counter}`;
-        });
+        (function() {
+            let counter = 0;
+            document.getElementById('button1').addEventListener('click', function() {
+                counter++;
+                document.getElementById('displayer').innerHTML = `buton 1 counter ${counter}`;
+            });
+        })();
         
-        const button2 = document.querySelector('#button2');
-        let button2Counter = 0;
-        button2.addEventListener('click', function() {
-            button2Counter += 1;
-            document.querySelector('#displayer').innerHTML = `buton 2 counter ${button2Counter}`;
-        });
+        (function() {
+            let counter = 0;
+            document.getElementById('button2').addEventListener('click', function() {
+                counter++;
+                document.getElementById('displayer').innerHTML = `buton 2 counter ${counter}`;
+            });
+        })();
         
-        const button3 = document.querySelector('#button3');
-        let button3Counter = 0;
-        button3.addEventListener('click', function() {
-            button3Counter += 1;
-            document.querySelector('#displayer').innerHTML = `buton 3 counter ${button3Counter}`;
-        });
+        (function() {
+            let counter = 0;
+            document.getElementById('button3').addEventListener('click', function() {
+                counter++;
+                document.getElementById('displayer').innerHTML = `buton 3 counter ${counter}`;
+            });
+        })();
         
-        const paragraph1 = document.querySelector('#paragraph1');
-        let paragraph1Counter = 0;
-        paragraph1.addEventListener('click', function() {
-            paragraph1Counter += 2;
-            document.querySelector('#displayer').innerHTML = `paragraph 1 counter ${paragraph1Counter}`;
-        });
-    })();
+        (function() {
+            let counter = 0;
+            document.getElementById('paragraph1').addEventListener('click', function() {
+                counter += 2;
+                document.getElementById('displayer').innerHTML = `paragraph 1 counter ${counter}`;
+            });
+        })();
     </script>
 </body>
 </html>
