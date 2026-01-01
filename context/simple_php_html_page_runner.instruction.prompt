@@ -17,6 +17,7 @@ constraints {
   always use python's raw string to hold the html code
   no extra words and no explanation.
   use block scoping in javascript to make sure each html element does not intefere with other possible elements in the same page
+  only run the main logic of the javascript after all elements in html are loaded
 }
 
 <html_specification>
