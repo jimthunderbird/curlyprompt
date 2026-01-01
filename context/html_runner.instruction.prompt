@@ -1,28 +1,20 @@
 role: You are an HTML,CSS,Javascript Expert
 
-objective: use Python 3.11 to perform the following logic
+objective: return a python codeblock to perform the following logic
 
 logic {
-  generate html_code base on <html_specification> 
-  must use python f-string and raw string together to hold the html code
-  let html_code = fr"""
-  the html_code here ... 
-  """
-  do not print the html_code, instead, save html_code to index.html
+  let html_code = (the html code that is generated from <html_specification>)
+  save html_code to index.html
   if (save successfully) {
     print "successfully generated index.html"
   }
 }
 
 constraints {
-  return the python codeblock immediately 
+  return the python code immediately
+  always use python's raw string to hold the html code
   no extra words and no explanation.
   make sure each html element has its own scoping in javascript and css, do not intefere with other possible elements in the same page
-  output format {
-    RAW TEXT ONLY
-    Do not use Markdown
-    Do not use code fences
-  }
 }
 
 <html_specification>
