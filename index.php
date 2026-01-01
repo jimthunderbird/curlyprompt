@@ -17,64 +17,61 @@
     <div id="container">
         <ul id="numbers-list">
             <?php foreach ($numbers as $number): ?>
-                <?php if ($number % 2 !== 0): ?>
-                    <li>odd number <?php echo $number; ?></li>
+                <?php if ($number % 2 != 0): ?>
+                    <li data-number="<?php echo $number; ?>">odd number <?php echo $number; ?></li>
                 <?php else: ?>
-                    <li>even number <?php echo $number; ?></li>
+                    <li data-number="<?php echo $number; ?>">even number <?php echo $number; ?></li>
                 <?php endif; ?>
             <?php endforeach; ?>
         </ul>
-
+        
         <div id="displayer"></div>
-
+        
         <button id="button1">button 1</button>
         <button id="button2">button 2</button>
         <button id="button3">button 3</button>
+        
         <p id="paragraph1">paragraph 1</p>
     </div>
-
+    
     <script>
     (function() {
-        const button1 = document.getElementById('button1');
-        const displayer = document.getElementById('displayer');
-        let counter1 = 0;
+        const numbersListItems = document.querySelectorAll('#numbers-list li');
+        numbersListItems.forEach(function(li) {
+            li.addEventListener('click', function() {
+                const number = this.getAttribute('data-number');
+                const isOdd = parseInt(number) % 2 !== 0;
+                const oddEven = isOdd ? 'odd' : 'even';
+                document.querySelector('#displayer').innerHTML = `clicked on ${oddEven} number ${number} in the list`;
+            });
+        });
         
+        const button1 = document.querySelector('#button1');
+        let button1Counter = 0;
         button1.addEventListener('click', function() {
-            counter1++;
-            displayer.innerHTML = 'buton 1 counter ' + counter1;
+            button1Counter += 1;
+            document.querySelector('#displayer').innerHTML = `buton 1 counter ${button1Counter}`;
         });
-    })();
-
-    (function() {
-        const button2 = document.getElementById('button2');
-        const displayer = document.getElementById('displayer');
-        let counter2 = 0;
         
+        const button2 = document.querySelector('#button2');
+        let button2Counter = 0;
         button2.addEventListener('click', function() {
-            counter2++;
-            displayer.innerHTML = 'buton 2 counter ' + counter2;
+            button2Counter += 1;
+            document.querySelector('#displayer').innerHTML = `buton 2 counter ${button2Counter}`;
         });
-    })();
-
-    (function() {
-        const button3 = document.getElementById('button3');
-        const displayer = document.getElementById('displayer');
-        let counter3 = 0;
         
+        const button3 = document.querySelector('#button3');
+        let button3Counter = 0;
         button3.addEventListener('click', function() {
-            counter3++;
-            displayer.innerHTML = 'buton 3 counter ' + counter3;
+            button3Counter += 1;
+            document.querySelector('#displayer').innerHTML = `buton 3 counter ${button3Counter}`;
         });
-    })();
-
-    (function() {
-        const paragraph1 = document.getElementById('paragraph1');
-        const displayer = document.getElementById('displayer');
-        let counter_p1 = 0;
         
+        const paragraph1 = document.querySelector('#paragraph1');
+        let paragraph1Counter = 0;
         paragraph1.addEventListener('click', function() {
-            counter_p1 += 2;
-            displayer.innerHTML = 'paragraph 1 counter ' + counter_p1;
+            paragraph1Counter += 2;
+            document.querySelector('#displayer').innerHTML = `paragraph 1 counter ${paragraph1Counter}`;
         });
     })();
     </script>

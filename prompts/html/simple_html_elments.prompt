@@ -21,10 +21,20 @@ body {
           if (number is odd) {
             li {
               text: odd number {number}
+              @click {
+                for div#displayer {
+                  set inner html to "clicked on odd number {number} in the list"
+                }       
+              }
             }
           } else {
             li {
               text: even number {number}
+              @click {
+                for div#displayer {
+                  set inner html to "clicked on even number {number} in the list"
+                }       
+              }
             }
           }
         }
