@@ -1,47 +1,56 @@
 @context(../../context/html_runner.instruction.prompt)
 
-div#container {
-  button#button1 {
-    data {
-      counter = 0
-    }
-    @click {
-      increment {data.counter} by 1
-      alert({data.counter})
-    }
-    text: "button 1"
-  }
+header {
+  title: "clicking components demo"
+}
 
-  button#button2 {
-    data {
-      counter = 0
+body {
+  div#container {
+    button#button1 {
+      data {
+        counter = 0
+      }
+      @click {
+        increment {data.counter} by 1
+        alert({data.counter})
+      }
+      text: "button 1"
+      style {
+        background: blue
+      }
     }
-    @click {
-      increment {data.counter} by 1
-      alert({data.counter})
-    }
-    text: "button 2"
-  }
 
-  button#button3 {
-    data {
-      counter = 0
+    button#button2 {
+      data {
+        counter = 0
+      }
+      @click {
+        increment {data.counter} by 1
+        alert({data.counter})
+      }
+      text: "button 2"
     }
-    @click {
-      increment {data.counter} by 1
-      alert({data.counter})
-    }
-    text: "button 3"
-  }
 
-  paragraph#paragraph1 {
-    data {
-      counter = 0
+    button#button3 {
+      data {
+        counter = 0
+      }
+      @click {
+        increment {data.counter} by 1
+        alert({data.counter})
+      }
+      text: "button 3"
     }
-    @click {
-      increment {data.counter} by 1
-      alert({data.counter})
+
+    paragraph#paragraph1 {
+      data {
+        counter = 0
+      }
+      @click {
+        increment {data.counter} by 1
+        alert({data.counter})
+      }
+      text: "paragraph 1"
     }
-    text: "paragraph 1"
   }
 }
