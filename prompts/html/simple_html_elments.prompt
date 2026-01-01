@@ -29,6 +29,9 @@ body {
         alert({data.counter})
       }
       text: "button 2"
+      style {
+        background: light yellow
+      }
     }
 
     button#button3 {
