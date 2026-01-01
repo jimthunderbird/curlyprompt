@@ -7,6 +7,8 @@ logic {
   save html_code to index.php
   if (save successfully) {
     print "successfully generated index.php"
+  } else {
+    print "fail generate index.php"
   }
 }
 
@@ -14,7 +16,7 @@ constraints {
   return the python code immediately
   always use python's raw string to hold the html code
   no extra words and no explanation.
-  make sure each html element has its own scoping in javascript and css, do not intefere with other possible elements in the same page
+  use block scoping in javascript to make sure each html element does not intefere with other possible elements in the same page
 }
 
 <html_specification>

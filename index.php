@@ -16,9 +16,9 @@
             }
             foreach ($numbers as $number) {
                 if ($number % 2 !== 0) {
-                    echo "<li data-number=\"{$number}\">odd number {$number}</li>";
+                    echo "<li data-number=\"$number\">odd number $number</li>";
                 } else {
-                    echo "<li data-number=\"{$number}\">even number {$number}</li>";
+                    echo "<li data-number=\"$number\">even number $number</li>";
                 }
             }
             ?>
@@ -28,39 +28,42 @@
     </div>
 
     <script>
-        (function() {
-            const numbersList = document.getElementById('numbers-list');
+    {
+        const numbersList = document.getElementById('numbers-list');
+        let numbersListCounter = 0;
+
+        numbersList.addEventListener('click', function(e) {
+            if (e.target.tagName === 'LI') {
+                numbersListCounter++;
+                const number = e.target.getAttribute('data-number');
+                const displayer = document.getElementById('displayer');
+                displayer.innerHTML = `clicked on odd number ${number} in the list, current counter ${numbersListCounter}`;
+            }
+        });
+
+        numbersList.addEventListener('mouseover', function(e) {
+            if (e.target.tagName === 'LI') {
+                e.target.style.cursor = 'pointer';
+            }
+        });
+
+        numbersList.addEventListener('mouseout', function(e) {
+            if (e.target.tagName === 'LI') {
+                e.target.style.cursor = 'default';
+            }
+        });
+    }
+
+    {
+        const button1 = document.getElementById('button1');
+        let button1Counter = 0;
+
+        button1.addEventListener('click', function() {
+            button1Counter++;
             const displayer = document.getElementById('displayer');
-            const button1 = document.getElementById('button1');
-            
-            let numbersListCounter = 0;
-            let button1Counter = 0;
-            
-            numbersList.addEventListener('click', function(e) {
-                if (e.target.tagName === 'LI') {
-                    numbersListCounter++;
-                    const number = e.target.getAttribute('data-number');
-                    displayer.innerHTML = `clicked on odd number ${number} in the list, current counter ${numbersListCounter}`;
-                }
-            });
-            
-            numbersList.addEventListener('mouseover', function(e) {
-                if (e.target.tagName === 'LI') {
-                    e.target.style.cursor = 'pointer';
-                }
-            });
-            
-            numbersList.addEventListener('mouseout', function(e) {
-                if (e.target.tagName === 'LI') {
-                    e.target.style.cursor = 'default';
-                }
-            });
-            
-            button1.addEventListener('click', function() {
-                button1Counter++;
-                displayer.innerHTML = `buton 1 counter ${button1Counter}`;
-            });
-        })();
+            displayer.innerHTML = `buton 1 counter ${button1Counter}`;
+        });
+    }
     </script>
 </body>
 </html>
