@@ -16,7 +16,8 @@ body {
   }
 }
 
-ul#number_list.php {
+ul#numbers-list.php {
+  use event delegation for @click and @hover
   numbers = (15 random numbers between 1 to 150)
   for each numbers as number {
     if (number is odd) {
