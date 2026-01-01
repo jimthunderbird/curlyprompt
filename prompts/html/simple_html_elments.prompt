@@ -16,32 +16,42 @@ body {
   }
 }
 
-ul#numbers-list.php {
+ul#numbers-list {
   use event delegation for @click and @hover
-  numbers = (15 random numbers between 1 to 150)
-  for each numbers as number {
-    if (number is odd) {
-      li {
-        text: odd number {number}
-        @click {
-          for div#displayer {
-            set inner html to "clicked on odd number {number} in the list"
-          }       
+  handle @hover in javascript instead of in css
+  
+  data {
+    counter = 0
+  }
+
+  php {
+    numbers = (15 random numbers between 1 to 150)
+    for each numbers as number {
+      if (number is odd) {
+        li {
+          text: odd number {number}
+          @click {
+            increment data.counter by 1
+            for div#displayer {
+              set inner html to "clicked on odd number {number} in the list, current counter {data.counter}"
+            }       
+          }
+          @hover {
+            change mouse to hand
+          }
         }
-        @hover {
-          change mouse to hand
-        }
-      }
-    } else {
-      li {
-        text: even number {number}
-        @click {
-          for div#displayer {
-            set inner html to "clicked on even number {number} in the list"
-          }       
-        }
-        @hover {
-          change mouse to hand
+      } else {
+        li {
+          text: even number {number}
+          @click {
+            increment data.counter by 1
+            for div#displayer {
+              set inner html to "clicked on odd number {number} in the list, current counter {data.counter}"
+            }       
+          }
+          @hover {
+            change mouse to hand
+          }
         }
       }
     }

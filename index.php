@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>clicking components demo</title>
     <link rel="stylesheet" href="/web.css">
-    <style>
-        #numbers-list li:hover {
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
     <div id="container">
@@ -21,9 +16,9 @@
             }
             foreach ($numbers as $number) {
                 if ($number % 2 !== 0) {
-                    echo "<li data-number='$number'>odd number $number</li>";
+                    echo "<li data-number=\"{$number}\">odd number {$number}</li>";
                 } else {
-                    echo "<li data-number='$number'>even number $number</li>";
+                    echo "<li data-number=\"{$number}\">even number {$number}</li>";
                 }
             }
             ?>
@@ -36,21 +31,34 @@
         (function() {
             const numbersList = document.getElementById('numbers-list');
             const displayer = document.getElementById('displayer');
+            const button1 = document.getElementById('button1');
+            
+            let numbersListCounter = 0;
+            let button1Counter = 0;
             
             numbersList.addEventListener('click', function(e) {
                 if (e.target.tagName === 'LI') {
-                    const number = e.target.dataset.number;
-                    const isOdd = parseInt(number) % 2 !== 0;
-                    displayer.innerHTML = `clicked on ${isOdd ? 'odd' : 'even'} number ${number} in the list`;
+                    numbersListCounter++;
+                    const number = e.target.getAttribute('data-number');
+                    displayer.innerHTML = `clicked on odd number ${number} in the list, current counter ${numbersListCounter}`;
                 }
             });
-
-            const button1 = document.getElementById('button1');
-            let counter = 0;
+            
+            numbersList.addEventListener('mouseover', function(e) {
+                if (e.target.tagName === 'LI') {
+                    e.target.style.cursor = 'pointer';
+                }
+            });
+            
+            numbersList.addEventListener('mouseout', function(e) {
+                if (e.target.tagName === 'LI') {
+                    e.target.style.cursor = 'default';
+                }
+            });
             
             button1.addEventListener('click', function() {
-                counter++;
-                displayer.innerHTML = `buton 1 counter ${counter}`;
+                button1Counter++;
+                displayer.innerHTML = `buton 1 counter ${button1Counter}`;
             });
         })();
     </script>
