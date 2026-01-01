@@ -43,6 +43,9 @@ body {
         alert({data.counter})
       }
       text: "button 3"
+      style {
+        background: light red
+      }
     }
 
     paragraph#paragraph1 {
@@ -54,6 +57,9 @@ body {
         alert({data.counter})
       }
       text: "paragraph 1"
+      style {
+        background: wheat
+      }
     }
   }
 }
