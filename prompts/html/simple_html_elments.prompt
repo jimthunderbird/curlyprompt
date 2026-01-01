@@ -1,25 +1,37 @@
 @context(../../context/simple_php_html_page_runner.instruction.prompt)
 
-header {
-  title: "clicking components demo"
+requirement {
+  make sure it works on both mobile and desktop
+  do not have inline javascript
+  save the javascript to web1.js
 }
+
+meta.keywords = ["demo","simple","php"]
+
+title: "clicking components demo"
 
 style {
   link: "/web.css"  
 }
 
+scripts {
+  location: in the header section
+  link: "/web1.js"
+  link: "/web2.js"
+}
+
 body {
   div#container {
+    button#button1
     ul#numbers-list
     div#displayer
-    button#button1
   }
 }
 
 ul#numbers-list {
   use event delegation for @click and @hover
   handle @hover in javascript instead of in css
-  
+
   data {
     counter = 0
   }
