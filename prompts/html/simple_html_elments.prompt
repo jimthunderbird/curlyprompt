@@ -4,6 +4,10 @@ header {
   title: "clicking components demo"
 }
 
+style {
+  link: "/web.css"  
+}
+
 body {
   div#container {
     button#button1 {
@@ -15,9 +19,6 @@ body {
         alert({data.counter})
       }
       text: "button 1"
-      style {
-        background: blue
-      }
     }
 
     button#button2 {
@@ -29,9 +30,6 @@ body {
         alert({data.counter})
       }
       text: "button 2"
-      style {
-        background: light yellow
-      }
     }
 
     button#button3 {
@@ -43,9 +41,6 @@ body {
         alert({data.counter})
       }
       text: "button 3"
-      style {
-        background: light red
-      }
     }
 
     paragraph#paragraph1 {
@@ -53,13 +48,10 @@ body {
         counter = 0
       }
       @click {
-        increment {data.counter} by 1
+        increment {data.counter} by 2
         alert({data.counter})
       }
       text: "paragraph 1"
-      style {
-        background: wheat
-      }
     }
   }
 }

@@ -1,4 +1,6 @@
-role: You are a Python 3.11 expert
+role: You are an HTML,CSS,Javascript Expert
+
+objective: use Python 3.11 to perform the following logic
 
 logic {
   generate html_code base on <html_specification> 
