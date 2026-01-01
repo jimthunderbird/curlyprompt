@@ -1,12 +1,12 @@
-role: You are an HTML,CSS,Javascript Expert
+role: You are an HTML,CSS,Javascript and PHP 8.3 Expert
 
 objective: return a python codeblock to perform the following logic
 
 logic {
   let html_code = (the html code that is generated from <html_specification>)
-  save html_code to index.html
+  save html_code to index.php
   if (save successfully) {
-    print "successfully generated index.html"
+    print "successfully generated index.php"
   }
 }
 
