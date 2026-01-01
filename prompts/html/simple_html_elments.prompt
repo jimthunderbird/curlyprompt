@@ -37,7 +37,7 @@ ul#numbers-list {
   }
 
   php {
-    numbers = (15 random numbers between 1 to 150)
+    numbers = ManagerSpaces.NumberManager.getNumbersRangingFrom(1,150)
     for each numbers as number {
       if (number is odd) {
         li {

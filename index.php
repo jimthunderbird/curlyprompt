@@ -13,19 +13,16 @@
     <div id="container">
         <button id="button1">button 1</button>
         <ul id="numbers-list">
-<?php
-$numbers = [];
-for ($i = 0; $i < 15; $i++) {
-    $numbers[] = rand(1, 150);
-}
-foreach ($numbers as $number) {
-    if ($number % 2 !== 0) {
-        echo "            <li data-number=\"$number\">odd number $number</li>\n";
-    } else {
-        echo "            <li data-number=\"$number\">even number $number</li>\n";
-    }
-}
-?>
+            <?php
+            $numbers = \ManagerSpaces\NumberManager::getNumbersRangingFrom(1, 150);
+            foreach ($numbers as $number) {
+                if ($number % 2 !== 0) {
+                    echo "<li data-number='{$number}' data-type='odd'>odd number {$number}</li>";
+                } else {
+                    echo "<li data-number='{$number}' data-type='even'>even number {$number}</li>";
+                }
+            }
+            ?>
         </ul>
         <div id="displayer"></div>
     </div>
