@@ -1,4 +1,4 @@
-@context(../../context/html_runner.instruction.prompt)
+@context(../../context/simple_php_html_page_runner.instruction.prompt)
 
 php {
   let numbers = (10 random numbers between 1 to 100)

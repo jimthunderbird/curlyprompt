@@ -15,6 +15,9 @@ for ($i = 0; $i < 10; $i++) {
         #numbers-list li {
             cursor: pointer;
         }
+        #button1, #button2, #button3 {
+            cursor: pointer;
+        }
         #paragraph1 {
             cursor: pointer;
         }
@@ -25,9 +28,9 @@ for ($i = 0; $i < 10; $i++) {
         <ul id="numbers-list">
             <?php foreach ($numbers as $number): ?>
                 <?php if ($number % 2 !== 0): ?>
-                    <li data-number="<?php echo $number; ?>">odd number <?php echo $number; ?></li>
+                    <li data-number="<?php echo $number; ?>" data-type="odd">odd number <?php echo $number; ?></li>
                 <?php else: ?>
-                    <li data-number="<?php echo $number; ?>">even number <?php echo $number; ?></li>
+                    <li data-number="<?php echo $number; ?>" data-type="even">even number <?php echo $number; ?></li>
                 <?php endif; ?>
             <?php endforeach; ?>
         </ul>
@@ -44,45 +47,42 @@ for ($i = 0; $i < 10; $i++) {
     <script>
         (function() {
             const numbersList = document.getElementById('numbers-list');
+            const displayer = document.getElementById('displayer');
+            
             numbersList.addEventListener('click', function(e) {
                 if (e.target.tagName === 'LI') {
                     const number = e.target.getAttribute('data-number');
-                    const isOdd = parseInt(number) % 2 !== 0;
-                    const type = isOdd ? 'odd' : 'even';
-                    document.getElementById('displayer').innerHTML = `clicked on ${type} number ${number} in the list`;
+                    const type = e.target.getAttribute('data-type');
+                    displayer.innerHTML = `clicked on ${type} number ${number} in the list`;
                 }
             });
-        })();
-        
-        (function() {
-            let counter = 0;
-            document.getElementById('button1').addEventListener('click', function() {
-                counter++;
-                document.getElementById('displayer').innerHTML = `buton 1 counter ${counter}`;
+            
+            const button1 = document.getElementById('button1');
+            let button1Counter = 0;
+            button1.addEventListener('click', function() {
+                button1Counter += 1;
+                displayer.innerHTML = `buton 1 counter ${button1Counter}`;
             });
-        })();
-        
-        (function() {
-            let counter = 0;
-            document.getElementById('button2').addEventListener('click', function() {
-                counter++;
-                document.getElementById('displayer').innerHTML = `buton 2 counter ${counter}`;
+            
+            const button2 = document.getElementById('button2');
+            let button2Counter = 0;
+            button2.addEventListener('click', function() {
+                button2Counter += 1;
+                displayer.innerHTML = `buton 2 counter ${button2Counter}`;
             });
-        })();
-        
-        (function() {
-            let counter = 0;
-            document.getElementById('button3').addEventListener('click', function() {
-                counter++;
-                document.getElementById('displayer').innerHTML = `buton 3 counter ${counter}`;
+            
+            const button3 = document.getElementById('button3');
+            let button3Counter = 0;
+            button3.addEventListener('click', function() {
+                button3Counter += 1;
+                displayer.innerHTML = `buton 3 counter ${button3Counter}`;
             });
-        })();
-        
-        (function() {
-            let counter = 0;
-            document.getElementById('paragraph1').addEventListener('click', function() {
-                counter += 2;
-                document.getElementById('displayer').innerHTML = `paragraph 1 counter ${counter}`;
+            
+            const paragraph1 = document.getElementById('paragraph1');
+            let paragraph1Counter = 0;
+            paragraph1.addEventListener('click', function() {
+                paragraph1Counter += 2;
+                displayer.innerHTML = `paragraph 1 counter ${paragraph1Counter}`;
             });
         })();
     </script>
