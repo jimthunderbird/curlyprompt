@@ -1,9 +1,5 @@
 @context(../../context/simple_php_html_page_runner.instruction.prompt)
 
-php {
-  let numbers = (10 random numbers between 1 to 100)
-}
-
 header {
   title: "clicking components demo"
 }
@@ -14,92 +10,52 @@ style {
 
 body {
   div#container {
+    ul#numbers-list
+    div#displayer
+    button#button1
+  }
+}
 
-    ul#numbers-list {
-      php {
-        for each numbers as number {
-          if (number is odd) {
-            li {
-              text: odd number {number}
-              @click {
-                for div#displayer {
-                  set inner html to "clicked on odd number {number} in the list"
-                }       
-              }
-              @hover {
-                change mouse to hand
-              }
-            }
-          } else {
-            li {
-              text: even number {number}
-              @click {
-                for div#displayer {
-                  set inner html to "clicked on even number {number} in the list"
-                }       
-              }
-              @hover {
-                change mouse to hand
-              }
-            }
-          }
+ul#number_list.php {
+  numbers = (15 random numbers between 1 to 150)
+  for each numbers as number {
+    if (number is odd) {
+      li {
+        text: odd number {number}
+        @click {
+          for div#displayer {
+            set inner html to "clicked on odd number {number} in the list"
+          }       
+        }
+        @hover {
+          change mouse to hand
         }
       }
-    }
-
-    div#displayer {
-    }
-
-    button#button1 {
-      data {
-        counter = 0
-      }
-      @click {
-        increment {data.counter} by 1
-        for div#displayer {
-          set inner html to "buton 1 counter {data.counter}"
+    } else {
+      li {
+        text: even number {number}
+        @click {
+          for div#displayer {
+            set inner html to "clicked on even number {number} in the list"
+          }       
+        }
+        @hover {
+          change mouse to hand
         }
       }
-      text: "button 1"
-    }
-
-    button#button2 {
-      data {
-        counter = 0
-      }
-      @click {
-        increment {data.counter} by 1
-        for div#displayer {
-          set inner html to "buton 2 counter {data.counter}"
-        }
-      }
-      text: "button 2"
-    }
-
-    button#button3 {
-      data {
-        counter = 0
-      }
-      @click {
-        increment {data.counter} by 1
-        for div#displayer {
-          set inner html to "buton 3 counter {data.counter}"
-        }
-      }
-      text: "button 3"
-    }
-
-    paragraph#paragraph1 {
-      data {
-        counter = 0
-      }
-      @click {
-        increment {data.counter} by 2
-        for div#displayer {
-          set inner html to "paragraph 1 counter {data.counter}"
-        }
-      }
-      text: "paragraph 1"
     }
   }
+}
+
+button#button1 {
+  data {
+    counter = 0
+  }
+  @click {
+    increment {data.counter} by 1
+    for div#displayer {
+      set inner html to "buton 1 counter {data.counter}"
+    }
+  }
+  text: "button 1"
 }
