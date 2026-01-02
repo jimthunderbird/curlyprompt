@@ -1,0 +1,23 @@
+role: you are an html, javascript expert with deep knowledge in ECMAScript 2025 (ES16) and ECMAScript 2026 (ES17)
+
+objective {
+  create a python codeblock to generate base on the specification
+  return the python codeblock immediately, no explanation and no extra words
+}
+
+constraints {
+  use python 3.11
+  must return ```python and ``` 
+  must use python raw string at all times, example:
+}
+
+specification {
+  create a single page application in html and pure javascript base on <application_specification>
+  must use html History API 
+  save the html and javascript to index.html {
+    if successfully, output message: "successfully created index.html"
+    else output message: "failed creating index.html"
+  }
+}
+
+<application_specification>
