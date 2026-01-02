@@ -1,159 +1,127 @@
-// SPA Application with History API
-class SPARouter {
-    constructor() {
-        this.routes = {};
-        this.components = {};
-        this.appElement = document.getElementById('app');
-        
-        window.addEventListener('popstate', () => this.handleRoute());
-        document.addEventListener('click', (e) => this.handleLinkClick(e));
-        
-        this.initializeComponents();
-        this.initializeRoutes();
-        this.handleRoute();
+// Application state
+const state = {
+    counter: 0
+};
+
+// Components
+const components = {
+    Navigation: () => {
+        return `
+            <ul id="navigation">
+                <li><a href="/login" data-link>Login</a></li>
+                <li><a href="/hello" data-link>Hello</a></li>
+            </ul>
+        `;
+    },
+
+    CounterDisplay: () => {
+        return `
+            <div>
+                <div id="counter-display">the current counter value is ${state.counter}</div>
+                <button id="counter-increment">+</button>
+                <button id="counter-decrement">-</button>
+            </div>
+        `;
+    },
+
+    LoginForm: () => {
+        return `
+            <div id="login-form-holder">
+                <form id="login-form">
+                    <div>
+                        <label for="username">Enter Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div>
+                        <label for="password">Enter Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        `;
     }
-    
-    initializeComponents() {
-        this.components.Navigation = new NavigationComponent();
-        this.components.CounterDisplay = new CounterDisplayComponent();
-        this.components.LoginForm = new LoginFormComponent();
-    }
-    
-    initializeRoutes() {
-        this.routes['/hello'] = {
-            title: 'simple hello',
-            render: () => {
-                document.title = 'simple hello';
-                const container = document.createElement('div');
-                container.id = 'container';
-                container.appendChild(this.components.CounterDisplay.render());
-                container.appendChild(this.components.Navigation.render());
-                return container;
-            }
-        };
-        
-        this.routes['/login'] = {
-            title: 'simple hello',
-            render: () => {
-                document.title = 'simple hello';
-                const container = document.createElement('div');
-                container.id = 'container';
-                container.appendChild(this.components.LoginForm.render());
-                
-                const navWrapper = document.createElement('div');
-                navWrapper.style.border = '1px solid silver';
-                navWrapper.appendChild(this.components.Navigation.render());
-                container.appendChild(navWrapper);
-                
-                return container;
-            }
-        };
-    }
-    
-    handleLinkClick(e) {
-        if (e.target.tagName === 'A' && e.target.dataset.link) {
-            e.preventDefault();
-            this.navigateTo(e.target.dataset.link);
+};
+
+// Routes
+const routes = {
+    '/hello': {
+        title: 'simple hello',
+        render: () => {
+            document.title = 'simple hello';
+            const container = document.createElement('div');
+            container.id = 'container';
+            container.innerHTML = components.CounterDisplay() + components.Navigation();
+            return container;
+        }
+    },
+    '/login': {
+        title: 'simple hello',
+        render: () => {
+            document.title = 'simple hello';
+            const container = document.createElement('div');
+            container.id = 'container';
+            
+            const navWrapper = document.createElement('div');
+            navWrapper.style.border = '1px solid silver';
+            navWrapper.innerHTML = components.Navigation();
+            
+            container.innerHTML = components.LoginForm();
+            container.appendChild(navWrapper);
+            return container;
         }
     }
+};
+
+// Router
+function router() {
+    const path = window.location.pathname;
+    const route = routes[path] || routes['/hello'];
     
-    navigateTo(path) {
-        history.pushState(null, null, path);
-        this.handleRoute();
-    }
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+    app.appendChild(route.render());
     
-    handleRoute() {
-        const path = window.location.pathname;
-        const route = this.routes[path] || this.routes['/hello'];
-        
-        this.appElement.innerHTML = '';
-        this.appElement.appendChild(route.render());
-    }
+    attachEventHandlers();
 }
 
-class NavigationComponent {
-    render() {
-        const ul = document.createElement('ul');
-        ul.id = 'navigation';
-        
-        const links = [
-            { text: 'Login', url: '/login' },
-            { text: 'Hello', url: '/hello' }
-        ];
-        
-        links.forEach(link => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = link.url;
-            a.textContent = link.text;
-            a.dataset.link = link.url;
-            li.appendChild(a);
-            ul.appendChild(li);
+// Attach event handlers
+function attachEventHandlers() {
+    // Navigation links
+    document.querySelectorAll('a[data-link]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = e.target.getAttribute('href');
+            history.pushState(null, null, href);
+            router();
         });
-        
-        return ul;
-    }
-}
+    });
 
-class CounterDisplayComponent {
-    constructor() {
-        this.data = { counter: 0 };
+    // Counter buttons
+    const incrementBtn = document.getElementById('counter-increment');
+    const decrementBtn = document.getElementById('counter-decrement');
+    
+    if (incrementBtn) {
+        incrementBtn.addEventListener('click', () => {
+            state.counter++;
+            router();
+        });
     }
     
-    render() {
-        const wrapper = document.createElement('div');
-        
-        const display = document.createElement('div');
-        display.id = 'counter-display';
-        display.textContent = `the current counter value is ${this.data.counter}`;
-        
-        const incrementBtn = document.createElement('button');
-        incrementBtn.id = 'counter-increment';
-        incrementBtn.textContent = '+';
-        incrementBtn.onclick = () => {
-            this.data.counter++;
-            display.textContent = `the current counter value is ${this.data.counter}`;
-        };
-        
-        const decrementBtn = document.createElement('button');
-        decrementBtn.id = 'counter-decrement';
-        decrementBtn.textContent = '-';
-        decrementBtn.onclick = () => {
-            this.data.counter--;
-            display.textContent = `the current counter value is ${this.data.counter}`;
-        };
-        
-        wrapper.appendChild(display);
-        wrapper.appendChild(incrementBtn);
-        wrapper.appendChild(decrementBtn);
-        
-        return wrapper;
+    if (decrementBtn) {
+        decrementBtn.addEventListener('click', () => {
+            state.counter--;
+            router();
+        });
     }
-}
 
-class LoginFormComponent {
-    render() {
-        const holder = document.createElement('div');
-        holder.id = 'login-form-holder';
-        
-        const title = document.createElement('h2');
-        title.textContent = 'Login';
-        
-        const usernameInput = document.createElement('input');
-        usernameInput.type = 'text';
-        usernameInput.placeholder = 'Username';
-        usernameInput.id = 'username';
-        
-        const passwordInput = document.createElement('input');
-        passwordInput.type = 'password';
-        passwordInput.placeholder = 'Password';
-        passwordInput.id = 'password';
-        
-        const loginBtn = document.createElement('button');
-        loginBtn.textContent = 'Login';
-        loginBtn.onclick = async () => {
-            const username = usernameInput.value;
-            const password = passwordInput.value;
+    // Login form
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
             
             try {
                 const response = await fetch('/api/login', {
@@ -169,16 +137,14 @@ class LoginFormComponent {
             } catch (error) {
                 console.error('Login error:', error);
             }
-        };
-        
-        holder.appendChild(title);
-        holder.appendChild(usernameInput);
-        holder.appendChild(passwordInput);
-        holder.appendChild(loginBtn);
-        
-        return holder;
+        });
     }
 }
 
-// Initialize the application
-new SPARouter();
+// Handle browser back/forward buttons
+window.addEventListener('popstate', router);
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    router();
+});
