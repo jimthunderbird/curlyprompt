@@ -78,8 +78,9 @@ components.CounterDisplay {
 components.LoginForm {
   spec {
     create a professional looking login form
+    the login form should be placed in a div with id "login-form-holder"
     it will allow us to enter username and password and then login
-    background fo the form: light yellow
+    background of the form: light yellow
     when click on the login button {
       send api request /api/login with payload {
         username: the user name's value
