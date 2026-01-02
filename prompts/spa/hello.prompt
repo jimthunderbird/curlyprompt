@@ -1,5 +1,7 @@
 @context(../../context/pure_javascript_single_page_app.instruction.prompt)
 
+application_javascript_file: "index.js"
+
 url: "/hello" {
   title: "simple hello"
   layout: {
@@ -15,14 +17,17 @@ url: "/login" {
   layout: {
     div#container {
       component.LoginForm
-      components.Navigation
+      div {
+        style: "1px silver solid"
+        components.Navigation
+      }
     }
   }
 }
 
 components.Navigation {
   layout {
-    ul {
+    ul#navigation {
       li {
         link {
           text: "Login"

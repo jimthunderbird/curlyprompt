@@ -14,7 +14,8 @@ constraints {
 specification {
   create a single page application in html and pure javascript base on <application_specification>
   must use html History API 
-  save the html and javascript to index.html {
+  save all application javascript code to {application_javascript_file}
+  save just the html, excluding the application javascript code, to index.html {
     if successfully, output message: "successfully created index.html"
     else output message: "failed creating index.html"
   }
