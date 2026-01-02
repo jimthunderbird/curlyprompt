@@ -1,0 +1,25 @@
+@context(../../../context/spa_component_generator.instruction.prompt)
+
+component.LoginForm {
+  spec {
+    create a professional looking login form
+    form wrapper: "div#login-form-holder" 
+    username {
+      label: "Enter Username"
+    }
+    password {
+      label: "Enter Password"
+    }
+    login button {
+      id: "login-button"
+      text: "Login"
+      when click {
+        send api request /api/login with payload {
+          username: the user name's value
+          password: the password's value
+        }
+      }
+    }
+    form background: light yellow
+  }
+}
