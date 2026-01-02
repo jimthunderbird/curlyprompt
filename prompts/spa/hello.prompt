@@ -1,13 +1,13 @@
 @context(../../context/pure_javascript_single_page_app.instruction.prompt)
 
-application_javascript_file: "index.js"
+application_javascript_file: "app.js"
 
 url: "/hello" {
   title: "simple hello"
   layout: {
     div#container {
       component.CounterDisplay
-      components.Navigation
+      component.Navigation
     }
   }
 }
@@ -76,11 +76,15 @@ components.CounterDisplay {
 }
 
 components.LoginForm {
-  layout {
-    paragraph#placeholder  
-  }
-
-  paragraph#placeholder {
-    text: "this is a login form"
+  spec {
+    create a professional looking login form
+    it will allow us to enter username and password and then login
+    background fo the form: light yellow
+    when click on the login button {
+      send api request /api/login with payload {
+        username: the user name's value
+        password: the password's value
+      }
+    }
   }
 }
