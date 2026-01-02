@@ -86,14 +86,15 @@ components.LoginForm {
       label: "Enter Password"
     }
     login button {
+      id: "login-button"
       text: "Login"
-      @click {
+      when click {
         send api request /api/login with payload {
           username: the user name's value
           password: the password's value
         }
       }
     }
-    background of the form: light yellow
+    form background: light yellow
   }
 }
