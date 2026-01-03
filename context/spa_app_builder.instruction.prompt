@@ -9,7 +9,7 @@ logic {
   if a route is not defined, redirect to /error
   must use python raw string to hold {html_code} at all times
   let component_list = []
-  if we see component.{component_name} in inside of div#container, we should {
+  if we see component.{component_name} inside of div#container, we should {
     let component_content = read the file content of prompts/spa/components/{component_name}.js
     add {component_content} to component_list 
   }
