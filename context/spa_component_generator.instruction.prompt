@@ -17,7 +17,7 @@ specification {
     constructor()
     render() -- the main component logic
   }
-  save the component's javascript code to ./prompts/spa/componets/{class name}.js
+  save the component's javascript code to ./prompts/spa/components/{class name}.js
 }
 
 <component_specification>

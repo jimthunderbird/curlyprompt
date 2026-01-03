@@ -1,0 +1,31 @@
+@context(../../../context/spa_component_generator.instruction.prompt)
+
+component.Counter {
+  layout {
+    div#counter-display
+    button#counter-increment
+    button#counter-decrement
+  }
+
+  data {
+    counter: 0
+  }
+
+  div#counter-display {
+    html: "the current counter value is {data.counter}"
+  }
+
+  button#counter-increment { 
+    text: "+"
+    @click {
+      increment data.counter by 1
+    }
+  }
+
+  button#counter-decrement { 
+    text: "-"
+    @click {
+      decrement data.counter by 1
+    }
+  }
+}

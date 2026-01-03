@@ -1,181 +1,156 @@
-class SPARouter {
-    constructor() {
-        this.routes = {};
-        this.components = {};
-        this.appElement = document.getElementById('app');
-        this.initializeComponents();
-        this.initializeRoutes();
-        this.init();
-    }
+class Counter {
+  constructor() {
+    this.data = {
+      counter: 0
+    };
+  }
 
-    init() {
-        window.addEventListener('popstate', () => this.handleRoute());
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('[data-link]')) {
-                e.preventDefault();
-                this.navigateTo(e.target.getAttribute('href'));
-            }
-        });
-        this.handleRoute();
-    }
-
-    navigateTo(url) {
-        history.pushState(null, null, url);
-        this.handleRoute();
-    }
-
-    initializeComponents() {
-        this.components.Navigation = () => {
-            const nav = document.createElement('ul');
-            nav.id = 'navigation';
-            
-            const loginLi = document.createElement('li');
-            const loginLink = document.createElement('a');
-            loginLink.href = '/login';
-            loginLink.textContent = 'Login';
-            loginLink.setAttribute('data-link', '');
-            loginLi.appendChild(loginLink);
-            
-            const helloLi = document.createElement('li');
-            const helloLink = document.createElement('a');
-            helloLink.href = '/hello';
-            helloLink.textContent = 'Hello';
-            helloLink.setAttribute('data-link', '');
-            helloLi.appendChild(helloLink);
-            
-            nav.appendChild(loginLi);
-            nav.appendChild(helloLi);
-            
-            return nav;
-        };
-
-        this.components.CounterDisplay = () => {
-            const container = document.createElement('div');
-            let counter = 0;
-
-            const display = document.createElement('div');
-            display.id = 'counter-display';
-            
-            const incrementBtn = document.createElement('button');
-            incrementBtn.id = 'counter-increment';
-            incrementBtn.textContent = '+';
-            
-            const decrementBtn = document.createElement('button');
-            decrementBtn.id = 'counter-decrement';
-            decrementBtn.textContent = '-';
-
-            const updateDisplay = () => {
-                display.innerHTML = `the current counter value is ${counter}`;
-            };
-
-            incrementBtn.addEventListener('click', () => {
-                counter++;
-                updateDisplay();
-            });
-
-            decrementBtn.addEventListener('click', () => {
-                counter--;
-                updateDisplay();
-            });
-
-            updateDisplay();
-            container.appendChild(display);
-            container.appendChild(incrementBtn);
-            container.appendChild(decrementBtn);
-
-            return container;
-        };
-
-        this.components.LoginForm = () => {
-            const holder = document.createElement('div');
-            holder.id = 'login-form-holder';
-
-            const usernameLabel = document.createElement('label');
-            usernameLabel.textContent = 'Enter Username';
-            const usernameInput = document.createElement('input');
-            usernameInput.type = 'text';
-            usernameInput.id = 'username';
-
-            const passwordLabel = document.createElement('label');
-            passwordLabel.textContent = 'Enter Password';
-            const passwordInput = document.createElement('input');
-            passwordInput.type = 'password';
-            passwordInput.id = 'password';
-
-            const loginButton = document.createElement('button');
-            loginButton.id = 'login-button';
-            loginButton.textContent = 'Login';
-            loginButton.addEventListener('click', async () => {
-                const payload = {
-                    username: usernameInput.value,
-                    password: passwordInput.value
-                };
-                
-                try {
-                    const response = await fetch('/api/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await response.json();
-                    console.log('Login response:', data);
-                } catch (error) {
-                    console.error('Login error:', error);
-                }
-            });
-
-            holder.appendChild(usernameLabel);
-            holder.appendChild(usernameInput);
-            holder.appendChild(passwordLabel);
-            holder.appendChild(passwordInput);
-            holder.appendChild(loginButton);
-
-            return holder;
-        };
-    }
-
-    initializeRoutes() {
-        this.routes['/hello'] = {
-            title: 'simple hello',
-            render: () => {
-                const container = document.createElement('div');
-                container.id = 'container';
-                container.appendChild(this.components.CounterDisplay());
-                container.appendChild(this.components.Navigation());
-                return container;
-            }
-        };
-
-        this.routes['/login'] = {
-            title: 'simple hello',
-            render: () => {
-                const container = document.createElement('div');
-                container.id = 'container';
-                
-                container.appendChild(this.components.LoginForm());
-                
-                const navWrapper = document.createElement('div');
-                navWrapper.style.border = '1px silver solid';
-                navWrapper.appendChild(this.components.Navigation());
-                container.appendChild(navWrapper);
-                
-                return container;
-            }
-        };
-    }
-
-    handleRoute() {
-        const path = window.location.pathname;
-        const route = this.routes[path] || this.routes['/hello'];
-        
-        document.title = route.title;
-        this.appElement.innerHTML = '';
-        this.appElement.appendChild(route.render());
-    }
+  render() {
+    const container = document.createElement('div');
+    
+    const counterDisplay = document.createElement('div');
+    counterDisplay.id = 'counter-display';
+    counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+    
+    const incrementButton = document.createElement('button');
+    incrementButton.id = 'counter-increment';
+    incrementButton.textContent = '+';
+    incrementButton.addEventListener('click', () => {
+      this.data.counter += 1;
+      counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+    });
+    
+    const decrementButton = document.createElement('button');
+    decrementButton.id = 'counter-decrement';
+    decrementButton.textContent = '-';
+    decrementButton.addEventListener('click', () => {
+      this.data.counter -= 1;
+      counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+    });
+    
+    container.appendChild(counterDisplay);
+    container.appendChild(incrementButton);
+    container.appendChild(decrementButton);
+    
+    return container;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new SPARouter();
-});
+class LoginForm {
+  constructor() {
+    this.formHolder = null;
+  }
+
+  render() {
+    this.formHolder = document.createElement('div');
+    this.formHolder.id = 'login-form-holder';
+    this.formHolder.style.cssText = `
+      background: lightyellow;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: 2rem auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    `;
+
+    const usernameLabel = document.createElement('label');
+    usernameLabel.textContent = 'Enter Username';
+    usernameLabel.style.cssText = `
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #333;
+    `;
+
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'text';
+    usernameInput.id = 'username';
+    usernameInput.style.cssText = `
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    `;
+
+    const passwordLabel = document.createElement('label');
+    passwordLabel.textContent = 'Enter Password';
+    passwordLabel.style.cssText = `
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #333;
+    `;
+
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.id = 'password';
+    passwordInput.style.cssText = `
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    `;
+
+    const loginButton = document.createElement('button');
+    loginButton.id = 'login-button';
+    loginButton.textContent = 'Login';
+    loginButton.style.cssText = `
+      width: 100%;
+      padding: 0.75rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    `;
+
+    loginButton.addEventListener('mouseenter', () => {
+      loginButton.style.background = '#0056b3';
+    });
+
+    loginButton.addEventListener('mouseleave', () => {
+      loginButton.style.background = '#007bff';
+    });
+
+    loginButton.addEventListener('click', async () => {
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+        console.log('Login response:', data);
+      } catch (error) {
+        console.error('Login error:', error);
+      }
+    });
+
+    this.formHolder.appendChild(usernameLabel);
+    this.formHolder.appendChild(usernameInput);
+    this.formHolder.appendChild(passwordLabel);
+    this.formHolder.appendChild(passwordInput);
+    this.formHolder.appendChild(loginButton);
+
+    return this.formHolder;
+  }
+}
