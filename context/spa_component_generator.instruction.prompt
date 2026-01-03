@@ -21,6 +21,7 @@ specification {
     constructor()
     render() -- the main component logic
   }
+  do not include any inline css in the class!
   save the component's javascript code to ./prompts/spa/components/{class name}.js
 }
 

@@ -1,8 +1,8 @@
 class TopNavigationBar {
   constructor() {
     this.links = [
-      { text: 'About', url: '/about' },
-      { text: 'Login', url: '/login' }
+      { text: "About", url: "/about" },
+      { text: "Login", url: "/login" }
     ];
   }
 

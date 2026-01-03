@@ -33,6 +33,7 @@ logic {
   save {application_javascript_code} to app.js
 
   run terser cli command to compress app.js
+  run javascript-obfuscator cli command to obfuscate app.js
 
   generate html_code {
     with the container div
