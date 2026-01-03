@@ -1,0 +1,13 @@
+@context(../../../context/spa_component_generator.instruction.prompt)
+
+component.UserProfile {
+  spec {
+    accept the following params in constructor {
+      id -- this is the user's id
+    }
+
+    div#user-profile {
+      text: "This is the user profile for user with id {id}"
+    }
+  }
+}

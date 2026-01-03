@@ -36,7 +36,7 @@ logic {
 
   generate html_code {
     with the container div
-    a reference to app.js
+    a reference to /app.js
   }
   save {html_code} to index.html
 }

@@ -26,6 +26,13 @@ url: "/login" {
   }
 }
 
+url: "/user/{id}/profile {
+  title: "user profile"
+  layout: {
+    component.UserProfile({id})
+  }
+}
+
 url: "/about" {
   title: "about"
   layout: {
