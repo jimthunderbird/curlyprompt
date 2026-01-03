@@ -8,14 +8,20 @@ logic {
   the single page application must use html History API
   if a route is not defined, redirect to /error
   must use python raw string to hold {html_code} at all times
-  let components_list = []
-  if we see component.{component_name} inside of div#container, we should {
+
+  let unique_components_list = (find all unique component.{component_name} patterns)
+
+  for each component_name in unique_components_list {
+    note that the {component_name} might be separated by the . sign
+    for {component_name} {
+      replace . to /
+    }
     let component_content = read the file content of prompts/spa/components/{component_name}.js
     add {component_content} to components_list 
   }
 
   let application_javascript_code = join all contents in components_list with new line
-  
+
   for application_javascript_code {
     add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
     const container = document.getElementById("container")
@@ -25,7 +31,6 @@ logic {
 
   save {application_javascript_code} to app.js
 
-  run terser cli command to compress app.js
 
   generate html_code {
     with the container div

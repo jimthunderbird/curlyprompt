@@ -1,0 +1,16 @@
+@context(../../../../context/spa_component_generator.instruction.prompt)
+
+component.navigation.TopNavigationBar {
+  spec {
+    it has the following HTML links {
+      link {
+        text: "About"
+        url: "/about" 
+      }
+      link {
+        text: "Login"
+        url: "/login" 
+      }
+    }
+  }
+}

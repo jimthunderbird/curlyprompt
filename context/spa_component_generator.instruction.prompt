@@ -13,7 +13,11 @@ constraints {
 
 specification {
   create a single page application component in pure javascript base on <component_specification>
-  the component should be a javascript class only, with the component name as the class name and should have the following methods {
+  note that the {component name} might be separated by the . sign
+  for {compoent name} {
+    replace . to /
+  }
+  the component should be a javascript class only, with the {component name} as the class name and should have the following methods {
     constructor()
     render() -- the main component logic
   }

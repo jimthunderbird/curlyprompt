@@ -5,6 +5,7 @@ title: "Welcome to the portal"
 url: "/counter" {
   title: "simple counter"
   layout: {
+    component.navigation.TopNavigationBar
     component.Counter
   }
 }
@@ -12,6 +13,7 @@ url: "/counter" {
 url: "/login" {
   title: "simple login form"
   layout: {
+    component.navigation.TopNavigationBar
     component.LoginForm
     div {
       style: "1px silver solid"
