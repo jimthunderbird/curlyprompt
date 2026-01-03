@@ -8,21 +8,25 @@ logic {
   the single page application must use html History API
   if a route is not defined, redirect to /error
   must use python raw string to hold {html_code} at all times
-  let component_list = []
+  let components_list = []
   if we see component.{component_name} inside of div#container, we should {
     let component_content = read the file content of prompts/spa/components/{component_name}.js
-    add {component_content} to component_list 
+    add {component_content} to components_list 
   }
 
-  let final_content = join all contents in component_list with new line
-  save {final_content} to app.js
-  generate html_code {
-    with the container div
-    a reference to app.js
+  let application_javascript_code = join all contents in components_list with new line
+  
+  for application_javascript_code {
     add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
     const container = document.getElementById("container")
     container.appendChild(new LoginForm().render());
     ...
+  }
+
+  save {application_javascript_code} to app.js
+  generate html_code {
+    with the container div
+    a reference to app.js
   }
   save {html_code} to index.html
 }
