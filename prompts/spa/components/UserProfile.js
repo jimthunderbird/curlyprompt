@@ -4,9 +4,9 @@ class UserProfile {
   }
 
   render() {
-    const div = document.createElement('div');
-    div.id = 'user-profile';
-    div.textContent = `This is the profile for user with id ${this.id}`;
-    return div;
+    const wrapper = document.createElement('div');
+    wrapper.id = 'user-profile-wrapper';
+    wrapper.textContent = `This is the profile for user with id ${this.id}`;
+    return wrapper;
   }
 }

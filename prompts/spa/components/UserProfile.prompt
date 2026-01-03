@@ -3,5 +3,6 @@
 component.UserProfile:
 - accept the following params in constructor:
 -- id: this is the user's id
-- it will have a div with id "user-profile"
-- text of the div: "This is the profile for user with id {id}"
+- it should have the following html:
+-- a div with id "user-profile-wrapper"
+--- text: "This is the profile for user with id {id}"
