@@ -4,25 +4,24 @@ objective: generate a python codeblock base on the following logic, return the p
 
 logic {
   analyze the <application_specification> below
-  this <application_specification> is a spec for a single page application
+  the <application_specification> is a spec for a single page application
   let component_list = []
-  if we see component.{component_name}, we should {
+  if we see component.{component_name} in inside of div#container, we should {
     let component_content = read the file content of prompts/spa/components/{component_name}.js
     add {component_content} to component_list 
   }
 
   let final_content = join all contents in component_list with new line
   save {final_content} to app.js
-  generate an html codeblock {
+  generate html_code {
     with the container div
     a reference to app.js
+    add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
+    const container = document.getElementById("container")
+    container.appendChild(new LoginForm().render());
+    ...
   }
-  save the html to index.html with the container div and a reference to app.js
-  save the html codeblock to index.html
-  in index.html, add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
-  const container = document.getElementById("container")
-  container.appendChild(new LoginForm().render());
-  ...
+  save {html_code} to index.html
 }
 
 <application_specification>
