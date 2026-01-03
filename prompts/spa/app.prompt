@@ -21,3 +21,10 @@ url: "/login" {
     }
   }
 }
+
+url: "/error" {
+  title: "error"
+  layout: {
+    component.Error
+  }
+}

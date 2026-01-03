@@ -1,0 +1,11 @@
+@context(../../../context/spa_component_generator.instruction.prompt)
+
+component.Error {
+  layout {
+    div#error-message
+  }
+
+  div#error-message {
+    text: "Page Not Found"
+  }
+}
