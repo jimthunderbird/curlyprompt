@@ -24,6 +24,9 @@ logic {
   }
 
   save {application_javascript_code} to app.js
+
+  run terser cli command to compress app.js
+
   generate html_code {
     with the container div
     a reference to app.js
