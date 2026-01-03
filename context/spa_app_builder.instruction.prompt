@@ -1,0 +1,31 @@
+role: you are a python 3.11 coding expert
+
+objective: generate a python codeblock base on the following logic, return the python codeblock only and return immediately, no extra words, no explanation
+
+logic {
+  analyze the <application_specification> below
+  the <application_specification> is a spec for a single page application
+  the single page application must use html History API
+  if a route is not defined, redirect to /error
+  must use python raw string to hold {html_code} at all times
+  let component_list = []
+  if we see component.{component_name} in inside of div#container, we should {
+    let component_content = read the file content of prompts/spa/components/{component_name}.js
+    add {component_content} to component_list 
+  }
+
+  let final_content = join all contents in component_list with new line
+  save {final_content} to app.js
+  generate html_code {
+    with the container div
+    a reference to app.js
+    add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
+    const container = document.getElementById("container")
+    container.appendChild(new LoginForm().render());
+    ...
+  }
+  save {html_code} to index.html
+}
+
+<application_specification>
+
