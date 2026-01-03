@@ -5,6 +5,8 @@ objective: generate a python codeblock base on the following logic, return the p
 logic {
   analyze the <application_specification> below
   the <application_specification> is a spec for a single page application
+  the single page application must use html History API
+  must use python raw string to hold {html_code} at all times
   let component_list = []
   if we see component.{component_name} in inside of div#container, we should {
     let component_content = read the file content of prompts/spa/components/{component_name}.js
@@ -26,7 +28,26 @@ logic {
 
 <application_specification>
 
-div#container {
-  component.Counter
-  component.LoginForm
+title: "Single Page App Demo"
+
+url: "/counter" {
+  title: "simple hello"
+  layout: {
+    div#container {
+      component.Counter
+    }
+  }
+}
+
+url: "/login" {
+  title: "simple hello"
+  layout: {
+    div#container {
+      component.LoginForm
+      div {
+        style: "1px silver solid"
+        text: "this is a log in form generated via llm"
+      }
+    }
+  }
 }
