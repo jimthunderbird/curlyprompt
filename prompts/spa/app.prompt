@@ -3,14 +3,14 @@
 title: "Welcome to the portal"
 
 url: "/counter" {
-  title: "simple hello"
+  title: "simple counter"
   layout: {
     component.Counter
   }
 }
 
 url: "/login" {
-  title: "simple hello"
+  title: "simple login form"
   layout: {
     component.LoginForm
     div {
