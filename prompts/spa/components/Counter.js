@@ -1,3 +1,4 @@
+
 class Counter {
   constructor() {
     this.data = {
@@ -16,22 +17,33 @@ class Counter {
     incrementButton.id = 'counter-increment';
     incrementButton.textContent = '+';
     incrementButton.addEventListener('click', () => {
-      this.data.counter += 1;
-      counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+      this.data.counter++;
+      this.update();
     });
     
     const decrementButton = document.createElement('button');
     decrementButton.id = 'counter-decrement';
     decrementButton.textContent = '-';
     decrementButton.addEventListener('click', () => {
-      this.data.counter -= 1;
-      counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+      if (this.data.counter > 0) {
+        this.data.counter--;
+      }
+      this.update();
     });
     
     container.appendChild(counterDisplay);
     container.appendChild(incrementButton);
     container.appendChild(decrementButton);
     
+    this.container = container;
+    this.counterDisplay = counterDisplay;
+    
     return container;
+  }
+  
+  update() {
+    if (this.counterDisplay) {
+      this.counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+    }
   }
 }

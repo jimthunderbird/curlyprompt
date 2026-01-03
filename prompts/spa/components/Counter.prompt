@@ -1,6 +1,10 @@
 @context(../../../context/spa_component_generator.instruction.prompt)
 
 component.Counter {
+  requirement {
+    the lowest value of data.counter can go should be 0
+  }
+
   layout {
     div#counter-display
     button#counter-increment
