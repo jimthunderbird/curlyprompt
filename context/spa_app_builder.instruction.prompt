@@ -16,6 +16,7 @@ logic {
     for {component_name} {
       replace . to /
     }
+    
     let component_content = read the file content of prompts/spa/components/{component_name}.js
     add {component_content} to components_list 
   }
@@ -23,7 +24,7 @@ logic {
   let application_javascript_code = join all contents in components_list with new line
 
   for application_javascript_code {
-    add necessary javascript to initiate all components and add them to the main container div, here is the sameple javascript:
+    add necessary javascript to initiate all components per route and add them to the main container div, here is the sameple javascript:
     const container = document.getElementById("container")
     container.appendChild(new LoginForm().render());
     ...

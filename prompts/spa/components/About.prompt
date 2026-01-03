@@ -1,0 +1,9 @@
+@context(../../../context/spa_component_generator.instruction.prompt)
+
+component.About {
+  layout {
+    p {
+      text: "About US"
+    }
+  }
+}
