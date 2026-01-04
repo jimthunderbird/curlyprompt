@@ -8,7 +8,7 @@ url: "/" {
 
 url: "/counter" {
   title: "simple counter"
-  layout: {
+  layout {
     component.navigation.TopNavigationBar
     component.Counter
   }
@@ -16,7 +16,7 @@ url: "/counter" {
 
 url: "/login" {
   title: "simple login form"
-  layout: {
+  layout {
     component.navigation.TopNavigationBar
     component.LoginForm
     div {
@@ -28,7 +28,7 @@ url: "/login" {
 
 url: "/user/{id}/profile {
   title: "user profile"
-  layout: {
+  layout {
     component.UserProfile({id} as integer)
   }
 }
@@ -42,7 +42,7 @@ url: "/about" {
 
 url: "/error" {
   title: "error"
-  layout: {
+  layout {
     component.Error
   }
 }

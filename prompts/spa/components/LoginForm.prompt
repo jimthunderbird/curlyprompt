@@ -4,21 +4,38 @@ component.LoginForm {
   spec {
     create a login form, add css styling to make the font size, font weight, font family, background color very very close to https://raw.githubusercontent.com/puikinsh/login-forms/main/assets/screenshots/neumorphism.png
     form wrapper: "div#login-form-holder" 
-    username {
-      label: "Enter Username"
-    }
-    password {
-      label: "Enter Password"
-    }
-    login button {
-      id: "login-button"
-      text: "Login"
-      when click {
-        send api request /api/login with payload {
-          username: the user name's value
-          password: the password's value
+
+    layout {
+      error_message_display "div#error-messages" {
+        text: ""  
+      }
+
+      username {
+        label: "Enter Username"
+        placeholder: "your username"
+        text: ""
+      }
+      password {
+        label: "Enter Password"
+        placeholder: "your password"
+        text: ""
+      }
+      login button {
+        id: "login-button"
+        text: "Login"
+        when click {
+          let response = send api request /api/login with payload {
+            username: the user name's value
+            password: the password's value
+          }
+
+          if response.success is not 1 {
+            set error_message_display.text to "Error logging in user"
+            set username.text to "your user name ..."
+          }
         }
       }
     }
+
   }
 }
