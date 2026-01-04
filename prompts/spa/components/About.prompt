@@ -2,8 +2,8 @@
 
 component.About {
   layout {
-    p {
-      text: "About US"
+    paragraph {
+      text: "About This AI component demo"
     }
   }
 }

@@ -12,9 +12,10 @@ components["About"] = class {
   render() {
     const container = document.createElement('div');
     
-    const p = document.createElement('p');
-    p.textContent = 'About US';
-    container.appendChild(p);
+    const paragraph = document.createElement('p');
+    paragraph.textContent = 'About This AI component demo';
+    
+    container.appendChild(paragraph);
     
     return container;
   }
