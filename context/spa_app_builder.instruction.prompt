@@ -13,6 +13,7 @@ logic {
 
   for each component_name in unique_components_list {
     note that the {component_name} might be separated by the . sign
+    let original_component_name = component_name
     for {component_name} {
       replace . to /
     }
@@ -21,15 +22,18 @@ logic {
     add {component_content} to components_list 
   }
 
-  let application_javascript_code = join all contents in components_list with new line
+  let application_javascript_code = define components = {} only once
+  application_javascript_code.append(join all contents in components_list with new line)
+  must use python raw string to hold {application_javascript_code} at all times
 
   for application_javascript_code {
     add necessary javascript to initiate all components per route and add them to the main container div, here is the sameple javascript:
     const container = document.getElementById("container")
-    container.appendChild(new LoginForm().render());
+    container.appendChild(new components["{original_component_name}"]().render());
     ...
   }
 
+  save {application_javascript_code} to app_raw.js
   save {application_javascript_code} to app.js
 
   run terser cli command to compress app.js

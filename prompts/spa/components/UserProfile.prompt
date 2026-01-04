@@ -1,6 +1,6 @@
 @context(../../../context/spa_component_generator.instruction.prompt)
 
-component.UserProfile:
+component.UserProfile {
 - accept the following params in constructor:
 -- id: this is the user's id
 - it should have the following html:

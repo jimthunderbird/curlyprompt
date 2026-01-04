@@ -13,16 +13,33 @@ constraints {
 
 specification {
   create a single page application component in pure javascript base on <component_specification>
-  note that the {component name} might be separated by the . sign
-  for {compoent name} {
-    replace . to /
-  }
-  the component should be a javascript class only, with the {component name} as the class name and should have the following methods {
+  find all patterns of component.{component_name}
+  note that the {component_name} might be separated by the . sign
+  for {component_name} {
+    replace "component." to ""
+  } as {component_name}
+
+  the component should be a javascript anonymous class only, the class should have the following methods {
     constructor()
-    render() -- the main component logic
+    render() -- the main component logic, it must return an html element node
   }
+  the definition of the class will be as follows:
+  
+  components["{component_name}"] = class {
+    constructor(...) { ... }
+    render() { ... }
+  }
+
+  we will assume that components map is already defined, do not need to initiate it
+
+  use a Proxy to automatically update the DOM whenever this.data changes
+
+  for {component_name} {
+    replace "." to "/"
+  } as {component_name}
+
   do not include any inline css in the class!
-  save the component's javascript code to ./prompts/spa/components/{class name}.js
+  save the component's javascript code to ./prompts/spa/components/{component_name}.js
 }
 
 <component_specification>

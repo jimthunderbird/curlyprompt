@@ -1,49 +1,52 @@
-
-class Counter {
+components["Counter"] = class {
   constructor() {
-    this.data = {
-      counter: 0
-    };
+    this.data = new Proxy(
+      { counter: 0 },
+      {
+        set: (target, property, value) => {
+          target[property] = value;
+          this.updateDOM();
+          return true;
+        }
+      }
+    );
+    this.elements = {};
   }
 
   render() {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     
-    const counterDisplay = document.createElement('div');
-    counterDisplay.id = 'counter-display';
-    counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+    this.elements.display = document.createElement("div");
+    this.elements.display.id = "counter-display";
     
-    const incrementButton = document.createElement('button');
-    incrementButton.id = 'counter-increment';
-    incrementButton.textContent = '+';
-    incrementButton.addEventListener('click', () => {
+    this.elements.incrementBtn = document.createElement("button");
+    this.elements.incrementBtn.id = "counter-increment";
+    this.elements.incrementBtn.textContent = "+";
+    this.elements.incrementBtn.addEventListener("click", () => {
       this.data.counter++;
-      this.update();
     });
     
-    const decrementButton = document.createElement('button');
-    decrementButton.id = 'counter-decrement';
-    decrementButton.textContent = '-';
-    decrementButton.addEventListener('click', () => {
+    this.elements.decrementBtn = document.createElement("button");
+    this.elements.decrementBtn.id = "counter-decrement";
+    this.elements.decrementBtn.textContent = "-";
+    this.elements.decrementBtn.addEventListener("click", () => {
       if (this.data.counter > 0) {
         this.data.counter--;
       }
-      this.update();
     });
     
-    container.appendChild(counterDisplay);
-    container.appendChild(incrementButton);
-    container.appendChild(decrementButton);
+    container.appendChild(this.elements.display);
+    container.appendChild(this.elements.incrementBtn);
+    container.appendChild(this.elements.decrementBtn);
     
-    this.container = container;
-    this.counterDisplay = counterDisplay;
+    this.updateDOM();
     
     return container;
   }
-  
-  update() {
-    if (this.counterDisplay) {
-      this.counterDisplay.innerHTML = `the current counter value is ${this.data.counter}`;
+
+  updateDOM() {
+    if (this.elements.display) {
+      this.elements.display.innerHTML = `the current counter value is ${this.data.counter}`;
     }
   }
-}
+};
