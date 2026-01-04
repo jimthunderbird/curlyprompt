@@ -114,14 +114,12 @@ components["LoginForm"] = class {
   }
 
   updateDOM(property, value) {
-    if (!this.elements.root) return;
-
     if (property === "username" && this.elements.usernameInput) {
       this.elements.usernameInput.value = value;
     } else if (property === "password" && this.elements.passwordInput) {
       this.elements.passwordInput.value = value;
-    } else if (property === "errorMessage" && this.elements.errorDiv) {
-      this.elements.errorDiv.textContent = value;
+    } else if (property === "errorMessage" && this.elements.errorMessages) {
+      this.elements.errorMessages.textContent = value;
     }
   }
 
@@ -143,164 +141,174 @@ components["LoginForm"] = class {
       if (result.success !== 1) {
         this.data.errorMessage = "Error logging in user";
         this.data.username = "your user name ...";
+        this.data.password = "";
+        this.elements.usernameInput.focus();
       }
     } catch (error) {
       this.data.errorMessage = "Error logging in user";
       this.data.username = "your user name ...";
+      this.data.password = "";
+      this.elements.usernameInput.focus();
     }
   }
 
   render() {
-    const wrapper = document.createElement("div");
-    wrapper.id = "login-form-holder";
-
-    const style = document.createElement("style");
-    style.textContent = `
-      #login-form-holder {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background: #e0e5ec;
-        font-family: 'Poppins', sans-serif;
-      }
-
-      .login-form-container {
-        background: #e0e5ec;
-        padding: 60px 50px;
-        border-radius: 30px;
-        box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #ffffff;
-        width: 400px;
-      }
-
-      #error-messages {
-        color: #ff6b6b;
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        min-height: 20px;
-        text-align: center;
-      }
-
-      .form-group {
-        margin-bottom: 30px;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #555;
-      }
-
-      .form-group input {
-        width: 100%;
-        padding: 15px;
-        border: none;
-        border-radius: 15px;
-        background: #e0e5ec;
-        box-shadow: inset 6px 6px 10px #cbced1, inset -6px -6px 10px #ffffff;
-        font-size: 16px;
-        font-weight: 500;
-        color: #555;
-        font-family: 'Poppins', sans-serif;
-        outline: none;
-        transition: all 0.3s ease;
-      }
-
-      .form-group input::placeholder {
-        color: #a0a0a0;
-        font-weight: 400;
-      }
-
-      .form-group input:focus {
-        box-shadow: inset 4px 4px 8px #cbced1, inset -4px -4px 8px #ffffff;
-      }
-
-      #login-button {
-        width: 100%;
-        padding: 15px;
-        border: none;
-        border-radius: 15px;
-        background: #e0e5ec;
-        box-shadow: 6px 6px 12px #cbced1, -6px -6px 12px #ffffff;
-        font-size: 16px;
-        font-weight: 700;
-        color: #555;
-        font-family: 'Poppins', sans-serif;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 20px;
-      }
-
-      #login-button:hover {
-        box-shadow: 4px 4px 8px #cbced1, -4px -4px 8px #ffffff;
-      }
-
-      #login-button:active {
-        box-shadow: inset 6px 6px 12px #cbced1, inset -6px -6px 12px #ffffff;
-      }
-    `;
-    document.head.appendChild(style);
-
     const container = document.createElement("div");
-    container.className = "login-form-container";
+    container.id = "login-form-holder";
+    container.style.cssText = `
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      background: #e0e5ec;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+    `;
 
-    const errorDiv = document.createElement("div");
-    errorDiv.id = "error-messages";
-    errorDiv.textContent = this.data.errorMessage;
-    this.elements.errorDiv = errorDiv;
+    const formWrapper = document.createElement("div");
+    formWrapper.style.cssText = `
+      background: #e0e5ec;
+      padding: 60px 50px;
+      border-radius: 30px;
+      box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #ffffff;
+      min-width: 380px;
+    `;
 
-    const usernameGroup = document.createElement("div");
-    usernameGroup.className = "form-group";
+    const errorMessages = document.createElement("div");
+    errorMessages.id = "error-messages";
+    errorMessages.style.cssText = `
+      color: #ff6b6b;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      min-height: 20px;
+      text-align: center;
+    `;
+    this.elements.errorMessages = errorMessages;
+
     const usernameLabel = document.createElement("label");
     usernameLabel.textContent = "Enter Username";
+    usernameLabel.style.cssText = `
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 10px;
+    `;
+
     const usernameInput = document.createElement("input");
     usernameInput.type = "text";
     usernameInput.placeholder = "your username";
-    usernameInput.value = this.data.username;
+    usernameInput.style.cssText = `
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 15px;
+      background: #e0e5ec;
+      box-shadow: inset 6px 6px 10px #cbced1, inset -6px -6px 10px #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      outline: none;
+      margin-bottom: 30px;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    `;
     usernameInput.addEventListener("input", (e) => {
       this.data.username = e.target.value;
     });
+    usernameInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        this.elements.passwordInput.focus();
+      }
+    });
     this.elements.usernameInput = usernameInput;
-    usernameGroup.appendChild(usernameLabel);
-    usernameGroup.appendChild(usernameInput);
 
-    const passwordGroup = document.createElement("div");
-    passwordGroup.className = "form-group";
     const passwordLabel = document.createElement("label");
     passwordLabel.textContent = "Enter Password";
+    passwordLabel.style.cssText = `
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 10px;
+    `;
+
     const passwordInput = document.createElement("input");
     passwordInput.type = "password";
     passwordInput.placeholder = "your password";
-    passwordInput.value = this.data.password;
+    passwordInput.style.cssText = `
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 15px;
+      background: #e0e5ec;
+      box-shadow: inset 6px 6px 10px #cbced1, inset -6px -6px 10px #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      outline: none;
+      margin-bottom: 30px;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    `;
     passwordInput.addEventListener("input", (e) => {
       this.data.password = e.target.value;
     });
+    passwordInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        this.elements.loginButton.click();
+      }
+    });
     this.elements.passwordInput = passwordInput;
-    passwordGroup.appendChild(passwordLabel);
-    passwordGroup.appendChild(passwordInput);
 
     const loginButton = document.createElement("button");
     loginButton.id = "login-button";
     loginButton.textContent = "Login";
+    loginButton.style.cssText = `
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 15px;
+      background: #e0e5ec;
+      box-shadow: 6px 6px 10px #cbced1, -6px -6px 10px #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      color: #555;
+      cursor: pointer;
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+    `;
+    loginButton.addEventListener("mousedown", (e) => {
+      e.target.style.boxShadow = "inset 6px 6px 10px #cbced1, inset -6px -6px 10px #ffffff";
+    });
+    loginButton.addEventListener("mouseup", (e) => {
+      e.target.style.boxShadow = "6px 6px 10px #cbced1, -6px -6px 10px #ffffff";
+    });
     loginButton.addEventListener("click", () => {
       this.handleLogin();
     });
+    this.elements.loginButton = loginButton;
 
-    container.appendChild(errorDiv);
-    container.appendChild(usernameGroup);
-    container.appendChild(passwordGroup);
-    container.appendChild(loginButton);
+    formWrapper.appendChild(errorMessages);
+    formWrapper.appendChild(usernameLabel);
+    formWrapper.appendChild(usernameInput);
+    formWrapper.appendChild(passwordLabel);
+    formWrapper.appendChild(passwordInput);
+    formWrapper.appendChild(loginButton);
 
-    wrapper.appendChild(container);
+    container.appendChild(formWrapper);
 
-    this.elements.root = wrapper;
-
-    return wrapper;
+    return container;
   }
 };
+
 components["UserProfile"] = class {
   constructor(id) {
     this.data = new Proxy(
@@ -387,48 +395,49 @@ components["Error"] = class {
 };
 
 
+// Router
 function navigate(path) {
-  history.pushState(null, '', path);
-  render();
+    history.pushState(null, '', path);
+    render();
 }
 
 function render() {
-  const container = document.getElementById("container");
-  container.innerHTML = '';
-  const path = window.location.pathname;
-  
-  if (path === '/') {
-    navigate('/about');
-    return;
-  }
-  
-  if (path === '/counter') {
-    document.title = 'simple counter';
-    container.appendChild(new components["navigation.TopNavigationBar"]().render());
-    container.appendChild(new components["Counter"]().render());
-  } else if (path === '/login') {
-    document.title = 'simple login form';
-    container.appendChild(new components["navigation.TopNavigationBar"]().render());
-    container.appendChild(new components["LoginForm"]().render());
-    const div = document.createElement('div');
-    div.style.border = '1px silver solid';
-    div.textContent = 'this is a log in form generated by AI';
-    container.appendChild(div);
-  } else if (path.match(/^\/user\/\d+\/profile$/)) {
-    document.title = 'user profile';
-    const id = parseInt(path.split('/')[2]);
-    container.appendChild(new components["UserProfile"](id).render());
-  } else if (path === '/about') {
-    document.title = 'about';
-    container.appendChild(new components["About"]().render());
-  } else if (path === '/error') {
-    document.title = 'error';
-    container.appendChild(new components["Error"]().render());
-  } else {
-    navigate('/error');
-    return;
-  }
+    const path = window.location.pathname;
+    const container = document.getElementById("container");
+    container.innerHTML = '';
+    
+    if (path === '/') {
+        navigate('/about');
+        return;
+    } else if (path === '/counter') {
+        document.title = 'simple counter';
+        container.appendChild(new components["navigation.TopNavigationBar"]().render());
+        container.appendChild(new components["Counter"]().render());
+    } else if (path === '/login') {
+        document.title = 'simple login form';
+        container.appendChild(new components["navigation.TopNavigationBar"]().render());
+        container.appendChild(new components["LoginForm"]().render());
+        const div = document.createElement('div');
+        div.style.border = '1px silver solid';
+        div.textContent = 'this is a log in form generated by AI';
+        container.appendChild(div);
+    } else if (path.match(/^\/user\/(\d+)\/profile$/)) {
+        const match = path.match(/^\/user\/(\d+)\/profile$/);
+        const id = parseInt(match[1]);
+        document.title = 'user profile';
+        container.appendChild(new components["UserProfile"](id).render());
+    } else if (path === '/about') {
+        document.title = 'about';
+        container.appendChild(new components["About"]().render());
+    } else if (path === '/error') {
+        document.title = 'error';
+        container.appendChild(new components["Error"]().render());
+    } else {
+        navigate('/error');
+    }
 }
 
 window.addEventListener('popstate', render);
 document.addEventListener('DOMContentLoaded', render);
+
+window.navigate = navigate;

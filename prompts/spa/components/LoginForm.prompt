@@ -3,6 +3,7 @@
 component.LoginForm {
   spec {
     create a login form, add css styling to make the font size, font weight, font family, background color very very close to https://raw.githubusercontent.com/puikinsh/login-forms/main/assets/screenshots/neumorphism.png
+    make sure the background of the form fill the entire browsing window, and with the same color as the form body
     form wrapper: "div#login-form-holder" 
 
     layout {
@@ -14,11 +15,17 @@ component.LoginForm {
         label: "Enter Username"
         placeholder: "your username"
         text: ""
+        @key.enter {
+          set focus on password textbox
+        }
       }
       password {
         label: "Enter Password"
         placeholder: "your password"
         text: ""
+        @key.enter {
+          trigger a click on the login button
+        }
       }
       login button {
         id: "login-button"
@@ -32,6 +39,8 @@ component.LoginForm {
           if response.success is not 1 {
             set error_message_display.text to "Error logging in user"
             set username.text to "your user name ..."
+            clear password.text
+            set focus on username.text
           }
         }
       }
