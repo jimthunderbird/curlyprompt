@@ -29,7 +29,7 @@ url: "/login" {
 url: "/user/{id}/profile {
   title: "user profile"
   layout: {
-    component.UserProfile({id})
+    component.UserProfile({id} as integer)
   }
 }
 

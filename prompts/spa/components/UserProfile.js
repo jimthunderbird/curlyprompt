@@ -3,8 +3,8 @@ components["UserProfile"] = class {
     this.data = new Proxy(
       { id },
       {
-        set: (target, property, value) => {
-          target[property] = value;
+        set: (target, prop, value) => {
+          target[prop] = value;
           this.update();
           return true;
         }
@@ -14,11 +14,11 @@ components["UserProfile"] = class {
   }
 
   render() {
-    const div = document.createElement('div');
-    div.id = 'user-profile-wrapper';
-    div.textContent = `This is the profile for user with id ${this.data.id}`;
-    this.element = div;
-    return div;
+    const wrapper = document.createElement('div');
+    wrapper.id = 'user-profile-wrapper';
+    wrapper.textContent = `This is the profile for user with id ${this.data.id}`;
+    this.element = wrapper;
+    return wrapper;
   }
 
   update() {
