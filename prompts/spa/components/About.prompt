@@ -1,9 +1,10 @@
 @context(../../../context/spa_component_generator.instruction.prompt)
 
 component.About {
-  layout {
+  do not have any extra divs except the html elements described below
+  html elements {
     paragraph {
-      text: "About This AI component demo"
+      text: "About This LLM generated component demo"
     }
   }
 }
