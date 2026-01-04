@@ -1,52 +1,49 @@
 components["LoginForm"] = class {
   constructor() {
     this.data = new Proxy(
-      {
-        username: "",
-        password: "",
-        error: ""
-      },
+      { username: '', password: '', error: '' },
       {
         set: (target, property, value) => {
           target[property] = value;
-          this.updateDOM();
+          this.update();
           return true;
         }
       }
     );
-    this.container = null;
+    this.element = null;
   }
 
   render() {
-    const holder = document.createElement("div");
-    holder.id = "login-form-holder";
+    const container = document.createElement('div');
+    container.id = 'login-form-holder';
     
-    const style = document.createElement("style");
+    const style = document.createElement('style');
     style.textContent = `
       #login-form-holder {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        background: linear-gradient(135deg, #fffacd 0%, #fef9e7 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
       
-      .login-form-container {
+      .login-form-wrapper {
         background: white;
         padding: 60px 50px;
         border-radius: 10px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         width: 100%;
         max-width: 400px;
       }
       
-      .login-form-container h2 {
-        text-align: center;
-        margin-bottom: 40px;
+      .login-form-wrapper h2 {
+        margin: 0 0 40px 0;
+        padding: 0;
         color: #333;
-        font-weight: 300;
+        text-align: center;
         font-size: 28px;
+        font-weight: 300;
         letter-spacing: 1px;
       }
       
@@ -56,50 +53,47 @@ components["LoginForm"] = class {
       
       .form-group label {
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         color: #666;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 400;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
       }
       
       .form-group input {
         width: 100%;
-        padding: 15px 0;
-        border: none;
-        border-bottom: 2px solid #e0e0e0;
-        font-size: 16px;
-        color: #333;
-        background: transparent;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         transition: border-color 0.3s;
         box-sizing: border-box;
       }
       
       .form-group input:focus {
         outline: none;
-        border-bottom-color: #4CAF50;
+        border-color: #667eea;
       }
       
       #login-button {
         width: 100%;
         padding: 15px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
         border: none;
-        border-radius: 50px;
+        border-radius: 5px;
+        color: white;
         font-size: 16px;
         font-weight: 500;
+        letter-spacing: 1px;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
-        margin-top: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
       
       #login-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
       }
       
       #login-button:active {
@@ -107,110 +101,97 @@ components["LoginForm"] = class {
       }
       
       .error-message {
-        color: #f44336;
+        color: #e74c3c;
         font-size: 13px;
         margin-top: 10px;
         text-align: center;
       }
     `;
     
-    holder.appendChild(style);
+    const formWrapper = document.createElement('div');
+    formWrapper.className = 'login-form-wrapper';
     
-    const formContainer = document.createElement("div");
-    formContainer.className = "login-form-container";
+    const title = document.createElement('h2');
+    title.textContent = 'LOGIN';
     
-    const title = document.createElement("h2");
-    title.textContent = "Sign In";
-    formContainer.appendChild(title);
-    
-    // Username field
-    const usernameGroup = document.createElement("div");
-    usernameGroup.className = "form-group";
-    
-    const usernameLabel = document.createElement("label");
-    usernameLabel.textContent = "Enter Username";
-    usernameLabel.setAttribute("for", "username-input");
-    
-    const usernameInput = document.createElement("input");
-    usernameInput.type = "text";
-    usernameInput.id = "username-input";
-    usernameInput.addEventListener("input", (e) => {
+    const usernameGroup = document.createElement('div');
+    usernameGroup.className = 'form-group';
+    const usernameLabel = document.createElement('label');
+    usernameLabel.textContent = 'Enter Username';
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'text';
+    usernameInput.id = 'username-input';
+    usernameInput.addEventListener('input', (e) => {
       this.data.username = e.target.value;
     });
-    
     usernameGroup.appendChild(usernameLabel);
     usernameGroup.appendChild(usernameInput);
-    formContainer.appendChild(usernameGroup);
     
-    // Password field
-    const passwordGroup = document.createElement("div");
-    passwordGroup.className = "form-group";
-    
-    const passwordLabel = document.createElement("label");
-    passwordLabel.textContent = "Enter Password";
-    passwordLabel.setAttribute("for", "password-input");
-    
-    const passwordInput = document.createElement("input");
-    passwordInput.type = "password";
-    passwordInput.id = "password-input";
-    passwordInput.addEventListener("input", (e) => {
+    const passwordGroup = document.createElement('div');
+    passwordGroup.className = 'form-group';
+    const passwordLabel = document.createElement('label');
+    passwordLabel.textContent = 'Enter Password';
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.id = 'password-input';
+    passwordInput.addEventListener('input', (e) => {
       this.data.password = e.target.value;
     });
-    
     passwordGroup.appendChild(passwordLabel);
     passwordGroup.appendChild(passwordInput);
-    formContainer.appendChild(passwordGroup);
     
-    // Login button
-    const loginButton = document.createElement("button");
-    loginButton.id = "login-button";
-    loginButton.textContent = "Login";
-    loginButton.addEventListener("click", async () => {
+    const loginButton = document.createElement('button');
+    loginButton.id = 'login-button';
+    loginButton.textContent = 'Login';
+    loginButton.addEventListener('click', async () => {
       try {
-        const response = await fetch("/api/login", {
-          method: "POST",
+        const response = await fetch('/api/login', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             username: this.data.username,
             password: this.data.password
           })
         });
-        
         const result = await response.json();
-        
-        if (response.ok) {
-          this.data.error = "";
-          console.log("Login successful", result);
+        if (!response.ok) {
+          this.data.error = result.message || 'Login failed';
         } else {
-          this.data.error = result.message || "Login failed";
+          this.data.error = '';
+          console.log('Login successful', result);
         }
       } catch (error) {
-        this.data.error = "Network error. Please try again.";
-        console.error("Login error:", error);
+        this.data.error = 'Network error occurred';
+        console.error('Login error:', error);
       }
     });
     
-    formContainer.appendChild(loginButton);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.id = 'error-message';
     
-    // Error message
-    const errorMessage = document.createElement("div");
-    errorMessage.className = "error-message";
-    formContainer.appendChild(errorMessage);
+    formWrapper.appendChild(title);
+    formWrapper.appendChild(usernameGroup);
+    formWrapper.appendChild(passwordGroup);
+    formWrapper.appendChild(loginButton);
+    formWrapper.appendChild(errorDiv);
     
-    holder.appendChild(formContainer);
+    container.appendChild(style);
+    container.appendChild(formWrapper);
     
-    this.container = holder;
-    return holder;
+    this.element = container;
+    this.usernameInput = usernameInput;
+    this.passwordInput = passwordInput;
+    this.errorDiv = errorDiv;
+    
+    return container;
   }
   
-  updateDOM() {
-    if (this.container) {
-      const errorMessage = this.container.querySelector(".error-message");
-      if (errorMessage) {
-        errorMessage.textContent = this.data.error;
-      }
+  update() {
+    if (this.errorDiv) {
+      this.errorDiv.textContent = this.data.error;
     }
   }
 };
