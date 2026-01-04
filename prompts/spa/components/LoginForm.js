@@ -1,16 +1,15 @@
 components["LoginForm"] = class {
   constructor() {
     this.data = new Proxy(
-      { username: '', password: '', error: '' },
+      { username: '', password: '' },
       {
         set: (target, property, value) => {
           target[property] = value;
-          this.update();
+          this.updateDOM();
           return true;
         }
       }
     );
-    this.element = null;
   }
 
   render() {
@@ -20,125 +19,80 @@ components["LoginForm"] = class {
     const style = document.createElement('style');
     style.textContent = `
       #login-form-holder {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-      
-      .login-form-wrapper {
-        background: white;
-        padding: 60px 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
         border-radius: 10px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        width: 100%;
         max-width: 400px;
+        margin: 50px auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       }
       
-      .login-form-wrapper h2 {
-        margin: 0 0 40px 0;
-        padding: 0;
-        color: #333;
-        text-align: center;
-        font-size: 28px;
-        font-weight: 300;
-        letter-spacing: 1px;
-      }
-      
-      .form-group {
-        margin-bottom: 30px;
-      }
-      
-      .form-group label {
+      #login-form-holder label {
         display: block;
-        margin-bottom: 8px;
-        color: #666;
+        color: #ffffff;
         font-size: 14px;
-        font-weight: 400;
-        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        margin-top: 20px;
       }
       
-      .form-group input {
+      #login-form-holder input {
         width: 100%;
-        padding: 15px;
-        border: 1px solid #ddd;
+        padding: 12px;
+        border: none;
         border-radius: 5px;
         font-size: 14px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        transition: border-color 0.3s;
         box-sizing: border-box;
-      }
-      
-      .form-group input:focus {
-        outline: none;
-        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.9);
       }
       
       #login-button {
         width: 100%;
-        padding: 15px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 14px;
+        margin-top: 25px;
+        background-color: #4CAF50;
+        color: white;
         border: none;
         border-radius: 5px;
-        color: white;
         font-size: 16px;
-        font-weight: 500;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: 700;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
       }
       
       #login-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      }
-      
-      #login-button:active {
-        transform: translateY(0);
-      }
-      
-      .error-message {
-        color: #e74c3c;
-        font-size: 13px;
-        margin-top: 10px;
-        text-align: center;
+        background-color: #45a049;
       }
     `;
     
-    const formWrapper = document.createElement('div');
-    formWrapper.className = 'login-form-wrapper';
+    container.appendChild(style);
     
-    const title = document.createElement('h2');
-    title.textContent = 'LOGIN';
-    
-    const usernameGroup = document.createElement('div');
-    usernameGroup.className = 'form-group';
     const usernameLabel = document.createElement('label');
     usernameLabel.textContent = 'Enter Username';
+    container.appendChild(usernameLabel);
+    
     const usernameInput = document.createElement('input');
     usernameInput.type = 'text';
-    usernameInput.id = 'username-input';
+    usernameInput.value = this.data.username;
     usernameInput.addEventListener('input', (e) => {
       this.data.username = e.target.value;
     });
-    usernameGroup.appendChild(usernameLabel);
-    usernameGroup.appendChild(usernameInput);
+    container.appendChild(usernameInput);
     
-    const passwordGroup = document.createElement('div');
-    passwordGroup.className = 'form-group';
     const passwordLabel = document.createElement('label');
     passwordLabel.textContent = 'Enter Password';
+    container.appendChild(passwordLabel);
+    
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
-    passwordInput.id = 'password-input';
+    passwordInput.value = this.data.password;
     passwordInput.addEventListener('input', (e) => {
       this.data.password = e.target.value;
     });
-    passwordGroup.appendChild(passwordLabel);
-    passwordGroup.appendChild(passwordInput);
+    container.appendChild(passwordInput);
     
     const loginButton = document.createElement('button');
     loginButton.id = 'login-button';
@@ -148,7 +102,7 @@ components["LoginForm"] = class {
         const response = await fetch('/api/login', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             username: this.data.username,
@@ -156,42 +110,23 @@ components["LoginForm"] = class {
           })
         });
         const result = await response.json();
-        if (!response.ok) {
-          this.data.error = result.message || 'Login failed';
-        } else {
-          this.data.error = '';
-          console.log('Login successful', result);
-        }
+        console.log('Login response:', result);
       } catch (error) {
-        this.data.error = 'Network error occurred';
         console.error('Login error:', error);
       }
     });
+    container.appendChild(loginButton);
     
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.id = 'error-message';
-    
-    formWrapper.appendChild(title);
-    formWrapper.appendChild(usernameGroup);
-    formWrapper.appendChild(passwordGroup);
-    formWrapper.appendChild(loginButton);
-    formWrapper.appendChild(errorDiv);
-    
-    container.appendChild(style);
-    container.appendChild(formWrapper);
-    
-    this.element = container;
-    this.usernameInput = usernameInput;
-    this.passwordInput = passwordInput;
-    this.errorDiv = errorDiv;
-    
+    this.container = container;
     return container;
   }
   
-  update() {
-    if (this.errorDiv) {
-      this.errorDiv.textContent = this.data.error;
+  updateDOM() {
+    if (this.container) {
+      const usernameInput = this.container.querySelector('input[type="text"]');
+      const passwordInput = this.container.querySelector('input[type="password"]');
+      if (usernameInput) usernameInput.value = this.data.username;
+      if (passwordInput) passwordInput.value = this.data.password;
     }
   }
-};
+}

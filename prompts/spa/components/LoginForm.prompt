@@ -2,7 +2,7 @@
 
 component.LoginForm {
   spec {
-    create a login form, add css styling to make the font size, font weight, font family, background color very very close to https://raw.githubusercontent.com/puikinsh/login-forms/main/assets/screenshots/minimal.png
+    create a login form, add css styling to make the font size, font weight, font family, background color very very close to https://i.ytimg.com/vi/hlwlM4a5rxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBjZ1oCcVnHkkFh2G_424jf55QVEg
     form wrapper: "div#login-form-holder" 
     username {
       label: "Enter Username"
