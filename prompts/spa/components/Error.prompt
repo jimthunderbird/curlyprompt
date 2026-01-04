@@ -6,6 +6,6 @@ component.Error {
   }
 
   div#error-message {
-    text: "Page Not Found"
+    text: "Invalid Page"
   }
 }

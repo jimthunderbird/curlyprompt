@@ -14,22 +14,22 @@ components["Counter"] = class {
   }
 
   render() {
-    const container = document.createElement("div");
+    const container = document.createElement('div');
     
-    this.elements.display = document.createElement("div");
-    this.elements.display.id = "counter-display";
+    this.elements.display = document.createElement('div');
+    this.elements.display.id = 'counter-display';
     
-    this.elements.incrementBtn = document.createElement("button");
-    this.elements.incrementBtn.id = "counter-increment";
-    this.elements.incrementBtn.textContent = "+";
-    this.elements.incrementBtn.addEventListener("click", () => {
+    this.elements.incrementBtn = document.createElement('button');
+    this.elements.incrementBtn.id = 'counter-increment';
+    this.elements.incrementBtn.textContent = '+';
+    this.elements.incrementBtn.addEventListener('click', () => {
       this.data.counter++;
     });
     
-    this.elements.decrementBtn = document.createElement("button");
-    this.elements.decrementBtn.id = "counter-decrement";
-    this.elements.decrementBtn.textContent = "-";
-    this.elements.decrementBtn.addEventListener("click", () => {
+    this.elements.decrementBtn = document.createElement('button');
+    this.elements.decrementBtn.id = 'counter-decrement';
+    this.elements.decrementBtn.textContent = '-';
+    this.elements.decrementBtn.addEventListener('click', () => {
       if (this.data.counter > 0) {
         this.data.counter--;
       }

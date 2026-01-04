@@ -38,7 +38,6 @@ specification {
     replace "." to "/"
   } as {component_name}
 
-  do not include any inline css in the class!
   save the component's javascript code to ./prompts/spa/components/{component_name}.js
 }
 

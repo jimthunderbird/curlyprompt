@@ -2,7 +2,7 @@
 
 component.LoginForm {
   spec {
-    create a professional looking login form
+    create a login form, add css styling to make the look and feel very close to https://raw.githubusercontent.com/puikinsh/login-forms/main/assets/screenshots/minimal.png
     form wrapper: "div#login-form-holder" 
     username {
       label: "Enter Username"
@@ -20,6 +20,5 @@ component.LoginForm {
         }
       }
     }
-    form background: light yellow
   }
 }

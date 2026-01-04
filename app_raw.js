@@ -1,13 +1,12 @@
 const components = {};
+
 components["navigation.TopNavigationBar"] = class {
   constructor() {
     this.data = new Proxy(
-      {
-        links: [
-          { text: "About", url: "/about" },
-          { text: "Login", url: "/login" }
-        ]
-      },
+      { links: [
+        { text: "About", url: "/about" },
+        { text: "Login", url: "/login" }
+      ]},
       {
         set: (target, property, value) => {
           target[property] = value;
@@ -20,23 +19,24 @@ components["navigation.TopNavigationBar"] = class {
   }
 
   render() {
-    const nav = document.createElement("nav");
+    const nav = document.createElement('nav');
+    nav.className = 'top-navigation-bar';
     
     this.data.links.forEach(link => {
-      const a = document.createElement("a");
-      a.textContent = link.text;
+      const a = document.createElement('a');
       a.href = link.url;
+      a.textContent = link.text;
       nav.appendChild(a);
     });
-
+    
     this.element = nav;
     return nav;
   }
 
   update() {
-    if (this.element && this.element.parentNode) {
+    if (this.element) {
       const newElement = this.render();
-      this.element.parentNode.replaceChild(newElement, this.element);
+      this.element.replaceWith(newElement);
     }
   }
 };
@@ -57,22 +57,22 @@ components["Counter"] = class {
   }
 
   render() {
-    const container = document.createElement("div");
+    const container = document.createElement('div');
     
-    this.elements.display = document.createElement("div");
-    this.elements.display.id = "counter-display";
+    this.elements.display = document.createElement('div');
+    this.elements.display.id = 'counter-display';
     
-    this.elements.incrementBtn = document.createElement("button");
-    this.elements.incrementBtn.id = "counter-increment";
-    this.elements.incrementBtn.textContent = "+";
-    this.elements.incrementBtn.addEventListener("click", () => {
+    this.elements.incrementBtn = document.createElement('button');
+    this.elements.incrementBtn.id = 'counter-increment';
+    this.elements.incrementBtn.textContent = '+';
+    this.elements.incrementBtn.addEventListener('click', () => {
       this.data.counter++;
     });
     
-    this.elements.decrementBtn = document.createElement("button");
-    this.elements.decrementBtn.id = "counter-decrement";
-    this.elements.decrementBtn.textContent = "-";
-    this.elements.decrementBtn.addEventListener("click", () => {
+    this.elements.decrementBtn = document.createElement('button');
+    this.elements.decrementBtn.id = 'counter-decrement';
+    this.elements.decrementBtn.textContent = '-';
+    this.elements.decrementBtn.addEventListener('click', () => {
       if (this.data.counter > 0) {
         this.data.counter--;
       }
@@ -97,7 +97,11 @@ components["Counter"] = class {
 components["LoginForm"] = class {
   constructor() {
     this.data = new Proxy(
-      { username: "", password: "" },
+      {
+        username: "",
+        password: "",
+        error: ""
+      },
       {
         set: (target, property, value) => {
           target[property] = value;
@@ -106,120 +110,214 @@ components["LoginForm"] = class {
         }
       }
     );
-    this.element = null;
-  }
-
-  updateDOM() {
-    if (this.element) {
-      const usernameInput = this.element.querySelector('input[type="text"]');
-      const passwordInput = this.element.querySelector('input[type="password"]');
-      if (usernameInput && usernameInput !== document.activeElement) {
-        usernameInput.value = this.data.username;
-      }
-      if (passwordInput && passwordInput !== document.activeElement) {
-        passwordInput.value = this.data.password;
-      }
-    }
-  }
-
-  async handleLogin() {
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: this.data.username,
-          password: this.data.password
-        })
-      });
-      const result = await response.json();
-      console.log('Login response:', result);
-    } catch (error) {
-      console.error('Login error:', error);
-    }
+    this.container = null;
   }
 
   render() {
-    const container = document.createElement('div');
-    container.id = 'login-form-holder';
-    container.style.backgroundColor = 'lightyellow';
-    container.style.padding = '30px';
-    container.style.borderRadius = '8px';
-    container.style.maxWidth = '400px';
-    container.style.margin = '50px auto';
-    container.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-
-    const usernameLabel = document.createElement('label');
-    usernameLabel.textContent = 'Enter Username';
-    usernameLabel.style.display = 'block';
-    usernameLabel.style.marginBottom = '8px';
-    usernameLabel.style.fontWeight = 'bold';
-
-    const usernameInput = document.createElement('input');
-    usernameInput.type = 'text';
-    usernameInput.value = this.data.username;
-    usernameInput.style.width = '100%';
-    usernameInput.style.padding = '10px';
-    usernameInput.style.marginBottom = '20px';
-    usernameInput.style.border = '1px solid #ccc';
-    usernameInput.style.borderRadius = '4px';
-    usernameInput.style.boxSizing = 'border-box';
-    usernameInput.addEventListener('input', (e) => {
+    const holder = document.createElement("div");
+    holder.id = "login-form-holder";
+    
+    const style = document.createElement("style");
+    style.textContent = `
+      #login-form-holder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #fffacd 0%, #fef9e7 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      .login-form-container {
+        background: white;
+        padding: 60px 50px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      
+      .login-form-container h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #333;
+        font-weight: 300;
+        font-size: 28px;
+        letter-spacing: 1px;
+      }
+      
+      .form-group {
+        margin-bottom: 30px;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        color: #666;
+        font-size: 13px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .form-group input {
+        width: 100%;
+        padding: 15px 0;
+        border: none;
+        border-bottom: 2px solid #e0e0e0;
+        font-size: 16px;
+        color: #333;
+        background: transparent;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+      }
+      
+      .form-group input:focus {
+        outline: none;
+        border-bottom-color: #4CAF50;
+      }
+      
+      #login-button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      #login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+      }
+      
+      #login-button:active {
+        transform: translateY(0);
+      }
+      
+      .error-message {
+        color: #f44336;
+        font-size: 13px;
+        margin-top: 10px;
+        text-align: center;
+      }
+    `;
+    
+    holder.appendChild(style);
+    
+    const formContainer = document.createElement("div");
+    formContainer.className = "login-form-container";
+    
+    const title = document.createElement("h2");
+    title.textContent = "Sign In";
+    formContainer.appendChild(title);
+    
+    // Username field
+    const usernameGroup = document.createElement("div");
+    usernameGroup.className = "form-group";
+    
+    const usernameLabel = document.createElement("label");
+    usernameLabel.textContent = "Enter Username";
+    usernameLabel.setAttribute("for", "username-input");
+    
+    const usernameInput = document.createElement("input");
+    usernameInput.type = "text";
+    usernameInput.id = "username-input";
+    usernameInput.addEventListener("input", (e) => {
       this.data.username = e.target.value;
     });
-
-    const passwordLabel = document.createElement('label');
-    passwordLabel.textContent = 'Enter Password';
-    passwordLabel.style.display = 'block';
-    passwordLabel.style.marginBottom = '8px';
-    passwordLabel.style.fontWeight = 'bold';
-
-    const passwordInput = document.createElement('input');
-    passwordInput.type = 'password';
-    passwordInput.value = this.data.password;
-    passwordInput.style.width = '100%';
-    passwordInput.style.padding = '10px';
-    passwordInput.style.marginBottom = '20px';
-    passwordInput.style.border = '1px solid #ccc';
-    passwordInput.style.borderRadius = '4px';
-    passwordInput.style.boxSizing = 'border-box';
-    passwordInput.addEventListener('input', (e) => {
+    
+    usernameGroup.appendChild(usernameLabel);
+    usernameGroup.appendChild(usernameInput);
+    formContainer.appendChild(usernameGroup);
+    
+    // Password field
+    const passwordGroup = document.createElement("div");
+    passwordGroup.className = "form-group";
+    
+    const passwordLabel = document.createElement("label");
+    passwordLabel.textContent = "Enter Password";
+    passwordLabel.setAttribute("for", "password-input");
+    
+    const passwordInput = document.createElement("input");
+    passwordInput.type = "password";
+    passwordInput.id = "password-input";
+    passwordInput.addEventListener("input", (e) => {
       this.data.password = e.target.value;
     });
-
-    const loginButton = document.createElement('button');
-    loginButton.id = 'login-button';
-    loginButton.textContent = 'Login';
-    loginButton.style.width = '100%';
-    loginButton.style.padding = '12px';
-    loginButton.style.backgroundColor = '#007bff';
-    loginButton.style.color = 'white';
-    loginButton.style.border = 'none';
-    loginButton.style.borderRadius = '4px';
-    loginButton.style.fontSize = '16px';
-    loginButton.style.fontWeight = 'bold';
-    loginButton.style.cursor = 'pointer';
-    loginButton.addEventListener('click', () => this.handleLogin());
-
-    container.appendChild(usernameLabel);
-    container.appendChild(usernameInput);
-    container.appendChild(passwordLabel);
-    container.appendChild(passwordInput);
-    container.appendChild(loginButton);
-
-    this.element = container;
-    return container;
+    
+    passwordGroup.appendChild(passwordLabel);
+    passwordGroup.appendChild(passwordInput);
+    formContainer.appendChild(passwordGroup);
+    
+    // Login button
+    const loginButton = document.createElement("button");
+    loginButton.id = "login-button";
+    loginButton.textContent = "Login";
+    loginButton.addEventListener("click", async () => {
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: this.data.username,
+            password: this.data.password
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          this.data.error = "";
+          console.log("Login successful", result);
+        } else {
+          this.data.error = result.message || "Login failed";
+        }
+      } catch (error) {
+        this.data.error = "Network error. Please try again.";
+        console.error("Login error:", error);
+      }
+    });
+    
+    formContainer.appendChild(loginButton);
+    
+    // Error message
+    const errorMessage = document.createElement("div");
+    errorMessage.className = "error-message";
+    formContainer.appendChild(errorMessage);
+    
+    holder.appendChild(formContainer);
+    
+    this.container = holder;
+    return holder;
   }
-}
+  
+  updateDOM() {
+    if (this.container) {
+      const errorMessage = this.container.querySelector(".error-message");
+      if (errorMessage) {
+        errorMessage.textContent = this.data.error;
+      }
+    }
+  }
+};
+
 components["UserProfile"] = class {
   constructor(id) {
     this.data = new Proxy(
       { id },
       {
-        set: (target, prop, value) => {
-          target[prop] = value;
+        set: (target, property, value) => {
+          target[property] = value;
           this.update();
           return true;
         }
@@ -229,11 +327,11 @@ components["UserProfile"] = class {
   }
 
   render() {
-    const wrapper = document.createElement("div");
-    wrapper.id = "user-profile-wrapper";
-    wrapper.textContent = `This is the profile for user with id ${this.data.id}`;
-    this.element = wrapper;
-    return wrapper;
+    const div = document.createElement('div');
+    div.id = 'user-profile-wrapper';
+    div.textContent = `This is the profile for user with id ${this.data.id}`;
+    this.element = div;
+    return div;
   }
 
   update() {
@@ -275,7 +373,7 @@ components["About"] = class {
 components["Error"] = class {
   constructor() {
     this.data = new Proxy(
-      { message: "Page Not Found" },
+      { message: "Invalid Page" },
       {
         set: (target, property, value) => {
           target[property] = value;
@@ -284,16 +382,14 @@ components["Error"] = class {
         }
       }
     );
-    this.element = null;
   }
 
   render() {
-    const errorMessage = document.createElement('div');
-    errorMessage.id = 'error-message';
-    errorMessage.textContent = this.data.message;
-    
-    this.element = errorMessage;
-    return this.element;
+    const div = document.createElement('div');
+    div.id = 'error-message';
+    div.textContent = this.data.message;
+    this.element = div;
+    return div;
   }
 
   update() {
@@ -304,15 +400,18 @@ components["Error"] = class {
 };
 
 
-// Router logic
-function route() {
-    const path = window.location.pathname;
+// Router setup
+function navigate(path) {
+    history.pushState(null, '', path);
+    loadRoute(path);
+}
+
+function loadRoute(path) {
     const container = document.getElementById("container");
     container.innerHTML = "";
     
     if (path === "/") {
-        window.history.pushState({}, "", "/about");
-        route();
+        navigate("/about");
         return;
     }
     
@@ -328,8 +427,8 @@ function route() {
         div.style.border = "1px silver solid";
         div.textContent = "this is a log in form generated by AI";
         container.appendChild(div);
-    } else if (path.match(/^\/user\/(.+)\/profile$/)) {
-        const id = path.match(/^\/user\/(.+)\/profile$/)[1];
+    } else if (path.startsWith("/user/") && path.endsWith("/profile")) {
+        const id = path.split("/")[2];
         document.title = "user profile";
         container.appendChild(new components["UserProfile"]({id: id}).render());
     } else if (path === "/about") {
@@ -339,19 +438,15 @@ function route() {
         document.title = "error";
         container.appendChild(new components["Error"]().render());
     } else {
-        window.history.pushState({}, "", "/error");
-        route();
+        navigate("/error");
         return;
     }
 }
 
-window.addEventListener("popstate", route);
-document.addEventListener("DOMContentLoaded", route);
+window.addEventListener("popstate", () => {
+    loadRoute(window.location.pathname);
+});
 
-document.addEventListener("click", (e) => {
-    if (e.target.tagName === "A" && e.target.href.startsWith(window.location.origin)) {
-        e.preventDefault();
-        window.history.pushState({}, "", e.target.href);
-        route();
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    loadRoute(window.location.pathname);
 });

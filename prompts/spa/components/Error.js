@@ -1,7 +1,7 @@
 components["Error"] = class {
   constructor() {
     this.data = new Proxy(
-      { message: "Page Not Found" },
+      { message: "Invalid Page" },
       {
         set: (target, property, value) => {
           target[property] = value;
@@ -10,16 +10,14 @@ components["Error"] = class {
         }
       }
     );
-    this.element = null;
   }
 
   render() {
-    const errorMessage = document.createElement('div');
-    errorMessage.id = 'error-message';
-    errorMessage.textContent = this.data.message;
-    
-    this.element = errorMessage;
-    return this.element;
+    const div = document.createElement('div');
+    div.id = 'error-message';
+    div.textContent = this.data.message;
+    this.element = div;
+    return div;
   }
 
   update() {
