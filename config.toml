@@ -7,11 +7,6 @@ version = "3.11"
 [codegen]
 agent = "copilot_cli"
 
-[agent.ollama_qwen]
-mode = "cli"
-model = "qwen3-coder:30b"
-command = 'cat <prompt_cache_directory>/_realtime_prompt.prompt | ollama run <model>'
-
 [agent.copilot_cli]
 mode = "cli"
 model = ""

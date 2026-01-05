@@ -8,7 +8,6 @@ A prompting language for generating prompts for LLM
 - Prompt result caching
 - Prompt script monitoring
 - Use @context directory to include different context
-- By default, it runs on the ollama qwen3-coder:30b model, meaning everything can be run locally without the concern of token usage.
 
 ## Example
 * A simple php script
