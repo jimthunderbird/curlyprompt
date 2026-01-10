@@ -82,7 +82,7 @@ if mode == "cli":
     command = command.replace("<model>", model)
     command = command.replace("<version>", str(python_version))
     command = command.replace("<prompt_file_content>", prompt_file_content)
-    command = command.replace("<prompt_cache_directory>", prompt_cache_directory)
+    command = command.replace("<prompt_file_fullpath_in_cache>", prompt_file_fullpath_in_cache)
     
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     prompt_output = result.stdout
@@ -131,7 +131,7 @@ if mode == "cli":
     
     try:
         if is_python_script:
-            process = subprocess.Popen([f"python{python_version}", realtime_script_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+            process = subprocess.Popen([f"python{python_version}", prompt_file_fullpath_in_cache_script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
             realtime_output_path = os.path.join(prompt_cache_directory, "_realtime_prompt.output")
             with open(realtime_output_path, "w") as outfile:
                 for line in process.stdout:
