@@ -1,5 +1,5 @@
 copilot {
-  do not include any files in context!!!
+  all file reading instructions are part of the php code, do not include any files in context!!!
   return me the code only, no Markdown formatting
 }
 
@@ -12,23 +12,28 @@ constraints {
   no extra words
   return php codeblock immediately to {
     execute the logic base on php
-    print {html_code}
+    print {html_code} 
   }
   for all variables defined in php {
     use <?php echo ...; ?>
   }
   for each {component} in js.component {
-    it is an anonymouse class with the javascript code:
-    libraries["{component}"] = class {}
+    it is an anonymouse class with the javascript code {
+      libraries["{component}"] = class {}
+    }
+   
+    the {component.html} should be set in the inner html div.id="root" via javascript
   }
   for {html_code} {
     do not add any css
+    format nicely with tab space 2 as indentation
   }
   return me the php code only, no Markdown formatting
 }
 
 php {
   data {
+    bookstore: (./bookstore.json).bookstore
     message: "happy new year 2026"
   }
 }
@@ -60,5 +65,8 @@ page {
       ComponentSpace.HappyNewYear
       ComponentSpace.SimpleComponent
     }
+  }
+  ul.id="inventory-list" for each {book} in {php.bookstore.inventory} {
+    li.text:"{book.title}"
   }
 } 
