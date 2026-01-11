@@ -117,6 +117,7 @@ visual_guide {
         the item text should be center horizontally and vertically
         the height should be fixed at 100px
         set a border: 1px silver solid
+        the left and right border should be in between the two arrows, do not overlap the arrows and the slide
       }
     }
     for the arrow {
