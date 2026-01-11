@@ -22,7 +22,9 @@ constraints {
       libraries["{component}"] = class {}
     }
    
-    the {component.html} should be set in the inner html div.id="root" via javascript
+    the {component.html} should be set using div.id="root".innerHTML in javascript {
+      document.getElementById('root').innerHTML = ...
+    }
   }
   for {html_code} {
     do not add any css
@@ -33,7 +35,9 @@ constraints {
 
 php {
   data {
-    bookstore: (./bookstore.json).bookstore
+    bookstore: (./bookstore.json).bookstore {
+      if there is an error reading the file, return {}
+    }
     message: "happy new year 2026"
   }
 }
