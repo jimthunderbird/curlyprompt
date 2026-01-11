@@ -1,0 +1,107 @@
+role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the latest Javascript/CSS standards
+
+copilot {
+  do not include any files in context!!!
+}
+
+objective {
+  generate Javascript code {javascript_code} base on spec
+  no explanation
+  no extra words
+  return php codeblock immediately to {
+    execute the logic base on php
+    print {javascript_code}
+  }
+}
+
+requirements {
+  try not to use deprecated javascript/css styling 
+  the javascript will {
+    be an anonymous class like components[{spec.component}] = {}
+    extend libraries["BaseComponent"]
+    have method.constructor() {
+      call parent constructor({spec.data})
+    }
+    have method.render() {
+      set container's inner html to {spec.html}
+      attache event handlers using Event Delgation for best performance
+    }
+    have method.updateDOM() {
+
+    }
+  }
+  only show the related javascript
+}
+
+php {
+  global_article = (read file content from "./article.txt")
+}
+
+spec {
+  dummy: "this is just a dummy attribute of the spec"
+
+  component: ComponentSpace.SimpleComponent
+
+  data {
+    counter: 0
+    number: 10
+    is_authenticated: false
+    map {
+      x: 30,
+      y: 100,
+      z: 20
+    },
+    articles: [
+      {title: "a1", conent: "a1 article"}
+      {title: "a2", conent: "a2 article"}
+      {title: "a3", conent: "a3 article"}
+    ]
+  }
+
+  html {
+    div id:"container" {
+      button id:"button-increment" text:"increment counter" {
+        @click {
+          increment {data.counter} by 1
+        }
+        @hover {
+          change style to hand
+        }
+      }
+
+      button id:"button-decrement" text:"decrement counter" {
+        @click {
+          decrement {data.counter} by 1
+        }
+        @hover {
+          change style to hand
+        }
+      }
+
+      button id:"button-movemap" text:"move map" {
+        @click {
+          call methods.moveMap()  
+          call methods.updateDOM()  
+        }
+      }
+
+      paragraph id:"simple-paragraph" text:"hello"
+
+      div id:"couter-display" text:"current counter is {data.counter}"
+      div id:"dummy-display" text:"{dummy}"
+      ul id:"articles-list" for each {article} in {data.articles} {
+        li {
+          h1.text:"{article.title}"
+          p.text:"{article.content}"
+        }
+      }
+      div id:"global-article-display" text:"{php.global_article}"
+    }
+  }
+
+  methods {
+    moveMap() {
+      increment {data.map.x} by 1
+    }
+  }
+}
