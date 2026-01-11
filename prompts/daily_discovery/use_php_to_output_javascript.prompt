@@ -1,5 +1,9 @@
 role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the latest Javascript/CSS standards
 
+copilot {
+  do not include any files in context!!!
+}
+
 objective {
   generate Javascript code {javascript_code} base on spec
   no explanation
@@ -7,6 +11,9 @@ objective {
   return php codeblock immediately to {
     execute the logic base on php
     print {javascript_code}
+  }
+  for all variables defined in php {
+    use <?php echo ...; ?>
   }
 }
 
@@ -29,12 +36,8 @@ requirements {
   only show the related javascript
 }
 
-copilot {
-  do not include any files in context even though it said read file content
-}
-
 php {
-  global_article = (read file content from "./article.txt")
+  global_article = (read file content as plain text from "./article.txt")
 }
 
 spec {
