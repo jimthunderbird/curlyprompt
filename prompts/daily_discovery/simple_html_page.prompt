@@ -67,8 +67,9 @@ page {
       ComponentSpace.HappyNewYear
       ComponentSpace.SimpleComponent
     }
+    ul.id="inventory-list" for each {book} in {php.bookstore.inventory} {
+      li.text:"{book.title}"
+    }
   }
-  ul.id="inventory-list" for each {book} in {php.bookstore.inventory} {
-    li.text:"{book.title}"
-  }
+  
 } 
