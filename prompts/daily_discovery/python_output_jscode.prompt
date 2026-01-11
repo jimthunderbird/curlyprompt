@@ -39,7 +39,12 @@ spec {
       x: 30,
       y: 100,
       z: 20
-    }
+    },
+    articles: [
+      {title: "a1", conent: "a1 article"}
+      {title: "a2", conent: "a2 article"}
+      {title: "a3", conent: "a3 article"}
+    ]
   }
 
   html {
@@ -66,6 +71,12 @@ spec {
 
       div id:"couter-display" text:"current counter is {data.counter}"
       div id:"dummy-display" text:"{dummy}"
+      ul id:"articles-list" for each {article} in {data.articles} {
+        li {
+          h1.text:"{article.title}"
+          p.text:"{article.content}"
+        }
+      }
     }
   }
 }
