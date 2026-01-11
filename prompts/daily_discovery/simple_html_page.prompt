@@ -1,6 +1,5 @@
 copilot {
-  all file reading instructions are part of the php code, do not include any files in context!!!
-  return me the code only, no Markdown formatting
+  do not read ./bookstore.json in context!!!
 }
 
 role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the latest Javascript/CSS standards
@@ -10,7 +9,7 @@ objective: generate html code {html_code} base on page
 constraints {
   no explanation
   no extra words
-  return php codeblock immediately to {
+  return php codeblock {php_code} immediately to {
     execute the logic base on php
     print {html_code} 
   }
@@ -29,13 +28,17 @@ constraints {
     do not add any css
     format nicely with tab space 2 as indentation
   }
-  return me the php code only, no Markdown formatting
+  for {php_code} {
+    format nicely with tab space 2 as indentation
+  }    
 }
 
 php {
   data {
     bookstore: (./bookstore.json).bookstore {
-      if there is an error reading the file, return {}
+      catch exception {
+        return {}
+      }
     }
     message: "happy new year 2026"
   }
@@ -48,6 +51,8 @@ js {
     }
 
     html {
+      div.id="counter-display" text:"{data.counter}"
+
       button.id="button-increment" text:"click to increment counter"{
         increment {data.counter}
         update dom
@@ -63,15 +68,13 @@ js {
   }
 }
 
-layout {
-  js.compoent.ComponentSpace.HappyNewYear
-  js.component.ComponentSpace.SimpleComponent
-  ul.id:"inventory-list" for each {book} in {php.bookstore.inventory} {
-    li.text:"{book.title}"
-  }
-}
-
 page {
   title: "simple counter increment"
-  div.id:"root".html:layout
+  div.id:"root".html {
+    js.compoent.ComponentSpace.HappyNewYear
+    js.component.ComponentSpace.SimpleComponent
+    ul.id:"inventory-list" for each {book} in {php.bookstore.inventory} {
+      li.text:"{book.title}"
+    }
+  }
 } 
