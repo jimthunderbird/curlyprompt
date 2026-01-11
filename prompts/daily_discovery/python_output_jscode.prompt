@@ -27,7 +27,9 @@ requirements {
 }
 
 spec {
-  component: SimpleComponent
+  dummy: "this is just a dummy attribute of the spec"
+
+  component: ComponentSpace.SimpleComponent
 
   data {
     counter: 0
@@ -63,6 +65,7 @@ spec {
       paragraph id:"simple-paragraph" text:"hello"
 
       div id:"couter-display" text:"current counter is {data.counter}"
+      div id:"dummy-display" text:"{dummy}"
     }
   }
 }
