@@ -13,7 +13,7 @@ objective {
 requirements {
   try not to use deprecated javascript/css styling 
   the javascript will {
-    be an anonymous class like components[{spec.component}] = {}
+    be an anonymous class like components[{spec.component}] = class {}
     extend libraries["BaseComponent"]
     have method.constructor() {
       call parent constructor({spec.data})
