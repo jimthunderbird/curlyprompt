@@ -22,9 +22,7 @@ constraints {
       libraries["{component}"] = class {}
     }
    
-    the {component.html} should be set using div.id="root".innerHTML in javascript {
-      document.getElementById('root').innerHTML = ...
-    }
+    the {component.html} should be set in a new container div with inner html
   }
   for {html_code} {
     do not add any css
