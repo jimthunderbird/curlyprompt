@@ -25,6 +25,7 @@ constraints {
     the {component.html} should be set in a new container div with inner html
   }
   for {html_code} {
+    there should be only one div.id:"root" exists, the rest should be done in javascript
     do not add any css
     format nicely with tab space 2 as indentation
   }
@@ -49,6 +50,7 @@ js {
     html {
       button.id="button-increment" text:"click to increment counter"{
         increment {data.counter}
+        update dom
       }
     }
   }
@@ -56,20 +58,20 @@ js {
   component: ComponentSpace.HappyNewYear {
     html {
       div.id="message" text:{php.data}
+      update dom
     }
+  }
+}
+
+layout {
+  js.compoent.ComponentSpace.HappyNewYear
+  js.component.ComponentSpace.SimpleComponent
+  ul.id:"inventory-list" for each {book} in {php.bookstore.inventory} {
+    li.text:"{book.title}"
   }
 }
 
 page {
   title: "simple counter increment"
-  div.id="root".add {
-    js.component {
-      ComponentSpace.HappyNewYear
-      ComponentSpace.SimpleComponent
-    }
-    ul.id="inventory-list" for each {book} in {php.bookstore.inventory} {
-      li.text:"{book.title}"
-    }
-  }
-  
+  div.id:"root".html:layout
 } 
