@@ -4,7 +4,10 @@ objective {
   generate Javascript code {javascript_code} base on spec
   no explanation
   no extra words
-  return python 3.11 codeblock to print {javascript_code}
+  return python 3.11 codeblock to {
+    execute the logic base on python
+    print {javascript_code}
+  }
 }
 
 requirements {
@@ -20,10 +23,14 @@ requirements {
       attache event handlers using Event Delgation for best performance
     }
     have method.updateDOM() {
-
+      
     }
   }
   only show the related javascript
+}
+
+python {
+  global_article = (get content from ./article.txt)
 }
 
 spec {
@@ -67,6 +74,13 @@ spec {
         }
       }
 
+      button id:"button-movemap" text:"move map" {
+        @click {
+          call methods.moveMap()  
+          call methods.updateDOM()  
+        }
+      }
+
       paragraph id:"simple-paragraph" text:"hello"
 
       div id:"couter-display" text:"current counter is {data.counter}"
@@ -77,6 +91,13 @@ spec {
           p.text:"{article.content}"
         }
       }
+      div id:"global-article-display" text:"{python.global_article}"
+    }
+  }
+
+  methods {
+    moveMap() {
+      increment {data.map.x} by 1
     }
   }
 }
