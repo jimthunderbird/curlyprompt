@@ -6,7 +6,7 @@ objective {
   no extra words
   return python 3.11 codeblock to {
     execute the logic base on python
-    print {javascript_code}
+    print {javascript_code} using python f-string only
   }
 }
 
@@ -30,12 +30,18 @@ requirements {
 }
 
 copilot {
-  find all files with extension ".prompt" in ./prompts/webclient/components and add them to context
-  explanation: how is TestCounter related to other components
+  find all files with extension "Test*.prompt" in ./prompts/webclient/components and add them to context
+  explanation {
+    how is TestCounter related to other components
+    show me a text-based folowchart on UI/UX
+    the folowchart should use solid border rectanges
+    less than 50 words
+  }
 }
 
 python {
   global_article = (get content from ./article.txt)
+  explanation = copilot.explanation
 }
 
 spec {
@@ -97,7 +103,7 @@ spec {
         }
       }
       div id:"global-article-display" text:"{python.global_article}"
-      div id:"explanation" text:"{copilot.explanation}"
+      div id:"explanation" text:"{python.explanation}"
     }
   }
 
