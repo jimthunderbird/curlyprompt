@@ -8,7 +8,6 @@ role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the 
 objective: generate html code {html_code} base on page 
 
 constraints {
-  generate html code {html_code} base on page
   no explanation
   no extra words
   return php codeblock immediately to {
