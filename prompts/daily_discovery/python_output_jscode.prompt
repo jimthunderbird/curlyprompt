@@ -1,0 +1,51 @@
+role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the latest Javascript/CSS standards
+
+objective {
+  generate Javascript code {javascript_code} base on spec
+  no explanation
+  no extra words
+  return python 3.11 codeblock to output {javascript_code}
+}
+
+requirements {
+  try not to use deprecated javascript/css styling 
+  the javascript will {
+    be an anonymous class like components[spec.component] = class {}
+    extend libraries["BaseComponent"]
+    have method.constructor() {
+      call parent constructor(spec.data)
+    }
+    have method.render() {
+      set container's inner html base on spec.html
+    }
+  }
+  only show the related javascript
+  use Event Delgation for best performance
+}
+
+spec {
+  component: SimpleComponent
+
+  data {
+    counter: 0
+    number: 10
+    is_authenticated: false
+    map {
+      x: 30,
+      y: 100
+    }
+  }
+
+  html {
+    div id="container" {
+      button id:"button-hello" text:"hello" {
+        @click {
+          alert "hello"
+        }
+        @hover {
+          change style to hand
+        }
+      }
+    }
+  }
+}
