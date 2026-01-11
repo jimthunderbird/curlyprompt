@@ -1,0 +1,55 @@
+copilot {
+  do not include any files in context!!!
+  do not return ```php and ```  
+}
+
+role: you are a pure HTML, CSS and Javascript expert with deep knowledge of the latest Javascript/CSS standards
+
+objective {
+  generate html code {html_code} base on page
+  no explanation
+  no extra words
+  return php codeblock immediately to {
+    execute the logic base on php
+    print {html_code}
+  }
+  for all variables defined in php {
+    use <?php echo ...; ?>
+  }
+}
+
+php {
+  data {
+    message: "happy new year 2026"
+  }
+}
+
+js {
+  component: ComponentSpace.SimpleComponent {
+    data {
+      counter: 0
+    }
+
+    html {
+      button.id="button-increment" text:"click to increment counter"{
+        increment {data.counter}
+      }
+    }
+  }
+
+  component: ComponentSpace.HappyNewYear {
+    html {
+      div.id="message" text:{php.data}
+    }
+  }
+}
+
+page {
+  title: "simple counter increment"
+  div.id="root".add {
+    js.component {
+      ComponentSpace.HappyNewYear
+      ComponentSpace.SimpleComponent
+    }
+  }
+} 
