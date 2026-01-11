@@ -4,7 +4,7 @@ objective {
   generate Javascript code {javascript_code} base on spec
   no explanation
   no extra words
-  return python 3.11 codeblock to output {javascript_code}
+  return python 3.11 codeblock to print {javascript_code}
 }
 
 requirements {
