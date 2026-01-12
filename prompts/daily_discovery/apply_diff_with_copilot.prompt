@@ -1,11 +1,3 @@
 copilot {
-  let tmp_prompt_current = load file ./tmp.prompt, no explantion and no extra words
-  let tmp_prompt_cache = load file ./tmp.prompt.cache, no explantion and no extra words
-  let tmp_php = load file ./tmp.php, no explantion and no extra words
-
-  let diff = the diff between {tmp_prompt_current} and {tmp_prompt_cache}
-  base on the {diff}, generate a prompt {prompt} i can use the make ./tmp.php align with ./tmp.prompt, no explantion and no extra words
-
-  apply the prompt {prompt} on ./tmp.php, no explantion and no extra words
-  save {tmp_prompt_current} to ./tmp.prompt.cache, no explantion and no extra words
+  update ./tmp.php to match the requirements in ./tmp.prompt
 }
