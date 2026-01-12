@@ -54,8 +54,10 @@ js {
       div.id="counter-display" text:"{data.counter}"
 
       button.id="button-increment" text:"click to increment counter"{
-        increment {data.counter}
-        update dom
+        @click {
+          increment {data.counter}
+          update dom
+        }
       }
     }
   }
