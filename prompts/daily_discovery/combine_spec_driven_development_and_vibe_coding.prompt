@@ -1,6 +1,7 @@
 copilot {
   load ./tmp.prompt into context
   apply minimum updates on ./tmp.php to match this spec
+  remove ```php and ``` in ./tmp.php
   do not read ./bookstore.json in context!!!
 }
 
