@@ -28,9 +28,21 @@ application_structure {
 requirements {
   the application directory should be in ./app/volkswagon_jetta_2011_qa
   please provide your thought process for each action below
+  do not provide test cases
+  the app should always be running on 127.0.0.1:8000
+}
+
+action (completed) {
+  if (./app/volkswagon_jetta_2011_qa does not exist yet) {
+    create all the files base on application_structure  
+  }
+}
+
+action (completed) {
+  please make the theme base on the color "wheat" 
 }
 
 action {
   i have ollama running locally in http://127.0.0.1:11434
-  when i ask the question, please send the question to ollma model "gemma2:2b" and show me the response, limit the answer to maximum 100 words
+  when i ask the question, please send the question to ollma model "gemma2:2b" and show me the response
 }
