@@ -1,0 +1,2665 @@
+project {
+  name: "2011 Volkswagen Jetta Q&A Application"
+  description: "A single-page web application built with pure HTML/CSS/JavaScript that allows users to ask questions about their 2011 Volkswagen Jetta and receive AI-powered answers"
+  version: "1.0.0"
+  tech_stack: ["HTML5", "CSS3", "ECMAScript 2025 (ES16)", "ECMAScript 2026 (ES17)", "Ollama AI (gemma2:2b)"]
+  
+  recreation_guide {
+    purpose: "This document serves as the single source of truth to recreate this entire application from scratch"
+    completeness: "Contains all code, logic, styling, and implementation details"
+    usage: "Follow sections sequentially to rebuild the app completely"
+  }
+}
+
+architecture {
+  pattern: "Component-based Single Page Application"
+  paradigm: "Modular JavaScript with ES Modules"
+  data_persistence: "LocalStorage API"
+  ai_integration: "Ollama Local AI (Gemma2:2b model)"
+}
+
+application_structure {
+  location: "./app/volkswagon_jetta_2011_qa"
+  
+  ├── index.html                    # Main HTML structure and entry point
+  ├── styles.css                    # Global styling with green theme
+  ├── app.js                        # Main application logic and initialization
+  ├── components/
+  │   ├── QuestionInput.js          # Question input form component
+  │   ├── QuestionList.js           # Display list of asked questions
+  │   ├── AnswerDisplay.js          # Display AI responses
+  │   └── VehicleInfo.js            # 2011 VW Jetta information header
+  ├── services/
+  │   ├── StorageService.js         # LocalStorage persistence layer
+  │   └── AIService.js              # Ollama AI integration service
+  └── utils/
+      └── helpers.js                # Utility functions
+  
+  setup_instructions {
+    step_1: "Create directory: mkdir -p ./app/volkswagon_jetta_2011_qa/{components,services,utils}"
+    step_2: "Create all files following complete_file_implementations section below"
+    step_3: "Start local server: cd ./app/volkswagon_jetta_2011_qa && python3 -m http.server 8000"
+    step_4: "Ensure Ollama is running: ollama serve"
+    step_5: "Ensure gemma2:2b model is installed: ollama pull gemma2:2b"
+    step_6: "Open browser: http://127.0.0.1:8000"
+  }
+}
+
+core_components {
+  
+  QuestionInput {
+    responsibility: "Handles user question input and submission"
+    features: [
+      "Text input field for questions",
+      "Submit button with validation",
+      "Prevents empty submissions",
+      "Triggers AI query on submit"
+    ]
+    exports: "QuestionInput class"
+    
+    logic_flow {
+      
+      initialization {
+        step_1: "Component is instantiated by app.js during initialization"
+        step_2: "No constructor parameters needed (stateless presentation component)"
+        purpose: "Provide clean separation between view and logic"
+      }
+      
+      render_method {
+        step_1: "Returns HTML string containing form structure"
+        step_2: "Creates textarea element with placeholder text for user guidance"
+        step_3: "Includes submit button with class 'btn' for styling"
+        step_4: "Wraps elements in .question-input container div"
+        
+        dom_elements {
+          form: "HTML form element to handle submission events"
+          textarea: "Multi-line input (3 rows) with 'required' attribute"
+          button: "Submit button with type='submit' to trigger form submission"
+          placeholder: "Provides example questions to guide users"
+        }
+        
+        return_value: "HTML string injected into #question-input container"
+      }
+      
+      event_handling {
+        note: "Events handled by app.js after component renders"
+        
+        form_submit {
+          step_1: "App.js attaches 'submit' event listener to form"
+          step_2: "Event.preventDefault() stops default form submission"
+          step_3: "Extracts question text from textarea.value"
+          step_4: "Validates question is not empty (trim() check)"
+          step_5: "Calls app.handleQuestion() with question text"
+          step_6: "Clears textarea after successful submission"
+        }
+        
+        button_state_management {
+          during_api_call: "Button disabled, shows loading spinner"
+          after_api_call: "Button re-enabled, restores 'Ask' text"
+          implementation: "Managed by app.js handleQuestion method"
+        }
+      }
+      
+      design_pattern: "Presentation component - pure view logic only"
+      state_management: "Stateless - no internal state tracking"
+      interaction_with_app: "App.js queries DOM for rendered elements"
+    }
+  }
+  
+  QuestionList {
+    responsibility: "Displays historical questions and answers"
+    features: [
+      "Renders list of Q&A pairs",
+      "Shows timestamps for each question",
+      "Displays loading states for pending answers",
+      "Auto-updates when new questions are added"
+    ]
+    exports: "QuestionList class"
+    
+    logic_flow {
+      
+      initialization {
+        step_1: "Constructor receives questions array parameter"
+        step_2: "Stores questions in this.questions instance property"
+        step_3: "Questions array comes from StorageService.getQuestions()"
+        default_value: "Empty array [] if no questions exist"
+      }
+      
+      render_method {
+        step_1: "Checks if questions array is empty"
+        step_2: "If empty: returns empty-state HTML with SVG icon"
+        step_3: "If populated: renders question list with count header"
+        step_4: "Maps over questions array using renderQuestionItem()"
+        step_5: "Joins all question items into single HTML string"
+        
+        empty_state {
+          condition: "this.questions.length === 0"
+          display: "SVG question mark icon with friendly message"
+          message: "No questions asked yet. Start by asking a question above!"
+          purpose: "Provide clear call-to-action for new users"
+        }
+        
+        populated_state {
+          condition: "this.questions.length > 0"
+          header: "Shows 'Question History ({count})' with dynamic count"
+          container: ".questions-container holds all question items"
+          iteration: "Calls renderQuestionItem for each Q&A object"
+        }
+        
+        return_value: "Complete HTML string for question list section"
+      }
+      
+      renderQuestionItem_method {
+        parameters: "qa object (question/answer/timestamp), index number"
+        
+        step_1: "Destructures question, answer, timestamp from qa object"
+        step_2: "Calls stripMarkdown() to convert answer to plain text"
+        step_3: "Creates preview text (150 char max) with ellipsis"
+        step_4: "Escapes HTML to prevent XSS attacks"
+        step_5: "Formats timestamp using formatDate() helper"
+        step_6: "Returns HTML string for single question item"
+        
+        dom_structure {
+          wrapper: ".question-item with data-index attribute"
+          header: ".question-item-header contains question and date"
+          question: ".question-text displays escaped question"
+          date: ".question-date shows formatted timestamp"
+          answer: ".question-answer shows preview of answer"
+        }
+        
+        data_attribute {
+          name: "data-index"
+          value: "Array index of question in questions array"
+          purpose: "Used by click handler to identify which question clicked"
+        }
+      }
+      
+      stripMarkdown_method {
+        purpose: "Convert markdown-formatted text to plain text for preview"
+        
+        step_1: "Removes code blocks (``` syntax) and replaces with '[code]'"
+        step_2: "Removes inline code backticks"
+        step_3: "Strips heading markers (# symbols)"
+        step_4: "Removes bold/italic formatting (* and _ markers)"
+        step_5: "Extracts link text from [text](url) syntax"
+        step_6: "Removes list markers (bullets and numbers)"
+        step_7: "Removes blockquote markers (>)"
+        step_8: "Collapses multiple newlines to single space"
+        step_9: "Trims whitespace and returns clean text"
+        
+        regex_patterns: [
+          "```[\\s\\S]*?``` - multiline code blocks",
+          "`([^`]+)` - inline code",
+          "^#{1,6}\\s+ - markdown headings",
+          "\\*\\*\\*|\\*\\*|\\* - bold/italic markers",
+          "\\[([^\\]]+)\\]\\([^)]+\\) - markdown links",
+          "^[*-]\\s+ - unordered list items",
+          "^\\d+\\.\\s+ - ordered list items"
+        ]
+        
+        return_value: "Plain text string suitable for preview display"
+      }
+      
+      escapeHtml_method {
+        purpose: "Prevent XSS attacks by escaping HTML entities"
+        
+        step_1: "Creates temporary div element"
+        step_2: "Sets textContent (auto-escapes HTML)"
+        step_3: "Returns innerHTML (escaped HTML entities)"
+        
+        security: "Critical for displaying user-generated content safely"
+        example: "< becomes &lt;, > becomes &gt;"
+      }
+      
+      event_handling {
+        click_handler {
+          location: "Attached in app.js to #question-list container"
+          delegation: "Uses event delegation to catch clicks on items"
+          
+          step_1: "Click event bubbles up from .question-item"
+          step_2: "App.js uses e.target.closest('.question-item')"
+          step_3: "Extracts data-index from clicked item"
+          step_4: "Calls app.showPreviousAnswer(index)"
+          step_5: "Retrieves Q&A from storage by index"
+          step_6: "Re-renders AnswerDisplay with selected Q&A"
+          step_7: "Scrolls page to top smoothly"
+        }
+      }
+      
+      update_trigger {
+        when: "After new question is submitted and saved"
+        how: "App.js calls renderQuestionList() method"
+        effect: "Fetches fresh data from storage and re-renders entire list"
+        optimization: "Could be improved with incremental updates"
+      }
+      
+      design_pattern: "Data-driven presentation component"
+      state_management: "Receives state as constructor parameter"
+      interaction_with_app: "App.js creates new instance on each render"
+    }
+  }
+  
+  AnswerDisplay {
+    responsibility: "Renders AI-generated answers with formatting"
+    features: [
+      "Displays formatted answers",
+      "Shows loading indicators",
+      "Error handling for failed requests",
+      "Markdown-like text formatting"
+    ]
+    exports: "AnswerDisplay class"
+    
+    logic_flow {
+      
+      initialization {
+        step_1: "Constructor receives qa object parameter or null"
+        step_2: "Stores qa in this.qa instance property"
+        default_value: "null for initial empty state"
+        
+        qa_object_structure {
+          question: "User's original question text"
+          answer: "AI-generated response (markdown formatted)"
+          timestamp: "ISO 8601 datetime string of when asked"
+        }
+      }
+      
+      render_method {
+        step_1: "Checks if this.qa is null (no answer to display)"
+        step_2: "If null: returns hidden placeholder container"
+        step_3: "If populated: renders full answer display"
+        step_4: "Extracts question, answer, timestamp from qa object"
+        step_5: "Escapes question HTML for security"
+        step_6: "Parses markdown in answer using parseMarkdown()"
+        step_7: "Formats timestamp using formatDate() helper"
+        step_8: "Returns complete HTML string"
+        
+        empty_state {
+          condition: "!this.qa (null or undefined)"
+          display: "Hidden container with class .hidden"
+          purpose: "Placeholder ready to receive answer content"
+          structure: "Empty .answer-content div within .answer-display"
+        }
+        
+        populated_state {
+          condition: "this.qa exists"
+          sections: [
+            "h3 heading: 'Answer'",
+            ".answer-question: Shows original question with 'Q:' prefix",
+            ".answer-content: Parsed markdown HTML of answer",
+            ".answer-meta: Formatted timestamp with 'Asked on' prefix"
+          ]
+        }
+        
+        css_classes {
+          answer_display: "Main container for answer section"
+          answer_question: "Styled question recap area"
+          answer_content: "Markdown-formatted answer content"
+          markdown_content: "Enables markdown styling from CSS"
+          answer_meta: "Metadata footer with muted styling"
+          hidden: "CSS display:none class for empty state"
+        }
+        
+        return_value: "HTML string injected into #answer-display"
+      }
+      
+      escapeHtml_method {
+        purpose: "Sanitize user question text before display"
+        
+        step_1: "Creates temporary div element in memory"
+        step_2: "Sets textContent property (browser auto-escapes)"
+        step_3: "Retrieves innerHTML with escaped entities"
+        step_4: "Returns safe HTML string"
+        
+        security_importance: "Prevents XSS from malicious question text"
+        example: "<script>alert('xss')</script> becomes escaped HTML entities"
+      }
+      
+      markdown_parsing {
+        method: "parseMarkdown() from utils/helpers.js"
+        
+        supported_syntax: [
+          "Headings: # ## ### etc",
+          "Bold: **text** or __text__",
+          "Italic: *text* or _text_",
+          "Inline code: `code`",
+          "Code blocks: ```code```",
+          "Links: [text](url)",
+          "Lists: - item or 1. item",
+          "Blockquotes: > quote",
+          "Paragraphs: double newline"
+        ]
+        
+        implementation_approach: "Regex replacements to convert markdown to HTML"
+        output: "HTML string with proper semantic tags"
+        css_styling: ".markdown-content class provides styling"
+      }
+      
+      update_trigger {
+        when: "User submits new question or clicks history item"
+        
+        new_question_flow {
+          step_1: "App.handleQuestion() receives AI response"
+          step_2: "Creates qa object with question/answer/timestamp"
+          step_3: "Calls app.showAnswer(qa)"
+          step_4: "Instantiates new AnswerDisplay(qa)"
+          step_5: "Renders and injects HTML into DOM"
+        }
+        
+        history_click_flow {
+          step_1: "User clicks question in QuestionList"
+          step_2: "App.showPreviousAnswer(index) retrieves stored qa"
+          step_3: "Calls app.showAnswer(qa)"
+          step_4: "Instantiates new AnswerDisplay(qa)"
+          step_5: "Replaces previous answer display"
+          step_6: "Scrolls to top for visibility"
+        }
+      }
+      
+      design_pattern: "Stateful presentation component"
+      state_management: "Receives state as constructor parameter"
+      interaction_with_app: "App.js creates new instance when answer changes"
+      dependencies: ["formatDate() helper", "parseMarkdown() helper"]
+    }
+  }
+  
+  VehicleInfo {
+    responsibility: "Shows vehicle information header"
+    features: [
+      "Displays 2011 VW Jetta branding",
+      "Shows vehicle specifications",
+      "Provides context for user questions"
+    ]
+    exports: "VehicleInfo class"
+    
+    logic_flow {
+      
+      initialization {
+        step_1: "Constructor called with no parameters"
+        step_2: "Initializes this.vehicleData object with hardcoded data"
+        step_3: "Sets vehicle year, make, model properties"
+        step_4: "Defines specs object with engine, transmission, drivetrain, fuelType"
+        
+        vehicleData_structure {
+          year: 2011
+          make: "Volkswagen"
+          model: "Jetta"
+          specs {
+            engine: "2.0L I4 / 2.5L I5"
+            transmission: "5-speed Manual / 6-speed Auto"
+            drivetrain: "Front-Wheel Drive"
+            fuelType: "Gasoline / Diesel (TDI)"
+          }
+        }
+        
+        data_source: "Hardcoded for 2011 VW Jetta specifications"
+        future_enhancement: "Could be parameterized for different vehicles"
+      }
+      
+      render_method {
+        step_1: "Destructures year, make, model, specs from this.vehicleData"
+        step_2: "Creates h1 heading with vehicle full name"
+        step_3: "Adds descriptive paragraph about app purpose"
+        step_4: "Generates specs display using Object.entries()"
+        step_5: "Maps each spec key-value pair to HTML"
+        step_6: "Returns complete HTML structure"
+        
+        dom_structure {
+          wrapper: ".vehicle-info container div"
+          heading: "h1 with '2011 Volkswagen Jetta' text"
+          description: "p tag explaining app functionality"
+          specs_container: ".vehicle-specs grid container"
+          spec_items: ".spec-item divs for each specification"
+        }
+        
+        specs_rendering {
+          step_1: "Uses Object.entries(specs) to get [key, value] pairs"
+          step_2: "Maps over pairs to create .spec-item HTML"
+          step_3: "Capitalizes first letter of key for display"
+          step_4: "Wraps key in <strong> tag for emphasis"
+          step_5: "Wraps value in <span> for styling"
+          step_6: "Joins all items into single string"
+          
+          key_transformation: "key.charAt(0).toUpperCase() + key.slice(1)"
+          example: "engine becomes 'Engine', fuelType becomes 'FuelType'"
+        }
+        
+        return_value: "HTML string injected into #vehicle-info"
+      }
+      
+      styling_integration {
+        css_classes: [
+          ".vehicle-info - main container",
+          ".vehicle-specs - grid layout for specs",
+          ".spec-item - individual specification row"
+        ]
+        
+        layout: "CSS Grid displays specs in responsive columns"
+        appearance: "Green theme with clear typography"
+      }
+      
+      purpose_in_app {
+        branding: "Establishes app identity and focus"
+        context: "Provides vehicle context for AI responses"
+        guidance: "Helps users understand app capabilities"
+        specs_reference: "Quick reference for vehicle details"
+      }
+      
+      design_pattern: "Static presentation component"
+      state_management: "Stateful but data is static/hardcoded"
+      interaction_with_app: "Renders once during app initialization"
+      update_frequency: "Never updates after initial render"
+    }
+  }
+}
+
+services_layer {
+  
+  AIService {
+    responsibility: "Integrates with Ollama local AI service"
+    endpoint: "http://127.0.0.1:11434/api/generate"
+    model: "gemma2:2b"
+    features: [
+      "Sends questions to Ollama API",
+      "Streams responses from AI model",
+      "Handles API errors gracefully",
+      "Provides context about 2011 VW Jetta"
+    ]
+    methods: {
+      getAnswer: "Sends question to AI and returns response"
+    }
+    exports: "AIService class"
+    
+    logic_flow {
+      initialization {
+        step_1: "Constructor called during App instantiation"
+        step_2: "Sets this.ollamaUrl to http://127.0.0.1:11434/api/generate"
+        step_3: "Sets this.model to gemma2:2b"
+        step_4: "Defines systemPrompt with automotive assistant context"
+        configuration: "Hardcoded for local Ollama setup"
+      }
+      
+      getAnswer_method {
+        parameters: "question string from user input"
+        returns: "Promise<string> containing AI response or error message"
+        
+        request_flow {
+          step_1: "Wraps in try-catch for error handling"
+          step_2: "Constructs POST request to Ollama API"
+          step_3: "Includes systemPrompt + question in prompt"
+          step_4: "Sets stream: false for non-streaming response"
+          step_5: "Configures AI parameters (temperature, top_p, num_predict)"
+          step_6: "Awaits fetch response"
+          step_7: "Checks response.ok status"
+          step_8: "Parses JSON and extracts response text"
+          step_9: "Trims and returns answer"
+        }
+        
+        ai_configuration {
+          temperature: "0.7 for moderate creativity"
+          top_p: "0.9 for nucleus sampling"
+          num_predict: "150 tokens max (~100 words)"
+          purpose: "Balance between accuracy and conciseness"
+        }
+        
+        error_handling {
+          http_errors: "Throws if response.ok is false"
+          missing_response: "Throws if data.response missing"
+          network_errors: "Caught and returns formatted error message"
+          user_feedback: "Error message includes troubleshooting steps"
+        }
+      }
+      
+      integration_points {
+        called_by: "App.handleQuestion() after user submits"
+        timing: "Async - blocks UI with loading state during request"
+        result: "Answer string saved to storage and displayed"
+      }
+      
+      design_pattern: "Service layer API abstraction"
+      external_dependency: "Requires Ollama running on localhost:11434"
+    }
+  }
+  
+  StorageService {
+    responsibility: "Manages data persistence using LocalStorage"
+    storage_key: "vw_jetta_2011_qa"
+    features: [
+      "Saves Q&A pairs to browser storage",
+      "Retrieves historical conversations",
+      "Handles storage quota limits",
+      "Provides clear storage functionality"
+    ]
+    methods: {
+      getQuestions: "Retrieves all saved Q&A pairs",
+      saveQuestion: "Saves question-answer pair",
+      clearHistory: "Removes all stored data",
+      exportData: "Downloads Q&A history as JSON file"
+    }
+    exports: "StorageService class"
+    
+    logic_flow {
+      initialization {
+        step_1: "Constructor sets this.storageKey to vw_jetta_2011_qa"
+        step_2: "No data loaded during construction"
+        approach: "Lazy loading on demand"
+      }
+      
+      getQuestions_method {
+        returns: "Array of Q&A objects (or empty array)"
+        
+        retrieval_flow {
+          step_1: "Wraps in try-catch for safety"
+          step_2: "Calls localStorage.getItem with storage key"
+          step_3: "Returns empty array if no data exists"
+          step_4: "Parses JSON string to JavaScript array"
+          step_5: "Returns parsed array"
+          error_fallback: "Returns empty array on any error"
+        }
+        
+        usage {
+          called_by: "App.renderQuestionList() and StorageService methods"
+          frequency: "Each time question list updates"
+          performance: "Synchronous localStorage read"
+        }
+      }
+      
+      saveQuestion_method {
+        parameters: "qa object with {question, answer, timestamp}"
+        returns: "boolean (true=success, false=failure)"
+        
+        save_flow {
+          step_1: "Loads existing questions via getQuestions()"
+          step_2: "Prepends new qa to beginning with unshift()"
+          step_3: "Checks array length > 100"
+          step_4: "If exceeded, trims to 100 with splice(100)"
+          step_5: "Converts array to JSON string"
+          step_6: "Saves to localStorage with setItem()"
+          step_7: "Returns true on success"
+        }
+        
+        data_management {
+          ordering: "Most recent first (unshift adds to start)"
+          limit: "Maximum 100 Q&A pairs"
+          rationale: "Prevent localStorage quota issues"
+        }
+        
+        error_scenarios {
+          quota_exceeded: "Returns false if storage full"
+          storage_disabled: "Returns false in private browsing"
+          fallback: "App continues without persistence"
+        }
+      }
+      
+      clearHistory_method {
+        returns: "boolean indicating success"
+        operation: "Calls localStorage.removeItem to delete all Q&A data"
+        ui_impact: "QuestionList shows empty state after clear"
+        current_status: "Method exists but not exposed in UI"
+      }
+      
+      exportData_method {
+        returns: "void (triggers browser download)"
+        
+        export_flow {
+          step_1: "Retrieves all questions via getQuestions()"
+          step_2: "Formats as JSON with 2-space indentation"
+          step_3: "Creates Blob with application/json type"
+          step_4: "Generates temporary object URL"
+          step_5: "Creates hidden anchor element"
+          step_6: "Sets download filename with current date"
+          step_7: "Programmatically clicks link to download"
+          step_8: "Revokes object URL to free memory"
+        }
+        
+        filename_format: "vw_jetta_qa_export_YYYY-MM-DD.json"
+        current_status: "Method exists but not exposed in UI"
+        use_case: "Backup, data portability, sharing"
+      }
+      
+      integration_points {
+        app_initialization: "getQuestions() loads history on startup"
+        after_ai_response: "saveQuestion() persists new Q&A"
+        question_list_update: "getQuestions() called to refresh list"
+      }
+      
+      design_pattern: "Repository pattern for data access"
+      browser_api: "Uses localStorage for persistence"
+      data_scope: "Per-origin (domain specific)"
+    }
+  }
+}
+
+application_orchestration {
+  
+  App_class {
+    responsibility: "Main application controller and orchestrator"
+    location: "app.js"
+    pattern: "MVC Controller pattern"
+    
+    logic_flow {
+      
+      initialization {
+        step_1: "App class instantiated when DOMContentLoaded fires"
+        step_2: "Constructor initializes service instances"
+        step_3: "Sets this.storageService = new StorageService()"
+        step_4: "Sets this.aiService = new AIService()"
+        step_5: "Initializes this.currentAnswer to null"
+        step_6: "Calls init() method to start app"
+        
+        timing: "Waits for DOM ready to ensure containers exist"
+        dependencies: "Requires #vehicle-info, #question-input, #answer-display, #question-list containers in HTML"
+      }
+      
+      init_method {
+        purpose: "Bootstrap application and setup"
+        
+        step_1: "Calls renderComponents() to render all UI"
+        step_2: "Calls setupEventListeners() to attach handlers"
+        execution_order: "Sequential - components first, then events"
+      }
+      
+      renderComponents_method {
+        purpose: "Initial render of all component views"
+        
+        step_1: "Creates VehicleInfo instance"
+        step_2: "Injects VehicleInfo HTML into #vehicle-info"
+        step_3: "Creates QuestionInput instance"
+        step_4: "Injects QuestionInput HTML into #question-input"
+        step_5: "Creates empty AnswerDisplay instance (null state)"
+        step_6: "Injects AnswerDisplay placeholder into #answer-display"
+        step_7: "Calls renderQuestionList() to load history"
+        
+        pattern: "Component factory - creates instances and injects HTML"
+        dom_injection: "Uses innerHTML to replace container contents"
+      }
+      
+      renderQuestionList_method {
+        purpose: "Render question history from storage"
+        
+        step_1: "Retrieves questions from storageService.getQuestions()"
+        step_2: "Creates QuestionList instance with questions array"
+        step_3: "Calls render() to generate HTML"
+        step_4: "Injects HTML into #question-list container"
+        
+        called_when: [
+          "App initialization",
+          "After new question saved",
+          "When history updates"
+        ]
+        
+        performance: "Synchronous - blocks briefly during render"
+      }
+      
+      setupEventListeners_method {
+        purpose: "Attach event handlers to interactive elements"
+        
+        form_submission {
+          step_1: "Selects .question-input form element"
+          step_2: "Attaches 'submit' event listener"
+          step_3: "Prevents default form submission"
+          step_4: "Extracts question from textarea"
+          step_5: "Validates question not empty"
+          step_6: "Calls handleQuestion() if valid"
+          step_7: "Clears textarea after submission"
+          
+          delegation: "Direct event listener on form"
+          validation: "Checks trim() to reject whitespace-only input"
+        }
+        
+        question_list_clicks {
+          step_1: "Attaches click handler to #question-list container"
+          step_2: "Uses event delegation (bubbling)"
+          step_3: "Finds closest .question-item ancestor"
+          step_4: "Extracts data-index attribute"
+          step_5: "Calls showPreviousAnswer(index)"
+          
+          delegation: "Event delegation - single handler for all items"
+          efficiency: "Works for dynamically added items"
+        }
+      }
+      
+      handleQuestion_method {
+        parameters: "question string from user input"
+        returns: "Promise<void> (async method)"
+        purpose: "Orchestrate AI query and UI updates"
+        
+        execution_flow {
+          step_1: "Gets reference to submit button"
+          step_2: "Disables button to prevent double-submit"
+          step_3: "Changes button HTML to loading spinner"
+          step_4: "Wraps in try-catch for error handling"
+          step_5: "Calls aiService.getAnswer(question) with await"
+          step_6: "Creates qa object with question/answer/timestamp"
+          step_7: "Saves qa to storage via storageService.saveQuestion()"
+          step_8: "Stores qa in this.currentAnswer"
+          step_9: "Calls showAnswer(qa) to display result"
+          step_10: "Calls renderQuestionList() to update history"
+          step_11: "In finally block: re-enables button and restores text"
+        }
+        
+        ui_state_management {
+          loading_state: "Button disabled with spinner icon"
+          success_state: "Answer displayed, button restored"
+          error_state: "Alert shown, button restored"
+          
+          loading_indicator: "<span class='loading'></span> CSS animated"
+        }
+        
+        error_handling {
+          api_errors: "Caught by catch block"
+          user_notification: "alert() shows error message"
+          recovery: "Button re-enabled for retry"
+          data_integrity: "Failed questions not saved"
+        }
+        
+        data_flow {
+          input: "User question string"
+          processing: "AI service call (async)"
+          storage: "LocalStorage persistence"
+          output: "UI updates (answer + history)"
+        }
+        
+        timing: "Blocks UI during API call (typically 2-5 seconds)"
+      }
+      
+      showAnswer_method {
+        parameters: "qa object with {question, answer, timestamp}"
+        purpose: "Display answer in answer display area"
+        
+        step_1: "Creates new AnswerDisplay instance with qa"
+        step_2: "Calls render() to generate HTML"
+        step_3: "Injects HTML into #answer-display container"
+        
+        called_by: [
+          "handleQuestion() after new AI response",
+          "showPreviousAnswer() when history item clicked"
+        ]
+        
+        effect: "Replaces previous answer display with new content"
+      }
+      
+      showPreviousAnswer_method {
+        parameters: "index number from data-index attribute"
+        purpose: "Display previously asked question from history"
+        
+        step_1: "Retrieves all questions from storageService"
+        step_2: "Gets qa object at specified index"
+        step_3: "Validates qa exists"
+        step_4: "Calls showAnswer(qa) to display"
+        step_5: "Scrolls window to top smoothly"
+        
+        scroll_behavior: "window.scrollTo with smooth behavior"
+        purpose_of_scroll: "Ensure answer visible after clicking history"
+      }
+      
+      state_management {
+        currentAnswer: "Tracks most recently displayed answer"
+        services: "Holds references to service instances"
+        components: "Stateless - recreated on each render"
+        
+        approach: "Lightweight state - relies on DOM and localStorage"
+      }
+      
+      lifecycle {
+        initialization: "DOMContentLoaded triggers instantiation"
+        running: "Event-driven - responds to user interactions"
+        no_cleanup: "Runs for lifetime of page"
+      }
+    }
+  }
+}
+
+utilities {
+  
+  helpers_module {
+    location: "utils/helpers.js"
+    responsibility: "Common utility functions used across components"
+    exports: "Named function exports"
+    
+    logic_flow {
+      
+      formatDate_function {
+        parameters: "isoString (ISO 8601 datetime string)"
+        returns: "Formatted date string (relative or absolute)"
+        purpose: "Convert timestamps to human-readable format"
+        
+        algorithm {
+          step_1: "Parses isoString to Date object"
+          step_2: "Gets current time as Date object"
+          step_3: "Calculates time difference in milliseconds"
+          step_4: "Converts to minutes, hours, and days"
+          step_5: "Returns appropriate format based on age"
+          
+          time_ranges {
+            less_than_1_min: "Returns 'Just now'"
+            less_than_60_mins: "Returns 'X minute(s) ago'"
+            less_than_24_hours: "Returns 'X hour(s) ago'"
+            less_than_7_days: "Returns 'X day(s) ago'"
+            older_than_7_days: "Returns formatted date (e.g., 'Jan 1, 2024, 12:00 PM')"
+          }
+          
+          calculations {
+            diffMs: "now - date (milliseconds)"
+            diffMins: "Math.floor(diffMs / 60000)"
+            diffHours: "Math.floor(diffMs / 3600000)"
+            diffDays: "Math.floor(diffMs / 86400000)"
+          }
+          
+          pluralization: "Adds 's' to 'minute', 'hour', 'day' when count > 1"
+        }
+        
+        usage_in_app: [
+          "QuestionList displays when each question was asked",
+          "AnswerDisplay shows 'Asked on' timestamp"
+        ]
+        
+        edge_cases {
+          future_dates: "Will show negative time (bug)"
+          invalid_dates: "Will return 'Invalid Date'"
+        }
+      }
+      
+      parseMarkdown_function {
+        parameters: "markdown string (AI response text)"
+        returns: "HTML string with semantic markup"
+        purpose: "Convert markdown syntax to HTML for display"
+        
+        algorithm {
+          step_1: "Returns empty string if input is falsy"
+          step_2: "Defines escapeHtml helper for XSS prevention"
+          step_3: "Processes markdown syntax in specific order"
+          step_4: "Returns final HTML string"
+          
+          processing_order {
+            reason: "Order matters to avoid conflicts"
+            
+            step_1_code_blocks {
+              pattern: "^```(lang)\\n(code)^```$ (multiline)"
+              replacement: "<pre><code class='language-{lang}'>{escaped}</code></pre>"
+              escaping: "Code content HTML-escaped for security"
+            }
+            
+            step_2_inline_code {
+              pattern: "`code`"
+              replacement: "<code>{escaped}</code>"
+              escaping: "Content HTML-escaped"
+            }
+            
+            step_3_headings {
+              patterns: ["^### text", "^## text", "^# text"]
+              replacements: ["<h3>text</h3>", "<h2>text</h2>", "<h1>text</h1>"]
+              order: "Process h3 before h2 before h1 (longest match first)"
+            }
+            
+            step_4_lists {
+              patterns: ["^* item", "^- item", "^1. item"]
+              replacement: "<li>item</li>"
+              wrapping: "Wraps in <ul> or <ol> based on pattern"
+            }
+            
+            step_5_bold_italic {
+              patterns: ["***text***", "**text**", "*text*", "___text___", "__text__", "_text_"]
+              replacements: [
+                "<strong><em>text</em></strong>",
+                "<strong>text</strong>",
+                "<em>text</em>"
+              ]
+              order: "Process triple before double before single"
+            }
+            
+            step_6_links {
+              pattern: "[text](url)"
+              replacement: "<a href='url' target='_blank' rel='noopener noreferrer'>text</a>"
+              security: "Opens in new tab with noopener for security"
+            }
+            
+            step_7_blockquotes {
+              pattern: "^> text"
+              replacement: "<blockquote>text</blockquote>"
+              nesting: "Adjacent blockquotes merged"
+            }
+            
+            step_8_horizontal_rules {
+              patterns: ["---", "***"]
+              replacement: "<hr>"
+            }
+            
+            step_9_paragraphs {
+              logic: "Split on double newlines"
+              wrapping: "Wrap blocks in <p> if not already wrapped"
+              skip: "Don't wrap headings, lists, pre, blockquote, hr"
+            }
+            
+            step_10_cleanup {
+              blockquote_merge: "Combines adjacent blockquotes"
+              nested_fix: "Removes nested blockquote tags"
+            }
+          }
+        }
+        
+        escapeHtml_helper {
+          purpose: "Prevent XSS attacks in code blocks"
+          
+          step_1: "Creates temporary div element"
+          step_2: "Sets textContent (browser auto-escapes)"
+          step_3: "Returns innerHTML (escaped entities)"
+          
+          examples {
+            input: "<script>alert('xss')</script>"
+            output: "&lt;script&gt;alert('xss')&lt;/script&gt;"
+          }
+        }
+        
+        regex_techniques {
+          multiline_flag: "gm for global multiline matching"
+          dotall_flag: "s makes . match newlines"
+          lookahead: "(?:...) for non-capturing groups"
+          greedy: ".*? for non-greedy matching"
+        }
+        
+        usage_in_app: "AnswerDisplay.render() parses AI responses"
+        
+        limitations {
+          nested_lists: "Doesn't handle nested list levels"
+          tables: "No table syntax support"
+          complex_markdown: "Simplified markdown parser"
+          performance: "Multiple regex passes - could be optimized"
+        }
+      }
+      
+      debounce_function {
+        parameters: "func (function to debounce), wait (milliseconds)"
+        returns: "Debounced function"
+        purpose: "Limit function execution rate for performance"
+        
+        algorithm {
+          step_1: "Declares timeout variable in closure"
+          step_2: "Returns wrapper function"
+          step_3: "Wrapper clears any pending timeout"
+          step_4: "Wrapper sets new timeout"
+          step_5: "Function executes only after wait period of inactivity"
+          
+          behavior: "Delays execution until user stops triggering"
+          use_case: "Search input, resize handlers"
+        }
+        
+        current_usage: "Not currently used in app"
+        potential_usage: "Could debounce textarea input for auto-save"
+      }
+      
+      throttle_function {
+        parameters: "func (function to throttle), limit (milliseconds)"
+        returns: "Throttled function"
+        purpose: "Ensure function executes at most once per time period"
+        
+        algorithm {
+          step_1: "Declares inThrottle flag in closure"
+          step_2: "Returns wrapper function"
+          step_3: "If not in throttle: execute immediately"
+          step_4: "Set inThrottle flag to true"
+          step_5: "After limit ms: reset inThrottle to false"
+          
+          behavior: "Executes immediately, then blocks for limit duration"
+          use_case: "Scroll handlers, rapid button clicks"
+        }
+        
+        current_usage: "Not currently used in app"
+        potential_usage: "Could throttle API calls or scroll events"
+      }
+      
+      generateId_function {
+        returns: "Unique string identifier"
+        purpose: "Generate unique IDs for Q&A objects or DOM elements"
+        
+        algorithm {
+          step_1: "Gets current timestamp with Date.now()"
+          step_2: "Generates random string with Math.random()"
+          step_3: "Converts to base36 (0-9a-z)"
+          step_4: "Combines timestamp + random string"
+          
+          format: "{timestamp}-{random9chars}"
+          example: "1704067200000-x9k2m4p7q"
+          uniqueness: "Timestamp ensures chronological ordering"
+        }
+        
+        current_usage: "Not currently used (timestamps used instead)"
+        potential_usage: "Could use for unique Q&A IDs instead of timestamps"
+      }
+      
+      sanitizeInput_function {
+        parameters: "input string"
+        returns: "Sanitized string"
+        purpose: "Basic input sanitization for user text"
+        
+        algorithm {
+          step_1: "Trims whitespace from both ends"
+          step_2: "Removes < and > characters with regex replace"
+          step_3: "Returns cleaned string"
+          
+          pattern: "/[<>]/g removes angle brackets"
+          limitation: "Very basic - not comprehensive XSS protection"
+        }
+        
+        current_usage: "Not currently used in app"
+        potential_usage: "Could pre-sanitize question input"
+        
+        note: "App relies on escapeHtml in components instead"
+      }
+    }
+    
+    design_philosophy {
+      pure_functions: "All functions are pure (no side effects)"
+      reusability: "Generic utilities usable across projects"
+      testability: "Easy to unit test in isolation"
+      performance: "Lightweight implementations"
+    }
+    
+    dependencies {
+      external: "None - uses only browser APIs"
+      browser_apis: ["Date", "Math", "document.createElement"]
+    }
+  }
+}
+
+styling {
+  theme: "Green-based color scheme"
+  primary_color: "#2d5016"
+  secondary_color: "#4a7c2c"
+  accent_color: "#6b9b47"
+  background_color: "#f0f8f0"
+  
+  design_principles: [
+    "Clean and modern interface",
+    "Responsive layout design",
+    "Accessibility-focused",
+    "Smooth transitions and animations",
+    "Mobile-friendly responsive design"
+  ]
+  
+  layout: {
+    container: "Centered max-width container",
+    header: "Vehicle info and branding",
+    main: "Question input and answer display",
+    sidebar: "Historical questions list"
+  }
+}
+
+data_flow {
+  
+  user_submits_question {
+    step_1: "User types question in QuestionInput component"
+    step_2: "QuestionInput validates and emits submit event"
+    step_3: "app.js receives event and calls AIService.askQuestion()"
+    step_4: "AIService sends request to Ollama API at http://127.0.0.1:11434"
+    step_5: "AIService streams response from gemma2:2b model"
+    step_6: "Answer is displayed in AnswerDisplay component"
+    step_7: "Q&A pair is saved via StorageService.saveQA()"
+    step_8: "QuestionList updates to show new entry"
+  }
+  
+  application_initialization {
+    step_1: "index.html loads and imports app.js as ES module"
+    step_2: "app.js imports all components and services"
+    step_3: "StorageService retrieves historical Q&A from LocalStorage"
+    step_4: "Components are initialized and mounted to DOM"
+    step_5: "QuestionList renders historical questions"
+    step_6: "Application ready for user interaction"
+  }
+}
+
+api_integration {
+  
+  ollama_api {
+    base_url: "http://127.0.0.1:11434"
+    endpoint: "/api/generate"
+    method: "POST"
+    model: "gemma2:2b"
+    
+    request_format {
+      model: "gemma2:2b"
+      prompt: "user question with context"
+      stream: true
+    }
+    
+    response_format {
+      model: "gemma2:2b"
+      response: "AI generated answer text"
+      done: boolean
+    }
+  }
+}
+
+local_storage_schema {
+  
+  storage_key: "vw_jetta_qa_history"
+  
+  data_structure {
+    type: "Array of Q&A objects"
+    
+    qa_object {
+      id: "Unique identifier (timestamp)"
+      question: "User's question text"
+      answer: "AI-generated answer text"
+      timestamp: "ISO 8601 datetime string"
+      model: "AI model used (gemma2:2b)"
+    }
+  }
+  
+  example {
+    [
+      {
+        id: "1704067200000",
+        question: "What type of oil should I use?",
+        answer: "For your 2011 VW Jetta, use 5W-40 synthetic oil...",
+        timestamp: "2024-01-01T00:00:00.000Z",
+        model: "gemma2:2b"
+      }
+    ]
+  }
+}
+
+features {
+  
+  core_functionality: [
+    "Ask questions about 2011 VW Jetta",
+    "Receive AI-powered answers from Ollama",
+    "View conversation history",
+    "Persistent storage across sessions",
+    "Real-time answer streaming"
+  ]
+  
+  user_experience: [
+    "Clean green-themed interface",
+    "Responsive design for all devices",
+    "Loading indicators for AI responses",
+    "Error handling with user feedback",
+    "Smooth animations and transitions"
+  ]
+  
+  technical_features: [
+    "ES Module architecture",
+    "Component-based design pattern",
+    "LocalStorage data persistence",
+    "Fetch API for HTTP requests",
+    "Modern JavaScript (ES16/ES17)"
+  ]
+}
+
+deployment {
+  
+  local_development {
+    server: "Python HTTP server"
+    host: "127.0.0.1"
+    port: 8000
+    command: "python3 -m http.server 8000"
+    url: "http://127.0.0.1:8000"
+  }
+  
+  requirements: [
+    "Modern web browser with ES Module support",
+    "Ollama installed and running locally",
+    "gemma2:2b model downloaded in Ollama",
+    "Python 3 for local HTTP server"
+  ]
+}
+
+future_enhancements {
+  potential_features: [
+    "Export conversation history to PDF",
+    "Voice input for questions",
+    "Image upload for visual questions",
+    "Multiple AI model selection",
+    "Dark mode theme toggle",
+    "Search functionality in history",
+    "Categories for questions (maintenance, specs, troubleshooting)",
+    "Integration with vehicle manual PDFs",
+    "Offline mode with cached responses"
+  ]
+}
+
+development_notes {
+  
+  code_style {
+    modules: "ES Modules with import/export"
+    classes: "ES6+ class syntax for components"
+    async: "Async/await for asynchronous operations"
+    naming: "camelCase for variables, PascalCase for classes"
+    comments: "JSDoc style for function documentation"
+  }
+  
+  best_practices: [
+    "Separation of concerns (components/services/utils)",
+    "Single responsibility principle for each module",
+    "Error handling at service layer",
+    "Progressive enhancement approach",
+    "Graceful degradation for older browsers"
+  ]
+  
+  browser_compatibility {
+    minimum_requirements: [
+      "ES Module support",
+      "Fetch API",
+      "LocalStorage API",
+      "CSS Grid and Flexbox",
+      "Async/await syntax"
+    ]
+    
+    supported_browsers: [
+      "Chrome 61+",
+      "Firefox 60+",
+      "Safari 11+",
+      "Edge 79+"
+    ]
+  }
+}
+
+troubleshooting {
+  
+  common_issues {
+    
+    ollama_not_responding {
+      symptom: "AI responses fail or timeout"
+      solutions: [
+        "Verify Ollama is running: ollama serve",
+        "Check Ollama is accessible at http://127.0.0.1:11434",
+        "Ensure gemma2:2b model is installed: ollama pull gemma2:2b",
+        "Check browser console for CORS errors"
+      ]
+    }
+    
+    storage_full {
+      symptom: "Cannot save new questions"
+      solutions: [
+        "Clear browser LocalStorage",
+        "Use incognito/private browsing mode",
+        "Implement storage quota management",
+        "Export and clear old conversations"
+      ]
+    }
+    
+    module_not_loading {
+      symptom: "JavaScript errors about modules"
+      solutions: [
+        "Ensure serving via HTTP server (not file://)",
+        "Check all file paths are correct",
+        "Verify ES Module syntax in all files",
+        "Check browser console for specific errors"
+      ]
+    }
+  }
+}
+
+maintenance {
+  
+  updating_dependencies {
+    note: "This application has no external dependencies"
+    approach: "Pure HTML/CSS/JavaScript implementation"
+  }
+  
+  version_control {
+    recommended: "Git for source control"
+    ignore: [
+      "node_modules/ (if added later)",
+      ".DS_Store",
+      "*.log"
+    ]
+  }
+  
+  backup {
+    important_files: [
+      "All source files in application_structure",
+      "User data in LocalStorage (export feature recommended)"
+    ]
+  }
+}
+
+complete_file_implementations {
+  
+  note: "Below are the complete, copy-paste-ready implementations of all files needed to recreate this application"
+  
+  file_1_index_html {
+    path: "./app/volkswagon_jetta_2011_qa/index.html"
+    purpose: "Main HTML structure - single page application shell"
+    
+    complete_code: """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2011 VW Jetta Q&A Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="vehicle-info"></div>
+        <div id="question-input"></div>
+        <div id="answer-display"></div>
+        <div id="question-list"></div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+    """
+    
+    structure_explanation {
+      app_container: "Main app wrapper with id='app'"
+      vehicle_info: "Header section showing vehicle information"
+      question_input: "Form area for user to ask questions"
+      answer_display: "Area to display AI responses"
+      question_list: "Historical questions and answers list"
+      module_script: "ES Module entry point loading app.js"
+    }
+  }
+  
+  file_2_styles_css {
+    path: "./app/volkswagon_jetta_2011_qa/styles.css"
+    purpose: "Complete styling with green theme"
+    theme_colors {
+      primary: "#2F5233"
+      secondary: "#4A7C4E"
+      accent: "#6B9B6E"
+      background: "#F0F8F0"
+    }
+    
+    complete_code: """
+:root {
+    --primary-color: #2F5233;
+    --secondary-color: #4A7C4E;
+    --accent-color: #6B9B6E;
+    --bg-color: #F0F8F0;
+    --card-bg: #FAFEFB;
+    --text-color: #1A3A1C;
+    --border-color: #C8E6CB;
+    --shadow: 0 2px 8px rgba(47, 82, 51, 0.15);
+    --green: #5A9A5F;
+    --green-dark: #3D6B41;
+    --green-light: #E8F5E9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+#app {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.vehicle-info {
+    background: linear-gradient(135deg, var(--green), var(--secondary-color));
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+    border: 2px solid var(--green-dark);
+}
+
+.vehicle-info h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.vehicle-info p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.vehicle-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.spec-item {
+    background: rgba(47, 82, 51, 0.15);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--green-dark);
+}
+
+.spec-item strong {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    color: white;
+}
+
+.question-input {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+}
+
+.question-input h2 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.input-group textarea {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.3s;
+}
+
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.btn {
+    padding: 12px 24px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.btn:hover {
+    background: #3D8B42;
+    box-shadow: 0 4px 12px rgba(74, 124, 78, 0.3);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:disabled {
+    background: var(--green-dark);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.answer-display {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent-color);
+}
+
+.answer-display.hidden {
+    display: none;
+}
+
+.answer-display h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.answer-question {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--bg-color);
+    border-radius: 6px;
+}
+
+.answer-content {
+    line-height: 1.8;
+    color: #2A4A2C;
+}
+
+.answer-meta {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    opacity: 0.8;
+}
+
+.question-list {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.question-list h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.question-list.hidden {
+    display: none;
+}
+
+.question-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.question-item:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.question-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 10px;
+}
+
+.question-text {
+    font-weight: 600;
+    color: var(--primary-color);
+    flex: 1;
+}
+
+.question-date {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    opacity: 0.7;
+    white-space: nowrap;
+}
+
+.question-answer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+    color: #2A4A2C;
+    font-size: 0.95rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-color);
+    opacity: 0.6;
+}
+
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(74, 124, 78, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--secondary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .vehicle-specs {
+        grid-template-columns: 1fr;
+    }
+    
+    .vehicle-info h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+    color: var(--primary-color);
+    margin-top: 1.2em;
+    margin-bottom: 0.6em;
+}
+
+.markdown-content h1 {
+    font-size: 1.6rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.3em;
+}
+
+.markdown-content h2 {
+    font-size: 1.4rem;
+}
+
+.markdown-content h3 {
+    font-size: 1.2rem;
+}
+
+.markdown-content p {
+    margin-bottom: 1em;
+    line-height: 1.8;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5em;
+    line-height: 1.6;
+}
+
+.markdown-content code {
+    background: var(--bg-color);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    border: 1px solid var(--border-color);
+}
+
+.markdown-content pre {
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 1em;
+    border: 1px solid var(--border-color);
+}
+
+.markdown-content pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    font-size: 0.95em;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid var(--accent-color);
+    padding-left: 15px;
+    margin-left: 0;
+    margin-bottom: 1em;
+    color: #3A5A3C;
+    font-style: italic;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 2px solid var(--border-color);
+    margin: 1.5em 0;
+}
+
+.markdown-content a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.markdown-content a:hover {
+    color: var(--secondary-color);
+}
+
+.markdown-content strong {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.markdown-content em {
+    font-style: italic;
+}
+    """
+  }
+  
+  file_3_app_js {
+    path: "./app/volkswagon_jetta_2011_qa/app.js"
+    purpose: "Main application controller and orchestrator"
+    
+    complete_code: """
+import { VehicleInfo } from './components/VehicleInfo.js';
+import { QuestionInput } from './components/QuestionInput.js';
+import { AnswerDisplay } from './components/AnswerDisplay.js';
+import { QuestionList } from './components/QuestionList.js';
+import { StorageService } from './services/StorageService.js';
+import { AIService } from './services/AIService.js';
+
+class App {
+    constructor() {
+        this.storageService = new StorageService();
+        this.aiService = new AIService();
+        this.currentAnswer = null;
+        
+        this.init();
+    }
+
+    init() {
+        this.renderComponents();
+        this.setupEventListeners();
+    }
+
+    renderComponents() {
+        const vehicleInfo = new VehicleInfo();
+        document.getElementById('vehicle-info').innerHTML = vehicleInfo.render();
+
+        const questionInput = new QuestionInput();
+        document.getElementById('question-input').innerHTML = questionInput.render();
+
+        const answerDisplay = new AnswerDisplay();
+        document.getElementById('answer-display').innerHTML = answerDisplay.render();
+
+        this.renderQuestionList();
+    }
+
+    renderQuestionList() {
+        const questions = this.storageService.getQuestions();
+        const questionList = new QuestionList(questions);
+        document.getElementById('question-list').innerHTML = questionList.render();
+    }
+
+    setupEventListeners() {
+        const form = document.querySelector('.question-input form');
+        const textarea = document.querySelector('.question-input textarea');
+
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = textarea.value.trim();
+            
+            if (question) {
+                await this.handleQuestion(question);
+                textarea.value = '';
+            }
+        });
+
+        document.getElementById('question-list')?.addEventListener('click', (e) => {
+            const questionItem = e.target.closest('.question-item');
+            if (questionItem) {
+                const index = questionItem.dataset.index;
+                this.showPreviousAnswer(index);
+            }
+        });
+    }
+
+    async handleQuestion(question) {
+        const submitBtn = document.querySelector('.question-input button[type="submit"]');
+        const answerContainer = document.getElementById('answer-display');
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading"></span>';
+        
+        try {
+            const answer = await this.aiService.getAnswer(question);
+            
+            const qa = {
+                question,
+                answer,
+                timestamp: new Date().toISOString()
+            };
+            
+            this.storageService.saveQuestion(qa);
+            this.currentAnswer = qa;
+            
+            this.showAnswer(qa);
+            this.renderQuestionList();
+        } catch (error) {
+            console.error('Error getting answer:', error);
+            alert('Failed to get answer. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Ask';
+        }
+    }
+
+    showAnswer(qa) {
+        const answerDisplay = new AnswerDisplay(qa);
+        document.getElementById('answer-display').innerHTML = answerDisplay.render();
+    }
+
+    showPreviousAnswer(index) {
+        const questions = this.storageService.getQuestions();
+        const qa = questions[index];
+        if (qa) {
+            this.showAnswer(qa);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new App();
+});
+    """
+  }
+  
+  file_4_VehicleInfo_js {
+    path: "./app/volkswagon_jetta_2011_qa/components/VehicleInfo.js"
+    purpose: "Vehicle information header component"
+    
+    complete_code: """
+export class VehicleInfo {
+    constructor() {
+        this.vehicleData = {
+            year: 2011,
+            make: 'Volkswagen',
+            model: 'Jetta',
+            specs: {
+                engine: '2.0L I4 / 2.5L I5',
+                transmission: '5-speed Manual / 6-speed Auto',
+                drivetrain: 'Front-Wheel Drive',
+                fuelType: 'Gasoline / Diesel (TDI)'
+            }
+        };
+    }
+
+    render() {
+        const { year, make, model, specs } = this.vehicleData;
+        
+        return `
+            <div class="vehicle-info">
+                <h1>${year} ${make} ${model}</h1>
+                <p>Your AI-powered assistant for maintenance, troubleshooting, and specifications</p>
+                <div class="vehicle-specs">
+                    ${Object.entries(specs).map(([key, value]) => `
+                        <div class="spec-item">
+                            <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong>
+                            <span>${value}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+}
+    """
+  }
+  
+  file_5_QuestionInput_js {
+    path: "./app/volkswagon_jetta_2011_qa/components/QuestionInput.js"
+    purpose: "Question input form component"
+    
+    complete_code: """
+export class QuestionInput {
+    render() {
+        return `
+            <div class="question-input">
+                <h2>Ask Your Question</h2>
+                <form>
+                    <div class="input-group">
+                        <textarea 
+                            placeholder="e.g., How do I change the oil? What type of coolant should I use? Why is my check engine light on?"
+                            rows="3"
+                            required
+                        ></textarea>
+                        <button type="submit" class="btn">Ask</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    }
+}
+    """
+  }
+  
+  file_6_AnswerDisplay_js {
+    path: "./app/volkswagon_jetta_2011_qa/components/AnswerDisplay.js"
+    purpose: "Display AI-generated answers with markdown formatting"
+    
+    complete_code: """
+import { formatDate } from '../utils/helpers.js';
+import { parseMarkdown } from '../utils/helpers.js';
+
+export class AnswerDisplay {
+    constructor(qa = null) {
+        this.qa = qa;
+    }
+
+    render() {
+        if (!this.qa) {
+            return `
+                <div class="answer-display hidden">
+                    <h3>Answer</h3>
+                    <div class="answer-content"></div>
+                </div>
+            `;
+        }
+
+        const { question, answer, timestamp } = this.qa;
+        
+        return `
+            <div class="answer-display">
+                <h3>Answer</h3>
+                <div class="answer-question">
+                    Q: ${this.escapeHtml(question)}
+                </div>
+                <div class="answer-content markdown-content">
+                    ${parseMarkdown(answer)}
+                </div>
+                <div class="answer-meta">
+                    Asked on ${formatDate(timestamp)}
+                </div>
+            </div>
+        `;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+    """
+  }
+  
+  file_7_QuestionList_js {
+    path: "./app/volkswagon_jetta_2011_qa/components/QuestionList.js"
+    purpose: "Display historical questions and answers list"
+    
+    complete_code: """
+import { formatDate, parseMarkdown } from '../utils/helpers.js';
+
+export class QuestionList {
+    constructor(questions = []) {
+        this.questions = questions;
+    }
+
+    render() {
+        if (this.questions.length === 0) {
+            return `
+                <div class="question-list">
+                    <h2>Question History</h2>
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p>No questions asked yet. Start by asking a question above!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="question-list">
+                <h2>Question History (${this.questions.length})</h2>
+                <div class="questions-container">
+                    ${this.questions.map((qa, index) => this.renderQuestionItem(qa, index)).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    renderQuestionItem(qa, index) {
+        const { question, answer, timestamp } = qa;
+        const plainText = this.stripMarkdown(answer);
+        const preview = plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
+        
+        return `
+            <div class="question-item" data-index="${index}">
+                <div class="question-item-header">
+                    <div class="question-text">${this.escapeHtml(question)}</div>
+                    <div class="question-date">${formatDate(timestamp)}</div>
+                </div>
+                <div class="question-answer">
+                    ${this.escapeHtml(preview)}
+                </div>
+            </div>
+        `;
+    }
+
+    stripMarkdown(text) {
+        return text
+            .replace(/```[\s\S]*?```/g, '[code]')
+            .replace(/`([^`]+)`/g, '$1')
+            .replace(/^#{1,6}\s+/gm, '')
+            .replace(/\*\*\*([^*]+)\*\*\*/g, '$1')
+            .replace(/\*\*([^*]+)\*\*/g, '$1')
+            .replace(/\*([^*]+)\*/g, '$1')
+            .replace(/__([^_]+)__/g, '$1')
+            .replace(/_([^_]+)_/g, '$1')
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            .replace(/^[*-]\s+/gm, '')
+            .replace(/^\d+\.\s+/gm, '')
+            .replace(/^>\s+/gm, '')
+            .replace(/\n+/g, ' ')
+            .trim();
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+    """
+  }
+  
+  file_8_AIService_js {
+    path: "./app/volkswagon_jetta_2011_qa/services/AIService.js"
+    purpose: "Ollama AI integration service"
+    
+    complete_code: """
+export class AIService {
+    constructor() {
+        this.ollamaUrl = 'http://127.0.0.1:11434/api/generate';
+        this.model = 'gemma2:2b';
+        this.systemPrompt = 'You are a helpful automotive assistant specializing in the 2011 Volkswagen Jetta. Provide clear, accurate, and helpful answers about maintenance, troubleshooting, specifications, and general questions about this vehicle.';
+    }
+
+    async getAnswer(question) {
+        try {
+            const response = await fetch(this.ollamaUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: this.model,
+                    prompt: `${this.systemPrompt}\n\nQuestion: ${question}\n\nAnswer:`,
+                    stream: false,
+                    options: {
+                        temperature: 0.7,
+                        top_p: 0.9,
+                        num_predict: 150
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ollama API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.response) {
+                throw new Error('No response from AI model');
+            }
+
+            return data.response.trim();
+        } catch (error) {
+            console.error('AI Service Error:', error);
+            throw new Error(`Failed to get AI response: ${error.message}. Make sure Ollama is running on http://127.0.0.1:11434 and the gemma2:2b model is installed.`);
+        }
+    }
+}
+    """
+  }
+  
+  file_9_StorageService_js {
+    path: "./app/volkswagon_jetta_2011_qa/services/StorageService.js"
+    purpose: "LocalStorage persistence layer"
+    
+    complete_code: """
+export class StorageService {
+    constructor() {
+        this.storageKey = 'vw_jetta_2011_qa';
+    }
+
+    getQuestions() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.error('Error reading from localStorage:', error);
+            return [];
+        }
+    }
+
+    saveQuestion(qa) {
+        try {
+            const questions = this.getQuestions();
+            questions.unshift(qa);
+            
+            if (questions.length > 100) {
+                questions.splice(100);
+            }
+            
+            localStorage.setItem(this.storageKey, JSON.stringify(questions));
+            return true;
+        } catch (error) {
+            console.error('Error saving to localStorage:', error);
+            return false;
+        }
+    }
+
+    clearHistory() {
+        try {
+            localStorage.removeItem(this.storageKey);
+            return true;
+        } catch (error) {
+            console.error('Error clearing localStorage:', error);
+            return false;
+        }
+    }
+
+    exportData() {
+        const questions = this.getQuestions();
+        const dataStr = JSON.stringify(questions, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `vw_jetta_qa_export_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+    }
+}
+    """
+  }
+  
+  file_10_helpers_js {
+    path: "./app/volkswagon_jetta_2011_qa/utils/helpers.js"
+    purpose: "Utility functions for date formatting, markdown parsing, and more"
+    
+    complete_code: """
+export function formatDate(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) {
+        return 'Just now';
+    } else if (diffMins < 60) {
+        return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+    } else if (diffHours < 24) {
+        return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    } else if (diffDays < 7) {
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    } else {
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+}
+
+export function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+export function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+export function generateId() {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+export function sanitizeInput(input) {
+    return input.trim().replace(/[<>]/g, '');
+}
+
+export function parseMarkdown(markdown) {
+    if (!markdown) return '';
+    
+    let html = markdown;
+    
+    const escapeHtml = (text) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+    
+    html = html.replace(/^```(\w*)\n([\s\S]*?)^```$/gm, (match, lang, code) => {
+        return `<pre><code class="language-${lang || 'plaintext'}">${escapeHtml(code.trim())}</code></pre>`;
+    });
+    
+    html = html.replace(/`([^`]+)`/g, (match, code) => {
+        return `<code>${escapeHtml(code)}</code>`;
+    });
+    
+    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    
+    html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
+    html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
+    html = html.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
+    
+    html = html.replace(/(<li>.*<\/li>)/s, (match) => {
+        if (markdown.match(/^\d+\./m)) {
+            return `<ol>${match}</ol>`;
+        }
+        return `<ul>${match}</ul>`;
+    });
+    
+    html = html.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+    html = html.replace(/___([^_]+)___/g, '<strong><em>$1</em></strong>');
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
+    
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    html = html.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+    
+    html = html.replace(/---/g, '<hr>');
+    html = html.replace(/\*\*\*/g, '<hr>');
+    
+    html = html.split('\n\n').map(block => {
+        if (!block.trim()) return '';
+        if (block.match(/^<(h[1-6]|ul|ol|pre|blockquote|hr)/)) {
+            return block;
+        }
+        return `<p>${block}</p>`;
+    }).join('\n');
+    
+    html = html.replace(/(<\/blockquote>)\n*(<blockquote>)/g, '\n');
+    html = html.replace(/(<blockquote>(?:(?!<\/blockquote>).)*<\/blockquote>)/gs, 
+        (match) => `<blockquote>${match.replace(/<\/?blockquote>/g, '')}</blockquote>`);
+    
+    return html;
+}
+    """
+  }
+}
+
+recreation_workflow {
+  
+  purpose: "Step-by-step guide to recreate this entire application from this document alone"
+  
+  prerequisites {
+    system_requirements: [
+      "Modern web browser (Chrome 61+, Firefox 60+, Safari 11+, Edge 79+)",
+      "Python 3.x installed (for local HTTP server)",
+      "Ollama installed (https://ollama.ai)",
+      "gemma2:2b model downloaded in Ollama"
+    ]
+    
+    verification {
+      check_python: "python3 --version"
+      check_ollama: "ollama --version"
+      check_model: "ollama list | grep gemma2:2b"
+      start_ollama: "ollama serve (in separate terminal)"
+    }
+  }
+  
+  step_by_step_recreation {
+    
+    step_1_create_directory_structure {
+      description: "Create the application directory and subdirectories"
+      
+      commands: [
+        "cd /path/to/your/workspace",
+        "mkdir -p app/volkswagon_jetta_2011_qa/{components,services,utils}",
+        "cd app/volkswagon_jetta_2011_qa"
+      ]
+      
+      verify: "ls -la should show components/, services/, utils/ directories"
+    }
+    
+    step_2_create_html_file {
+      description: "Create index.html from complete_file_implementations.file_1_index_html"
+      file: "index.html"
+      source_section: "complete_file_implementations.file_1_index_html.complete_code"
+      action: "Copy the entire code block (between triple quotes) into index.html"
+    }
+    
+    step_3_create_css_file {
+      description: "Create styles.css from complete_file_implementations.file_2_styles_css"
+      file: "styles.css"
+      source_section: "complete_file_implementations.file_2_styles_css.complete_code"
+      action: "Copy the entire code block (between triple quotes) into styles.css"
+    }
+    
+    step_4_create_main_app_file {
+      description: "Create app.js from complete_file_implementations.file_3_app_js"
+      file: "app.js"
+      source_section: "complete_file_implementations.file_3_app_js.complete_code"
+      action: "Copy the entire code block (between triple quotes) into app.js"
+    }
+    
+    step_5_create_component_files {
+      description: "Create all component files in components/ directory"
+      
+      VehicleInfo_js {
+        file: "components/VehicleInfo.js"
+        source_section: "complete_file_implementations.file_4_VehicleInfo_js.complete_code"
+        action: "Copy code block into components/VehicleInfo.js"
+      }
+      
+      QuestionInput_js {
+        file: "components/QuestionInput.js"
+        source_section: "complete_file_implementations.file_5_QuestionInput_js.complete_code"
+        action: "Copy code block into components/QuestionInput.js"
+      }
+      
+      AnswerDisplay_js {
+        file: "components/AnswerDisplay.js"
+        source_section: "complete_file_implementations.file_6_AnswerDisplay_js.complete_code"
+        action: "Copy code block into components/AnswerDisplay.js"
+      }
+      
+      QuestionList_js {
+        file: "components/QuestionList.js"
+        source_section: "complete_file_implementations.file_7_QuestionList_js.complete_code"
+        action: "Copy code block into components/QuestionList.js"
+      }
+    }
+    
+    step_6_create_service_files {
+      description: "Create all service files in services/ directory"
+      
+      AIService_js {
+        file: "services/AIService.js"
+        source_section: "complete_file_implementations.file_8_AIService_js.complete_code"
+        action: "Copy code block into services/AIService.js"
+      }
+      
+      StorageService_js {
+        file: "services/StorageService.js"
+        source_section: "complete_file_implementations.file_9_StorageService_js.complete_code"
+        action: "Copy code block into services/StorageService.js"
+      }
+    }
+    
+    step_7_create_utility_files {
+      description: "Create all utility files in utils/ directory"
+      
+      helpers_js {
+        file: "utils/helpers.js"
+        source_section: "complete_file_implementations.file_10_helpers_js.complete_code"
+        action: "Copy code block into utils/helpers.js"
+      }
+    }
+    
+    step_8_verify_file_structure {
+      description: "Verify all files are created correctly"
+      
+      command: "tree or ls -R"
+      
+      expected_output: """
+      .
+      ├── index.html
+      ├── styles.css
+      ├── app.js
+      ├── components/
+      │   ├── VehicleInfo.js
+      │   ├── QuestionInput.js
+      │   ├── AnswerDisplay.js
+      │   └── QuestionList.js
+      ├── services/
+      │   ├── AIService.js
+      │   └── StorageService.js
+      └── utils/
+          └── helpers.js
+      """
+    }
+    
+    step_9_start_ollama {
+      description: "Ensure Ollama is running with gemma2:2b model"
+      
+      commands: [
+        "# In separate terminal window/tab:",
+        "ollama serve",
+        "",
+        "# Verify model is available:",
+        "ollama list",
+        "",
+        "# If gemma2:2b not listed, install it:",
+        "ollama pull gemma2:2b"
+      ]
+      
+      verification: "curl http://127.0.0.1:11434/api/tags should return JSON with models list"
+    }
+    
+    step_10_start_http_server {
+      description: "Start local HTTP server to serve the application"
+      
+      commands: [
+        "# From app/volkswagon_jetta_2011_qa directory:",
+        "python3 -m http.server 8000"
+      ]
+      
+      expected_output: "Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ..."
+      
+      alternative_servers: [
+        "Node.js: npx http-server -p 8000",
+        "PHP: php -S 127.0.0.1:8000",
+        "VS Code: Use Live Server extension"
+      ]
+    }
+    
+    step_11_open_browser {
+      description: "Open application in web browser"
+      
+      url: "http://127.0.0.1:8000"
+      
+      expected_behavior: [
+        "Page loads with green-themed header showing '2011 Volkswagen Jetta'",
+        "Vehicle specifications displayed in grid layout",
+        "Question input form with textarea and 'Ask' button",
+        "Empty state message in Question History section",
+        "No console errors in browser DevTools"
+      ]
+    }
+    
+    step_12_test_application {
+      description: "Test core functionality"
+      
+      test_1_ask_question {
+        action: "Type a question like 'What type of oil should I use?' and click Ask"
+        expected: [
+          "Button shows loading spinner and becomes disabled",
+          "After 2-5 seconds, AI response appears in Answer section",
+          "Question is added to Question History list",
+          "Textarea is cleared and button re-enabled"
+        ]
+      }
+      
+      test_2_view_history {
+        action: "Click on a question in the Question History list"
+        expected: [
+          "Page scrolls to top smoothly",
+          "Selected question and answer display in Answer section",
+          "Previous answer is replaced with selected one"
+        ]
+      }
+      
+      test_3_persistence {
+        action: "Refresh the browser page"
+        expected: [
+          "Question History still shows previously asked questions",
+          "LocalStorage persists data across sessions"
+        ]
+      }
+      
+      test_4_error_handling {
+        action: "Stop Ollama service and try asking a question"
+        expected: [
+          "Error alert appears with helpful message",
+          "Button re-enables after error",
+          "Failed question is not saved to history"
+        ]
+      }
+    }
+  }
+  
+  customization_guide {
+    
+    change_theme_colors {
+      file: "styles.css"
+      location: ":root CSS variables (lines 1-13)"
+      variables: [
+        "--primary-color: Change main green shade",
+        "--secondary-color: Change secondary green",
+        "--accent-color: Change accent highlights",
+        "--bg-color: Change page background"
+      ]
+      tip: "Use a color picker tool and maintain color harmony"
+    }
+    
+    change_vehicle_info {
+      file: "components/VehicleInfo.js"
+      location: "constructor() method, this.vehicleData object"
+      properties: [
+        "year: Change vehicle year",
+        "make: Change manufacturer",
+        "model: Change vehicle model",
+        "specs: Update specifications object"
+      ]
+      tip: "Adapt for any vehicle by updating this data"
+    }
+    
+    change_ai_model {
+      file: "services/AIService.js"
+      location: "constructor() method"
+      properties: [
+        "this.model: Change to any Ollama model (e.g., 'llama2', 'mistral')",
+        "this.systemPrompt: Customize AI personality and expertise"
+      ]
+      tip: "Ensure model is downloaded: ollama pull <model-name>"
+    }
+    
+    adjust_ai_parameters {
+      file: "services/AIService.js"
+      location: "getAnswer() method, options object"
+      parameters: [
+        "temperature: 0.1-2.0 (lower=focused, higher=creative)",
+        "top_p: 0.1-1.0 (nucleus sampling threshold)",
+        "num_predict: 50-500 (max tokens in response)"
+      ]
+      tip: "Experiment with values to tune response quality"
+    }
+    
+    change_storage_limit {
+      file: "services/StorageService.js"
+      location: "saveQuestion() method, line checking questions.length"
+      current: "if (questions.length > 100)"
+      tip: "Increase/decrease based on storage needs and quota"
+    }
+  }
+  
+  troubleshooting_guide {
+    
+    blank_white_page {
+      symptom: "Browser shows blank white page"
+      checks: [
+        "Open browser DevTools Console (F12)",
+        "Look for CORS or module loading errors",
+        "Ensure page served via HTTP (not file://)",
+        "Verify all file paths and imports are correct"
+      ]
+    }
+    
+    ai_responses_fail {
+      symptom: "Questions submit but fail with error alert"
+      checks: [
+        "Verify Ollama is running: curl http://127.0.0.1:11434",
+        "Check model is installed: ollama list",
+        "Review browser console for network errors",
+        "Test Ollama directly: ollama run gemma2:2b"
+      ]
+    }
+    
+    history_not_persisting {
+      symptom: "Questions disappear after page refresh"
+      checks: [
+        "Check browser privacy/incognito mode (may block localStorage)",
+        "Verify localStorage is enabled in browser settings",
+        "Check DevTools > Application > Local Storage",
+        "Look for StorageService errors in console"
+      ]
+    }
+    
+    styling_broken {
+      symptom: "Page loads but styling is missing/broken"
+      checks: [
+        "Verify styles.css exists in same directory as index.html",
+        "Check browser DevTools > Network tab for 404 errors",
+        "Ensure <link> tag path is correct in index.html",
+        "Hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)"
+      ]
+    }
+  }
+  
+  success_checklist {
+    
+    files_created: [
+      "✓ index.html (20 lines)",
+      "✓ styles.css (372 lines)",
+      "✓ app.js (111 lines)",
+      "✓ components/VehicleInfo.js (28 lines)",
+      "✓ components/QuestionInput.js (18 lines)",
+      "✓ components/AnswerDisplay.js (43 lines)",
+      "✓ components/QuestionList.js (70 lines)",
+      "✓ services/AIService.js (46 lines)",
+      "✓ services/StorageService.js (55 lines)",
+      "✓ utils/helpers.js (100+ lines)"
+    ]
+    
+    services_running: [
+      "✓ Ollama service running on http://127.0.0.1:11434",
+      "✓ gemma2:2b model downloaded and available",
+      "✓ HTTP server running on http://127.0.0.1:8000"
+    ]
+    
+    functionality_working: [
+      "✓ Page loads with green theme and vehicle info",
+      "✓ Can type and submit questions",
+      "✓ AI responses appear after submission",
+      "✓ Questions saved to history",
+      "✓ Can click history items to review answers",
+      "✓ Data persists after page refresh"
+    ]
+  }
+}
+
+document_metadata {
+  total_lines: "~2300+"
+  total_sections: 18
+  total_files_documented: 10
+  completeness: "100% - All code included"
+  last_updated: "2026-01-13"
+  format: "Curly Brace Prompting Style"
+  
+  usage_instructions: "This document contains everything needed to recreate the 2011 Volkswagen Jetta Q&A application. Simply follow the recreation_workflow section step-by-step, copying code from the complete_file_implementations section into the appropriate files. All logic, styling, and implementation details are fully documented."
+}
