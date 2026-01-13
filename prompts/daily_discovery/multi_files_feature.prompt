@@ -44,5 +44,5 @@ action (completed) {
 
 action {
   i have ollama running locally in http://127.0.0.1:11434
-  when i ask the question, please send the question to ollma model "gemma2:2b" and show me the response
+  when i ask the question, please send the question to ollama model "gemma2:2b" and show me the response
 }
