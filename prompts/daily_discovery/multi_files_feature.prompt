@@ -1,0 +1,36 @@
+copilot {
+  please add ./app/volkswagon_jetta_2011_qa to the context
+}
+
+role: you are a software architect with deep knowledge in HTML, CSS, ECMAScript 2025 (ES16) and ECMAScript 2026 (ES17)
+
+plan {
+  create a single page web application to allow me ask questions on my 2011 volkswagon jetta
+  it should be built with pure HTML/Javascript/CSS
+}
+
+application_structure {
+  ├── index.html                    # Main HTML structure
+  ├── styles.css                    # Styling and layout
+  ├── app.js                        # Main application logic
+  ├── components/
+  │   ├── QuestionInput.js          # Question input form component
+  │   ├── QuestionList.js           # Display list of asked questions
+  │   ├── AnswerDisplay.js          # Display AI/mock answers
+  │   └── VehicleInfo.js            # 2011 VW Jetta information header
+  ├── services/
+  │   ├── StorageService.js         # LocalStorage persistence
+  │   └── AIService.js              # Mock AI response generator
+  └── utils/
+  └── helpers.js                # Utility functions
+}
+
+requirements {
+  the application directory should be in ./app/volkswagon_jetta_2011_qa
+  please provide your thought process for each action below
+}
+
+action {
+  i have ollama running locally in http://127.0.0.1:11434
+  when i ask the question, please send the question to ollma model "gemma2:2b" and show me the response, limit the answer to maximum 100 words
+}
