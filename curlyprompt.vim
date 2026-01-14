@@ -36,9 +36,9 @@ syn keyword curlypromptTag typeof instanceof delete void
 syn keyword curlypromptTag true false null undefined
 hi curlypromptTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
-" Words starting with @ sign (keyword_style: ForestGreen #228B22, normal weight)
+" Words starting with @ sign (DarkOrange #FF8C00, bold)
 syn match curlypromptAtWord '@\w\+'
-hi curlypromptAtWord cterm=NONE ctermfg=28 guifg=#228B22 gui=NONE
+hi curlypromptAtWord cterm=bold ctermfg=208 guifg=#FF8C00 gui=bold
 
 " Words ending with : sign (tag_style: ForestGreen #228B22, bold)
 syn match curlypromptColonTag '\w\+:'
@@ -48,14 +48,6 @@ hi curlypromptColonTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 " Matches words before { with optional content in between (e.g., newtag (abc) {)
 syn match curlypromptBraceTag '\<\w\+\>\ze\s*\%(([^)]*)\)\?\s*{'
 hi curlypromptBraceTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
-
-" XML tags (tag_style: ForestGreen #228B22, bold)
-" Match XML tags as simple atomic patterns to avoid breaking surrounding syntax
-" Opening tags: <tag> or <tag attr="value"> or <tag attr='value'>
-syn match curlypromptXmlTag '<[a-zA-Z_][a-zA-Z0-9_:.-]*\%(\s\+[a-zA-Z_][a-zA-Z0-9_:.-]*\s*=\s*\%("[^"]*"\|'[^']*'\)\)*\s*\/\?>'
-" Closing tags: </tag>
-syn match curlypromptXmlTag '<\/[a-zA-Z_][a-zA-Z0-9_:.-]*\s*>'
-hi curlypromptXmlTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
 " Curly braces (curlybraces_style: DarkGoldenRod #B8860B, bold)
 syn match curlypromptBrace "[{}]"
@@ -123,15 +115,21 @@ endfunction
 
 setlocal indentexpr=GetCurlyPromptIndent(v:lnum)
 
-" Enable code folding for curly braces
-setlocal foldmethod=marker
-setlocal foldmarker={,}
-setlocal foldlevel=99
+" Auto-indent when pressing Enter after opening brace in insert mode
+inoremap <buffer> <expr> <CR> <SID>HandleEnterAfterBrace()
 
-" Folding shortcuts (built-in Vim commands):
-" zc - Close the fold under the cursor
-" za - Alternate (toggle) the fold under the cursor
-" zM - Close More: Folds everything in the file
-" zf - Fold: Create a fold manually (e.g., zfip folds the current paragraph)
-" zd - Delete the fold at the cursor (removes the fold, not the code)
-" zi - Invert: Toggle whether folding is enabled or disabled globally
+function! s:HandleEnterAfterBrace()
+  let line = getline('.')
+  let col = col('.') - 1
+  
+  " Check if cursor is right after an opening brace
+  if col > 0 && line[col - 1] == '{'
+    " Insert newline and let indentexpr handle indentation
+    return "\<CR>"
+  endif
+  
+  " Default: just insert newline and let indentexpr handle it
+  return "\<CR>"
+endfunction
+
+

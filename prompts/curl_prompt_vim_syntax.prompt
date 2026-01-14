@@ -3,42 +3,116 @@ role: you are the vim editor expert
 let tag_style = (ForestGreen "#228B22" font weight bold)
 let keyword_style = (ForestGreen "#228B22" font weight normal)
 let curlybraces_style = (DarkGoldenRod "#B8860B", font weight bold)
+let atword_style = (DarkOrange "#FF8C00", font weight bold)
 
 objective {
   please generate a vim plugin file ./curlprompt.vim for a new programming language "curly prompt"
   please learn from the requirements
   
+  generated_file_location {
+    - Primary: ./curlyprompt.vim (in project root)
+    - Installation: ~/.vim/syntax/curlyprompt.vim (copy for vim to use)
+    - To install: mkdir -p ~/.vim/syntax && cp ./curlyprompt.vim ~/.vim/syntax/
+  }
+  
   current_implementation {
     syntax_highlighting {
-      - Comments: #, //, /* */ styles
-      - Strings: Double quotes and single quotes (with smart apostrophe handling to avoid breaking syntax on contractions like "he's")
-      - JavaScript control flow/loop keywords: if, else, switch, case, default, break, continue, return, while, for, do, in, of, try, catch, finally, throw, async, await, yield (highlighted with keyword_style)
-      - Other JavaScript keywords: let, const, var, function, class, extends, implements, new, this, super, static, import, export, from, as, default, typeof, instanceof, delete, void, true, false, null, undefined (highlighted with tag_style)
-      - Words starting with @: highlighted with keyword_style
-      - Words ending with :: highlighted with tag_style
-      - Tags followed by curly braces: highlighted with tag_style (supports optional content like parentheses between tag and brace, e.g., "newtag (abc) {")
-      - XML tags: Both opening tags (<tag>, <tag attr="value">) and closing tags (</tag>) highlighted with tag_style, using atomic patterns to prevent breaking surrounding syntax
-      - Curly braces {}: highlighted with curlybraces_style
+      order_of_precedence {
+        1. Comments (defined first): #, //, /* */ styles
+        2. Strings (defined second with keepend): 
+           - Double quoted strings: standard pattern with skip for escaped quotes
+           - Single quoted strings: uses lookbehind pattern \%(^\|[\s({[,=:]\)\@<=' to only match after whitespace/start/delimiters, preventing apostrophes in contractions like "he's" from breaking syntax
+        3. Keywords and tags (defined after strings to avoid conflicts)
+      }
+      
+      syntax_rules {
+        comments {
+          - Line comments: # and //
+          - Block comments: /* */
+          - Linked to Comment highlight group
+        }
+        
+        strings {
+          - Double quoted: start='"' end='"' skip='\\"' keepend
+          - Single quoted: start="\%(^\|[\s({[,=:]\)\@<='" end="'" skip="\\'" keepend
+          - Linked to String highlight group
+          - Single quote pattern prevents matching apostrophes in contractions
+        }
+        
+        keywords {
+          - JavaScript control flow/loops: if, else, switch, case, default, break, continue, return, while, for, do, in, of, try, catch, finally, throw, async, await, yield
+          - Highlighted with keyword_style (ForestGreen #228B22, normal weight)
+          - Defined as curlypromptKeyword
+        }
+        
+        tags {
+          - Other JavaScript keywords: let, const, var, function, class, extends, implements, new, this, super, static, import, export, from, as, default, typeof, instanceof, delete, void, true, false, null, undefined
+          - Highlighted with tag_style (ForestGreen #228B22, bold)
+          - Defined as curlypromptTag
+        }
+        
+        special_patterns {
+          - At-words (@word): pattern '@\w\+', highlighted with atword_style (DarkOrange #FF8C00, bold) (curlypromptAtWord)
+          - Colon-tags (word:): pattern '\w\+:', highlighted with tag_style (curlypromptColonTag)
+          - Brace-tags (word {): pattern '\<\w\+\>\ze\s*\%(([^)]*)\)\?\s*{', supports optional parentheses content, highlighted with tag_style (curlypromptBraceTag)
+        }
+        
+        braces {
+          - Pattern: "[{}]"
+          - Highlighted with curlybraces_style (DarkGoldenRod #B8860B, bold)
+          - Defined as curlypromptBrace
+        }
+      }
     }
     
     indentation {
-      - HCL-like behavior with automatic indentation
-      - All content inside curly braces indented at the same level
-      - Closing braces aligned with the opening tag line (matching indentation)
-      - Uses searchpair() function to find matching opening brace for proper alignment
-      - Settings: autoindent, smartindent, expandtab, shiftwidth=2, tabstop=2, softtabstop=2
+      mechanism: Custom indentexpr using GetCurlyPromptIndent() function
+      
+      behavior {
+        - HCL-like automatic indentation
+        - All content inside curly braces indented at same level
+        - Closing braces aligned with opening tag line (matching indentation)
+      }
+      
+      algorithm {
+        closing_brace_lines {
+          1. Save cursor position
+          2. Use searchpair('{', '', '}', 'bWn', '', max([1, a:lnum - 200])) to find matching opening brace
+          3. Return indentation of the line containing opening brace
+          4. Fallback: dedent by shiftwidth if searchpair fails
+        }
+        
+        after_opening_brace {
+          - If previous line ends with '{\s*$', indent by shiftwidth
+        }
+        
+        other_lines {
+          - Maintain current indentation level
+        }
+      }
+      
+      settings {
+        - autoindent, smartindent, expandtab
+        - shiftwidth=2, tabstop=2, softtabstop=2
+        - indentexpr=GetCurlyPromptIndent(v:lnum)
+      }
+      
+      insert_mode_mappings {
+        - inoremap <buffer> <expr> <CR> s:HandleEnterAfterBrace()
+        - When Enter is pressed after '{', inserts newline and lets indentexpr handle indentation automatically
+        - For other positions, just insert newline and let indentexpr handle it
+        - Implementation returns "\<CR>" in all cases to trigger automatic indentation
+      }
     }
     
-    code_folding {
-      - Uses foldmethod=marker with {,} as fold markers
-      - foldlevel=99 (starts with all folds open)
-      - Supports standard vim folding commands: zc, za, zM, zf, zd, zi
-    }
+
     
     known_fixes_applied {
-      - Single quote string matching uses lookbehind pattern to only match true string literals, not apostrophes in contractions
-      - XML tags use atomic patterns to avoid interfering with other syntax highlighting
-      - Closing brace indentation uses searchpair() to find matching opening brace for accurate alignment
+      issue: Single quotes in contractions break syntax highlighting
+      solution: Use lookbehind pattern \%(^\|[\s({[,=:]\)\@<=' to only match single quotes preceded by whitespace, start of line, or common delimiters. This prevents apostrophes in "he's", "don't", etc. from being treated as string delimiters.
+      
+      issue: Closing braces don't align with opening tag
+      solution: Use searchpair('{', '', '}', 'bWn') in GetCurlyPromptIndent() to find matching opening brace and return its indentation level. Search backwards up to 200 lines for performance.
     }
   }
 }
@@ -52,16 +126,8 @@ requirements {
       "}" <-- notice this should be matching the indentation of arandomtag
       </code>
   }
-  for all words starting with "@" sign, highlight those words as well in {keyword_style}
+  for all words starting with "@" sign, highlight those words in {atword_style} (DarkOrange #FF8C00, bold)
   for all words ending with ":" sign, highlight those words as well in {tag_style}
   all Control Flow and Loops keywords in javascript should be hightlighted in {keywords_style}
-  other keywords in javascript should be hightlighted in {tag_style} 
-  please provide code folding functionality on all tags followed by (arbitrary number of spaces) and the beginning curly brace with the following shortcuts {
-    zc:Close the fold under the cursor.
-    za:Alternate (toggle) the fold under the cursor.
-    zM:Close More: Folds everything in the file.
-    zf:Fold: Create a fold manually (e.g., zfip folds the current paragraph).
-    zd:Delete the fold at the cursor (removes the fold, not the code).
-    zi:Invert: Toggle whether folding is enabled or disabled globally. 
-  }
+  other keywords in javascript should be hightlighted in {tag_style}
 }

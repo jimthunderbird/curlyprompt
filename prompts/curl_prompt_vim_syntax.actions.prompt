@@ -75,6 +75,55 @@ action (completed) {
   this sentence: "he's good", breaks the syntax
 }
 
-action {
+action (completed){
   update ./prompts/curl_prompt_vim_syntax.prompt to make it a single source of truth
 }
+
+action (completed){
+  in vim normal mode, when my cursor is at the beginning of the tag, the it can not find out my folding
+  for example, in the code:
+  <code>
+  abc {
+  }
+  </code>
+  when my cursor is on a, it should see abc {
+    ...
+  }
+  as a folding block
+}
+
+action (completed){
+  in vim normal mode when i type zc, it said "No fold found!"
+  do not need to perform testing, just fix the code!
+}
+
+action (completed){
+  for the words that start with the symbole "@", please highlight it in DarkOrange "#FF8C00" with font weight bold
+}
+
+action (completed){
+  now when i open the prompt file in vim, in normal model if i type ":e", it said:
+  "
+  Error detected while processing BufRead Autocommands for "*.prompt"..FileType Autocommands for "*"..Syntax Autocommands for "*"..function
+  <SNR>21_SynSet[25]..script curlyprompt.vim:
+  line   55:
+  E53: Unmatched \%( 
+  "
+  this is still hapening
+  this is still hapening
+}
+
+action (completed){
+  in vim's insert mode, when i type open bracket "{" and press enter, it the cusor should be on the next line in the beginning of the child content
+}
+
+action (completed){
+  please remove all the folding supports!
+}
+
+action {
+  remove xml tag support!
+}
+
+copy ./curlyprompt.vim to ~/.vim/syntax/
+update ./prompts/curl_prompt_vim_syntax.prompt to make it a single source of truth
