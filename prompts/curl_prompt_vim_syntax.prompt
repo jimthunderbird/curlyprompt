@@ -1,7 +1,7 @@
 role: you are the vim editor expert
 
 let tag_style = (ForestGreen "#228B22" font weight bold)
-let keyword_style = (DarkOliveGreen "#556B2F", font weight bold)
+let keyword_style = (ForestGreen "#228B22" font weight normal)
 let curlybraces_style = (DarkGoldenRod "#B8860B", font weight bold)
 
 objective {
@@ -15,6 +15,7 @@ requirements {
     all sentences, all child tags should have the same indentation, very similar to hcl indentation
   }
   for all words starting with "@" sign, highlight those words as well in {keyword_style}
+  for all words ending with ":" sign, highlight those words as well in {tag_style}
   all Control Flow and Loops keywords in javascript should be hightlighted in {keywords_style}
   other keywords in javascript should be hightlighted in {tag_style}
 }

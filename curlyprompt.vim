@@ -7,14 +7,14 @@ if exists("b:current_syntax")
   finish
 endif
 
-" JavaScript Control Flow and Loop keywords (DarkOliveGreen #556B2F, bold)
+" JavaScript Control Flow and Loop keywords (ForestGreen #228B22, normal weight)
 syn keyword curlypromptKeyword if else switch case default break continue return
 syn keyword curlypromptKeyword while for do in of
 syn keyword curlypromptKeyword try catch finally throw
 syn keyword curlypromptKeyword async await yield
-hi curlypromptKeyword cterm=bold ctermfg=100 guifg=#556B2F gui=bold
+hi curlypromptKeyword cterm=NONE ctermfg=28 guifg=#228B22 gui=NONE
 
-" Other JavaScript keywords (ForestGreen #228B22, bold)
+" Other JavaScript keywords (ForestGreen #228B22, bold - tag_style)
 syn keyword curlypromptTag let const var function class extends implements
 syn keyword curlypromptTag new this super static
 syn keyword curlypromptTag import export from as default
@@ -22,16 +22,16 @@ syn keyword curlypromptTag typeof instanceof delete void
 syn keyword curlypromptTag true false null undefined
 hi curlypromptTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
-" Words starting with @ sign (DarkOliveGreen #556B2F, bold)
+" Words starting with @ sign (ForestGreen #228B22, normal weight - keyword_style)
 syn match curlypromptAtWord '@\w\+'
-hi curlypromptAtWord cterm=bold ctermfg=100 guifg=#556B2F gui=bold
+hi curlypromptAtWord cterm=NONE ctermfg=28 guifg=#228B22 gui=NONE
 
 " Curly braces (DarkGoldenRod #B8860B, bold)
 syn match curlypromptBrace "[{}]"
 hi curlypromptBrace cterm=bold ctermfg=136 guifg=#B8860B gui=bold
 
-" Tags followed by colon (e.g., myobjective:) - ForestGreen #228B22, bold
-syn match curlypromptColonTag '\w\+\ze:\s*"' 
+" Words ending with : sign (ForestGreen #228B22, bold - tag_style)
+syn match curlypromptColonTag '\w\+:'
 hi curlypromptColonTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
 " Tags at the beginning of curly braces (e.g., abc {, efg {) - ForestGreen #228B22, bold
