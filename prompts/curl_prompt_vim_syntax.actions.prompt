@@ -1,0 +1,80 @@
+context {
+  ./prompts/curl_prompt_vim_syntax.prompt
+  ./curlprompt.vim
+}
+
+requirements {
+  please apply updates to ./curlypromt.vim base on the action
+}
+
+action (completed){
+  i noticed that the closing tag still does not align with the opening tag, please fix it
+}
+
+action (completed){
+  the code folding is not working, for example, if i have this code
+  <code>
+  arandomtag {
+
+  }
+  when in vims normal model, when my cursor is on "a", the beginning character of arandomtag, i use "zc", the folding does not work
+  </code>
+}
+
+action (completed) {
+  the indentation is messed up on the following <code>, please fix it
+  <code>
+  newtag {
+    inner {
+    }
+  }
+  </code>
+}
+
+action (completed){
+  please also add syntax highligting to xml tags
+}
+
+action (completed){
+  the syntax highlighting does not work when xml tags are presented, please fix it
+}
+
+action (completed){
+  i found that if the body of the tag contains the single quote, the syntax highligting is broken, please fix it
+}
+
+action (completed){
+  the single quote ' still messs up the syntax highligting!
+  for example:
+  he's a good guy breaks the subsequent new tag highligting
+}
+
+action (completed){
+  the following code seems to be breaking the syntax highligting, will that be possible that the xml tag breaks it?
+  <code>
+  arandomtag {
+
+  }
+  when in vims normal model, when my cursor is on "a", the beginning character of arandomtag, i use "zc", the folding does not work
+  </code>
+}
+
+action (completed){
+  now seems like the closing xml tag like "</code>" breaks the syntax highligting
+}
+
+action (completed) {
+  now seems like the opening xml tag like "<code>" breaks the syntax highligting
+  now seems like the closing xml tag like "</code>" breaks the syntax highligting
+  please make sure the highligting works even with the xml tags presented
+}
+
+action (completed) {
+  now the single quote is breaks the syntax highlighting
+  for example:
+  this sentence: "he's good", breaks the syntax
+}
+
+action {
+  update ./prompts/curl_prompt_vim_syntax.prompt to make it a single source of truth
+}

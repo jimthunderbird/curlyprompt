@@ -7,15 +7,61 @@ let curlybraces_style = (DarkGoldenRod "#B8860B", font weight bold)
 objective {
   please generate a vim plugin file ./curlprompt.vim for a new programming language "curly prompt"
   please learn from the requirements
-  run cli command: cp ./curlyprompt.vim ~/.vim/syntax/
+  
+  current_implementation {
+    syntax_highlighting {
+      - Comments: #, //, /* */ styles
+      - Strings: Double quotes and single quotes (with smart apostrophe handling to avoid breaking syntax on contractions like "he's")
+      - JavaScript control flow/loop keywords: if, else, switch, case, default, break, continue, return, while, for, do, in, of, try, catch, finally, throw, async, await, yield (highlighted with keyword_style)
+      - Other JavaScript keywords: let, const, var, function, class, extends, implements, new, this, super, static, import, export, from, as, default, typeof, instanceof, delete, void, true, false, null, undefined (highlighted with tag_style)
+      - Words starting with @: highlighted with keyword_style
+      - Words ending with :: highlighted with tag_style
+      - Tags followed by curly braces: highlighted with tag_style (supports optional content like parentheses between tag and brace, e.g., "newtag (abc) {")
+      - XML tags: Both opening tags (<tag>, <tag attr="value">) and closing tags (</tag>) highlighted with tag_style, using atomic patterns to prevent breaking surrounding syntax
+      - Curly braces {}: highlighted with curlybraces_style
+    }
+    
+    indentation {
+      - HCL-like behavior with automatic indentation
+      - All content inside curly braces indented at the same level
+      - Closing braces aligned with the opening tag line (matching indentation)
+      - Uses searchpair() function to find matching opening brace for proper alignment
+      - Settings: autoindent, smartindent, expandtab, shiftwidth=2, tabstop=2, softtabstop=2
+    }
+    
+    code_folding {
+      - Uses foldmethod=marker with {,} as fold markers
+      - foldlevel=99 (starts with all folds open)
+      - Supports standard vim folding commands: zc, za, zM, zf, zd, zi
+    }
+    
+    known_fixes_applied {
+      - Single quote string matching uses lookbehind pattern to only match true string literals, not apostrophes in contractions
+      - XML tags use atomic patterns to avoid interfering with other syntax highlighting
+      - Closing brace indentation uses searchpair() to find matching opening brace for accurate alignment
+    }
+  }
 }
 
 requirements {
   inside the curly braces {
     all sentences, all child tags should have the same indentation, very similar to hcl indentation
+    the closing bracket should have the same indentation as the parent tag, for example:
+    <code>
+    arandomtag {
+      "}" <-- notice this should be matching the indentation of arandomtag
+      </code>
   }
   for all words starting with "@" sign, highlight those words as well in {keyword_style}
   for all words ending with ":" sign, highlight those words as well in {tag_style}
   all Control Flow and Loops keywords in javascript should be hightlighted in {keywords_style}
-  other keywords in javascript should be hightlighted in {tag_style}
+  other keywords in javascript should be hightlighted in {tag_style} 
+  please provide code folding functionality on all tags followed by (arbitrary number of spaces) and the beginning curly brace with the following shortcuts {
+    zc:Close the fold under the cursor.
+    za:Alternate (toggle) the fold under the cursor.
+    zM:Close More: Folds everything in the file.
+    zf:Fold: Create a fold manually (e.g., zfip folds the current paragraph).
+    zd:Delete the fold at the cursor (removes the fold, not the code).
+    zi:Invert: Toggle whether folding is enabled or disabled globally. 
+  }
 }
