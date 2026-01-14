@@ -114,16 +114,18 @@ action (completed){
 }
 
 action (completed){
-  in vim's insert mode, when i type open bracket "{" and press enter, it the cusor should be on the next line in the beginning of the child content
+  in vim's insert mode, when i type open bracket "{" and press enter, the cusor should be on the next line in the beginning of the child content
 }
 
 action (completed){
   please remove all the folding supports!
 }
 
-action {
+action (completed){
   remove xml tag support!
 }
+
+
 
 copy ./curlyprompt.vim to ~/.vim/syntax/
 update ./prompts/curl_prompt_vim_syntax.prompt to make it a single source of truth
