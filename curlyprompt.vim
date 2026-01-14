@@ -7,28 +7,28 @@ if exists("b:current_syntax")
   finish
 endif
 
-" Keywords
+" Keywords - 'let' for variable initialization (normal font, dark sea green)
 syn keyword curlypromptKeyword let
-hi def link curlypromptKeyword Identifier
+hi curlypromptKeyword ctermfg=29 guifg=#00875f
 
-" Curly braces
+" Curly braces (normal font, wheat color)
 syn match curlypromptBrace "[{}]"
-hi curlypromptBrace ctermfg=180 guifg=#d4bc7d
+hi curlypromptBrace ctermfg=180 guifg=#d7af87
 
-" Tags followed by colon (e.g., myobjective:)
-syn match curlypromptColonTag "\w\+\s*:" contains=curlypromptColon
-hi curlypromptColonTag cterm=bold ctermfg=green gui=bold guifg=#00ff00
+" Tags followed by colon (e.g., myobjective:) - bold dark sea green
+syn match curlypromptColonTag '\w\+\ze:\s*"' 
+hi curlypromptColonTag cterm=bold ctermfg=29 guifg=#00875f gui=bold
 
-" Tags at the beginning of curly braces (e.g., abc {, efg {)
-syn match curlypromptBraceTag "\w\+\s*{" contains=curlypromptBrace
-hi curlypromptBraceTag cterm=bold ctermfg=green gui=bold guifg=#00ff00
+" Tags at the beginning of curly braces (e.g., abc {, efg {) - bold dark sea green
+syn match curlypromptBraceTag '\<\w\+\>\ze\s*{'
+hi curlypromptBraceTag cterm=bold ctermfg=29 guifg=#00875f gui=bold
 
 " String literals
-syn region curlypromptString start='"' end='"' 
+syn region curlypromptString start='"' end='"' skip='\\"'
 hi def link curlypromptString String
 
 " Parentheses expressions
-syn region curlypromptParen start='(' end=')'
+syn region curlypromptParen start='(' end=')' contains=ALL
 hi def link curlypromptParen Normal
 
 " Comments (optional, for future use)
@@ -36,3 +36,10 @@ syn match curlypromptComment "#.*$"
 hi def link curlypromptComment Comment
 
 let b:current_syntax = "curlyprompt"
+
+" Enable automatic indentation
+setlocal autoindent
+setlocal smartindent
+setlocal expandtab
+setlocal shiftwidth=2
+setlocal tabstop=2

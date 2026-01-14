@@ -1,11 +1,17 @@
 role: you are the vim editor expert
 
 objective {
-  please generate a vim file ./curlprompt.vim for a new programming language "curly prompt"
-  please generate a readme.md file ./ showing me how to install it in vim
-  please learn all the {examples.example} of curly prompt, note that {
-    examples.example.code is the code of the "curly prompt"
-    examples.example.behavior should be the bahavior that you should learn in ./curlyprompt.vim
+  please generate a vim plugin file ./curlprompt.vim for a new programming language "curly prompt"
+    please learn all the {examples.example} of curly prompt, note that {
+      examples.example.code is the code of the "curly prompt"
+        examples.example.behavior should be the bahavior that you should learn in ./curlyprompt.vim
+    }
+  run cli command: cp ./curlyprompt.vim ~/.vim/syntax/
+}
+
+requirements {
+  inside the curly braces {
+    all sentences, all child tags should have the same indentation, very similar to hcl indentation
   }
 }
 
@@ -14,34 +20,38 @@ examples {
     code {
       abc {
         let numbers = (generate a list of random numbers)
-        efg {
-          perform task 1
-          perform task 2
-        }
+          efg {
+            perform task 1
+              perform task 2
+          }
       }
     }
     behavior {
-      we need to highlight "abc", "efg" in bold font and green color since they are the "beginning tag of a curly braces"
-      we should also highlight "let" in normal font and green color, this is a keyword that is used to initiate a variable
-      we need to highlight all the curl braces in normal font with wheat color
+      we need to highlight "abc", "efg" in bold font and dark see green color since they are the "beginning tag of a curly braces"
+        we should also highlight "let" in normal font and dark see green color, this is a keyword that is used to initiate a variable
+        we need to highlight all the curl braces in normal font with wheat color
+        "perform task 1" should have the same indentation as "perform task 2" since they are sentences on its own line         
     }
   }   
 
   example {
     code {
-      myobjective: "some objective"
-      myownspec {
-        let numbers = (generate a list of random numbers)
-        efg {
-          perform task 1
-          perform task 2
-        }
-      }
+myobjective: "some objective"
+               myownspec {
+                 let numbers = (generate a list of random numbers)
+                   efg {
+                     perform task 1
+                       perform task 2
+                   }
+               }
     }
     behavior {
-      we need to highlight "myobjective" in bold font and green color since they are a tag in "curly prompt" following by a colon sign
-      we should also highlight "let" in normal font and green color, this is a keyword that is used to initiate a variable
-      we need to highlight all the curl braces in normal font with wheat color
+      we need to highlight "myobjective" in bold font and dark see green color since they are a tag in "curly prompt" following by a colon sign
+        we should also highlight "let" in normal font and dark see green color, this is a keyword that is used to initiate a variable
+        we need to highlight all the curl braces in normal font with wheat color
+        "myownspec" should have the same indentation as "myobjective"
+        "efg" should have the same indentation as "let"
+        "perform task 1" should have the same indentation as "perform task 2" since they are sentences on its own line         
     }
-  }   
+  }
 }
