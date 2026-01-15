@@ -1,0 +1,30 @@
+context {
+  ./index.html
+}
+
+role: HTML/CSS/Javascript Expert
+
+objective {
+  generate or update ./index.html base on the section: spec
+  perform tasks base on the tasks sections, if task.status is closed, skip it completely
+}
+
+spec {
+  data {
+    counter: 0
+  }
+  html {
+    button.id:"button-increment" {
+      increment {data.counter} by 1
+    }
+    div.id:"counter-display" {
+      text: {data.counter}
+    }
+  }   
+}
+
+tasks {
+  for (each *.task.prompt {task_prompt} in directory:./tasks, sort by {task_prompt}.file_name in ascending order) {
+    {task_prompt}
+  } 
+}

@@ -1,0 +1,11 @@
+task {
+  status: "closed"
+  description {
+    button.id:"button-increment" {
+      background should be gold, font weight normal
+      when hover {
+        font weight bold 
+      }
+    }
+  }
+}

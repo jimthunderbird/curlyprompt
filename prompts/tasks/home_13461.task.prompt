@@ -1,0 +1,8 @@
+task {
+  status: "closed"
+  description {
+    button.id:"button-increment" {
+      background should be CadetBlue("5F9EA0")
+    }
+  }
+}
