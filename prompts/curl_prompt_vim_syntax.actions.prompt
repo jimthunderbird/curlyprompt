@@ -1,5 +1,6 @@
 context {
   ./prompts/curl_prompt_vim_syntax.prompt
+  ./prompts/curl_prompt_vim_syntax.md
   ./curlprompt.vim
 }
 
@@ -125,7 +126,12 @@ action (completed){
   remove xml tag support!
 }
 
-
+action {
+  the tag like "a.b.c" is not highlghted, please fix it!
+  we should assume that a tag can contain the "." sign!
+  hm... now i loose all highlited colors!
+}
 
 copy ./curlyprompt.vim to ~/.vim/syntax/
 update ./prompts/curl_prompt_vim_syntax.prompt to make it a single source of truth
+update ./prompts/curl_prompt_vim_syntax.md base on ./prompts/curl_prompt_vim_syntax.prompt

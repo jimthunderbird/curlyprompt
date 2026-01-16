@@ -6,7 +6,7 @@ role: HTML/CSS/Javascript Expert
 
 objective {
   generate or update ./index.html base on the section: spec
-  perform tasks base on the tasks sections, if task.status is closed, skip it completely
+  perform tasks base on the secton: tasks, if task.status is closed, skip it completely
 }
 
 spec {

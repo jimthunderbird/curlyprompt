@@ -41,12 +41,14 @@ syn match curlypromptAtWord '@\w\+'
 hi curlypromptAtWord cterm=bold ctermfg=208 guifg=#FF8C00 gui=bold
 
 " Words ending with : sign (tag_style: ForestGreen #228B22, bold)
-syn match curlypromptColonTag '\w\+:'
+" Supports dots in tag names (e.g., a.b.c:)
+syn match curlypromptColonTag '\v<\w+(\.\w+)*:'
 hi curlypromptColonTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
 " Tags followed by curly braces (tag_style: ForestGreen #228B22, bold)
 " Matches words before { with optional content in between (e.g., newtag (abc) {)
-syn match curlypromptBraceTag '\<\w\+\>\ze\s*\%(([^)]*)\)\?\s*{'
+" Supports dots in tag names (e.g., a.b.c {)
+syn match curlypromptBraceTag '\v<\w+(\.\w+)*>\ze\s*(\([^)]*\))?\s*\{'
 hi curlypromptBraceTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
 
 " Curly braces (curlybraces_style: DarkGoldenRod #B8860B, bold)

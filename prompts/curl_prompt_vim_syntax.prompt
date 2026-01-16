@@ -16,6 +16,9 @@ objective {
   }
   
   current_implementation {
+    version: 2026-01-16
+    status: All features working, XML support removed, folding removed, dots in tag names supported
+    
     syntax_highlighting {
       order_of_precedence {
         1. Comments (defined first): #, //, /* */ styles
@@ -30,6 +33,9 @@ objective {
           - Line comments: # and //
           - Block comments: /* */
           - Linked to Comment highlight group
+          - Pattern: syn match curlypromptComment "#.*$"
+          - Pattern: syn region curlypromptComment start="/\*" end="\*/"
+          - Pattern: syn match curlypromptComment "//.*$"
         }
         
         strings {
@@ -37,30 +43,42 @@ objective {
           - Single quoted: start="\%(^\|[\s({[,=:]\)\@<='" end="'" skip="\\'" keepend
           - Linked to String highlight group
           - Single quote pattern prevents matching apostrophes in contractions
+          - Pattern: syn region curlypromptString start='"' end='"' skip='\\"' keepend
+          - Pattern: syn region curlypromptString start="\%(^\|[\s({[,=:]\)\@<='" end="'" skip="\\'" keepend
         }
         
         keywords {
           - JavaScript control flow/loops: if, else, switch, case, default, break, continue, return, while, for, do, in, of, try, catch, finally, throw, async, await, yield
           - Highlighted with keyword_style (ForestGreen #228B22, normal weight)
           - Defined as curlypromptKeyword
+          - Highlight: hi curlypromptKeyword cterm=NONE ctermfg=28 guifg=#228B22 gui=NONE
         }
         
         tags {
           - Other JavaScript keywords: let, const, var, function, class, extends, implements, new, this, super, static, import, export, from, as, default, typeof, instanceof, delete, void, true, false, null, undefined
           - Highlighted with tag_style (ForestGreen #228B22, bold)
           - Defined as curlypromptTag
+          - Highlight: hi curlypromptTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
         }
         
         special_patterns {
           - At-words (@word): pattern '@\w\+', highlighted with atword_style (DarkOrange #FF8C00, bold) (curlypromptAtWord)
-          - Colon-tags (word:): pattern '\w\+:', highlighted with tag_style (curlypromptColonTag)
-          - Brace-tags (word {): pattern '\<\w\+\>\ze\s*\%(([^)]*)\)\?\s*{', supports optional parentheses content, highlighted with tag_style (curlypromptBraceTag)
+            * Pattern: syn match curlypromptAtWord '@\w\+'
+            * Highlight: hi curlypromptAtWord cterm=bold ctermfg=208 guifg=#FF8C00 gui=bold
+          - Colon-tags (word:): pattern '\v<\w+(\.\w+)*:', supports dots in tag names (e.g., a.b.c:), highlighted with tag_style (curlypromptColonTag)
+            * Pattern: syn match curlypromptColonTag '\v<\w+(\.\w+)*:'
+            * Highlight: hi curlypromptColonTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
+          - Brace-tags (word {): pattern '\v<\w+(\.\w+)*>\ze\s*(\([^)]*\))?\s*\{', supports optional parentheses content and dots in tag names (e.g., a.b.c {), highlighted with tag_style (curlypromptBraceTag)
+            * Pattern: syn match curlypromptBraceTag '\v<\w+(\.\w+)*>\ze\s*(\([^)]*\))?\s*\{'
+            * Highlight: hi curlypromptBraceTag cterm=bold ctermfg=28 guifg=#228B22 gui=bold
         }
         
         braces {
           - Pattern: "[{}]"
           - Highlighted with curlybraces_style (DarkGoldenRod #B8860B, bold)
           - Defined as curlypromptBrace
+          - Pattern: syn match curlypromptBrace "[{}]"
+          - Highlight: hi curlypromptBrace cterm=bold ctermfg=136 guifg=#B8860B gui=bold
         }
       }
     }
@@ -72,47 +90,84 @@ objective {
         - HCL-like automatic indentation
         - All content inside curly braces indented at same level
         - Closing braces aligned with opening tag line (matching indentation)
+        - Auto-indent when pressing Enter after opening brace in insert mode
       }
       
       algorithm {
         closing_brace_lines {
-          1. Save cursor position
-          2. Use searchpair('{', '', '}', 'bWn', '', max([1, a:lnum - 200])) to find matching opening brace
-          3. Return indentation of the line containing opening brace
-          4. Fallback: dedent by shiftwidth if searchpair fails
+          1. Save cursor position with getcurpos()
+          2. Move cursor to closing brace line with cursor(a:lnum, 1)
+          3. Use searchpair('{', '', '}', 'bWn', '', max([1, a:lnum - 200])) to find matching opening brace
+          4. Restore cursor position with setpos('.', save_cursor)
+          5. Return indentation of the line containing opening brace using indent(openline)
+          6. Fallback: dedent by shiftwidth if searchpair fails
         }
         
         after_opening_brace {
           - If previous line ends with '{\s*$', indent by shiftwidth
+          - Pattern: prevline =~ '{\s*$'
+          - Action: return ind + shiftwidth()
+        }
+        
+        after_closing_brace {
+          - If previous line closes a brace, maintain current indentation
+          - Pattern: prevline =~ '^\s*}'
+          - Action: return ind
         }
         
         other_lines {
           - Maintain current indentation level
+          - Ensures all children at same level have same indentation
+          - Action: return ind
         }
       }
       
       settings {
-        - autoindent, smartindent, expandtab
-        - shiftwidth=2, tabstop=2, softtabstop=2
-        - indentexpr=GetCurlyPromptIndent(v:lnum)
+        - setlocal autoindent
+        - setlocal smartindent
+        - setlocal expandtab
+        - setlocal shiftwidth=2
+        - setlocal tabstop=2
+        - setlocal softtabstop=2
+        - setlocal indentexpr=GetCurlyPromptIndent(v:lnum)
       }
       
       insert_mode_mappings {
-        - inoremap <buffer> <expr> <CR> s:HandleEnterAfterBrace()
+        - inoremap <buffer> <expr> <CR> <SID>HandleEnterAfterBrace()
         - When Enter is pressed after '{', inserts newline and lets indentexpr handle indentation automatically
-        - For other positions, just insert newline and let indentexpr handle it
-        - Implementation returns "\<CR>" in all cases to trigger automatic indentation
+        - Implementation checks if cursor is right after '{' using: line[col - 1] == '{'
+        - Returns "\<CR>" in all cases to trigger automatic indentation
+        - Function s:HandleEnterAfterBrace() handles the logic
       }
     }
     
-
+    features_removed {
+      - Folding support: Removed all foldmethod, foldexpr, and folding-related code
+      - XML tag support: Removed all XML/HTML tag syntax patterns and highlighting
+      - Reason: Simplification and focus on core curly-brace syntax
+    }
     
     known_fixes_applied {
       issue: Single quotes in contractions break syntax highlighting
       solution: Use lookbehind pattern \%(^\|[\s({[,=:]\)\@<=' to only match single quotes preceded by whitespace, start of line, or common delimiters. This prevents apostrophes in "he's", "don't", etc. from being treated as string delimiters.
+      status: Fixed
       
       issue: Closing braces don't align with opening tag
       solution: Use searchpair('{', '', '}', 'bWn') in GetCurlyPromptIndent() to find matching opening brace and return its indentation level. Search backwards up to 200 lines for performance.
+      status: Fixed
+      
+      issue: XML tags breaking syntax highlighting
+      solution: Removed all XML tag support completely
+      status: Fixed by removal
+      
+      issue: Folding not working
+      solution: Removed all folding support
+      status: Fixed by removal
+      
+      issue: Tags with dots (e.g., a.b.c) not highlighted
+      solution: Changed regex patterns to use very magic mode '\v' with pattern '\w+(\.\w+)*' which matches word followed by zero or more dot-word sequences. This properly supports tags like "a.b.c {" and "a.b.c:"
+      status: Fixed
+      date: 2026-01-16
     }
   }
 }
