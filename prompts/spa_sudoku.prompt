@@ -1,0 +1,122 @@
+role: "You are an HTML/CSS/Javascript expert and a very good QA"
+
+spec {
+  html {
+    title: "Simple Sudoku"
+    
+    font: Courier New, 18px
+
+    style {
+      background: wheat
+    }
+
+    component.control {
+      button.id:"control" {
+        text: "Brand New Game"
+        @click {
+          create a new sudoku board
+        }
+        @hover {
+          background: blue  
+        }
+        style {
+          width: 200px
+          height: 100px
+          background: gold
+        }
+      }
+    }
+
+    component.sudokuboard {
+      div.id:"sudokuboard" {
+        create a new sudoku board
+      }
+      div.id:"sudokuboard".style {
+        padding: 0
+        border: 5px dark sea solid gradient
+      }
+      number{
+        style {
+          font: bold 20px
+        }
+        @hover {
+          background: orange
+        }
+      }
+      each 3x3 box {
+        style {
+          border: 1px dark solid
+        }
+      }
+      cell {
+        style {
+          width: 50px
+          height: 50px 
+          font: bold 20px
+          background: light blue
+        }
+        @hover {
+          background: gold
+        }
+        feature {
+          on click {
+            allow me to fill in a number
+            the cursor should be blinking
+            background: light grey 
+          }
+        }
+      }
+    }
+
+    component.level_selection {
+      div.id:"level_selection" {
+        selecion.id:"difficulty2" {
+          options {
+            Easy
+            Medium
+            Hard
+          }
+          @change (option) {
+            regenerate a new game base on the difficulty {option}.text
+          }
+        }
+      }
+    }
+    component.def {
+      div.id:"def" {
+        paragraph: "This is a DEF component"
+      }
+    }
+    component.ghi {
+      div.id:"ghi" {
+        paragraph: "This is a GHI component"
+      }
+    }
+    component.jkl {
+      div.id:"jkl" {
+        paragraph: "This is a JKL component"
+      }
+    }
+  }   
+  layout {
+    let N = (number of components in the layout)
+    horizontal N column layout with the components in the following orders {
+      {component.sudokuboard}
+      {component.control}
+      {component.level_selection}
+    }
+  }
+} 
+
+constraint {
+  DO NOT generate summary
+  NO EXPLANATION, NO EXTRA WORDS
+  DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
+  only the components presented in spec.layout should show up in index.html
+  all components presented in spec.layout should show up in index.html
+  make sure in index.html, the components order is the same as described in html.layout
+}
+
+action {
+  generate index.html base on spec and constraint 
+}

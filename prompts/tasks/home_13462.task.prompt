@@ -1,0 +1,6 @@
+task {
+  status: "close"
+  description {
+    we need to change the sudoku board's border, it should be 5px and with a green background     
+  }
+}

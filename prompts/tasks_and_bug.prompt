@@ -14,12 +14,11 @@ spec {
     counter: 0
   }
   html {
-    button.id:"button-increment" {
-      increment {data.counter} by 1
-    }
-    div.id:"counter-display" {
-      text: {data.counter}
-    }
+    component.sudokuboard {
+      div.id:"sudokuboard" {
+        create a random sudoku board
+      }
+    } 
   }   
 }
 

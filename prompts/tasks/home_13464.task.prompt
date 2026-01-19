@@ -1,0 +1,16 @@
+task {
+  status: "open"
+  description {
+    for the button having "Increment" {
+      change its text to "Next Sudoku Board"
+      when click {
+        update the sudoku board with a new problem
+      }
+    }
+    remove the counter display
+    for the button "Next Sudoku Board" {
+      place it on top of the sudoku board
+      align in the center
+    }
+  }
+}
