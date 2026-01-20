@@ -17,3 +17,7 @@ task (closed) {
 task (closed) {
   for the hinting anaimation, make it last for 5 seconds
 }
+
+task (closed) {
+  for the filled number, set the background to Teal("#008080")
+}
