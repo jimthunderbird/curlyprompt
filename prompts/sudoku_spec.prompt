@@ -1,0 +1,111 @@
+spec {
+  let action.create_sudoku_board = generate a random difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level
+
+  html {
+    title: "Super Simple Sudoku version 3"
+    style {
+      background: wheat
+      font: Courier New (monospace)
+    }
+  }
+
+  component.sudokuboard {
+    div.id:"sudokuboard" {
+      perform action.create_sudoku_board
+      for the filled number {
+        background should expand and cover the whole number cell
+        background should be dark sea green (implemented as background: darkseagreen !important)
+        width: 50px
+        height: 50px
+      }
+      for the emtpty number {
+        background: transparent
+        width: 50px
+        height: 50px
+      }
+    }
+
+    each 3x3 cells should be grouped into "box" (COMPLETED)
+    for each box {box} {
+      if box.number is even {
+        box.background: light yellow (boxes 2,4,6,8 have lightyellow background)
+      } else {
+        box.background: orange (boxes 1,3,5,7,9 have orange background)
+      }
+    }
+    filled cells have dark sea green background (filled cells use background: darkseagreen !important)
+    when clicked on empty number cell {cell} {
+      for all other empty cells, style should be back to default, with mouse pointer style
+      cell.background: "gold" 
+      allow me to enter a number {number}
+      the blinking cursor {cursor} should show up {
+        {cursor}.alignment.horizontal: center
+        {cursor}.alignment.veritcal: center
+        when @key.enter {
+          set {cell} number to {number} and do not change it
+          mark {cell} is non empty
+          remove focus on {cell}
+        }
+      }
+    }
+
+  }
+
+  component.control {
+    button.id:"control" {
+      text: "Brand New Game"
+      style {
+        width: 200px
+        height: 50px
+        background: Brown
+      }
+      @click {
+        perform action.create_sudoku_board
+      }
+      @hover {
+        background: dark sea green
+      }
+    }
+  }
+
+  component.abc {
+    div.id:"abc" {
+      text: "ABC"
+      style {
+        width: 80px
+        height: 40px
+        background: orange
+      }
+      @click {
+        perform action.create_sudoku_board
+      }
+    }
+
+  }
+
+  component.efg {
+    div.id:"efg" {
+      background: Light Sky Blue
+      text: "EFG"
+      border: 5px silver solid
+      @click {
+        perform action.create_sudoku_board
+      }
+    }
+  }
+
+  layout {
+    row {
+      {component.sudokuboard}
+    }.style {
+      do not expand to full page width
+      make components align center
+    }
+    row {
+      {component.control} {component.efg} {component.abc} 
+    }.style {
+      make components align center
+    }
+  }
+
+}

@@ -1,44 +1,32 @@
 role: "You are an HTML/CSS/Javascript expert"
 
+context {
+  ./sudoku_spec.prompt
+}
+
 constraint {
   EACH section AND EACH nested section in spec is a unit of action to perform
   SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
   DO NOT generate summary
   DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
   DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
+  peform file search starting from the current directory only!
+  FOR each task {task} in tasks, when task is completed, update ./sudoku_spec.prompt {
+    do not update the status 
+    merge the changes you made into the spec
+  }
 }
 
 objective {
   update ./index.html based on all actions
 }
 
-action.create_sudoku_board = generate a random difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level
+task (closed) {
+  the sudoku board is empty, no prefilled number, it should have some prefilled number 
+}
 
-spec {
-  html {
-    title: "Super Simple Sudoku version 3"
-    style {
-      background: wheat
-      font: Courier New (monospace)
-    }
-  }
-
-  component.sudokuboard {
-    div.id:"sudokuboard" {
-      perform action.create_sudoku_board
-      for the filled number {
-        background should expand and cover the whole number cell
-        background should be dark sea green
-        width: 50px
-        height: 50px
-      }
-      for the emtpty number {
-        background: transparent
-        width: 50px
-        height: 50px
-      }
-    }
-   
+task.box_background (closed) {
+  please use the following as the requirement {
     each 3x3 cells should be grouped into "box"
     for each box {box} {
       if box.number is even {
@@ -47,94 +35,37 @@ spec {
         box.background: light yellow
       }
     }
-    when clicked on empty number cell {cell} {
-      for all other empty cells, style should be back to default, with mouse pointer style
-      cell.background: "gold" 
-      allow me to enter a number {number}
-      the blinking cursor {cursor} should show up {
-        {cursor}.alignment.horizontal: center
-        {cursor}.alignment.veritcal: center
-        when @key.enter {
-          set {cell} number to {number} and do not change it
-          mark {cell} is non empty
-          remove focus on {cell}
-        }
-      }
-    }
-
   }
-
-  component.control {
-    button.id:"control" {
-      text: "Brand New Game"
-      style {
-        width: 200px
-        height: 50px
-        background: Brown
-      }
-      @click {
-        perform action.create_sudoku_board
-      }
-      @hover {
-        background: dark sea green
-      }
-    }
-  }
-
-  component.abc {
-    div.id:"abc" {
-      text: "ABC"
-      style {
-        width: 80px
-        height: 40px
-        background: orange
-      }
-      @click {
-        perform action.create_sudoku_board
-      }
-    }
-
-  }
-
-  component.efg {
-    div.id:"efg" {
-      background: Light Sky Blue
-      text: "EFG"
-      border: 5px silver solid
-      @click {
-        perform action.create_sudoku_board
-      }
-    }
-  }
-
-  layout {
-    row {
-      {component.sudokuboard}
-    }.style {
-      do not expand to full page width
-      make components align center
-    }
-    row {
-      {component.abc} {component.control} {component.efg} 
-    }.style {
-      make components align center
-    }
-  }
-
+  I am currently seeing filled cell numbers are in dark sea green, that is correct
+  but for the box with odd or even number, the background is not showing up
 }
 
-task (completed) {
-  the sudoku board is empty, no prefilled number, it should have some prefilled number 
+task (closed) {
+  description {
+    on each page refresh, a new sudoku board should be created
+    but currently on each page refresh, the board sometimes refreshes but sometimes do not
+  }
+  feedback {
+    now looks better, but in some page refreshes, the board still stay the same
+  }
+  feedback {
+    now it is way better, but if i refresh the page really fast, the board sometimes still stay the same
+  }
 }
 
-task (completed) {
-  each 3x3 cells should be grouped into "box"
-  for each box {box} {
-    if box.number is even {
-      box.background: orange
-    } else {
-      box.background: light yellow
-    }
+task (closed) {
+  in the second row of the layout, it should have the following components in order {
+    {component.control} {component.efg} {component.abc} 
   }
-  but for boxes that has even number, orange does not show up, please fix it
+}
+
+task (closed) {
+  reference task.box_background
+  now, 
+  for the box with odd number {
+    box.background: "orange"  
+  }
+  for the box with even number {
+    box.background: "light yellow"  
+  }
 }
