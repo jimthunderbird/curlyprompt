@@ -30,9 +30,17 @@ spec {
       the filled number's background should be dark sea green
       the filled number's width: 50px
       the filled number's height: 50px
-      the empty number's background: light green
+      the empty number's background: transparent
       the empty number's width: 50px
       the empty number's height: 50px
+    }
+    each 3x3 cells should be grouped into "box"
+    for each "box" {box} {
+      if box.number is even {
+        box.background: orange
+      } else {
+        box.background: light yellow
+      }
     }
     when clicked on empty number cell {cell} {
       for all other empty cells, style should be back to default, with mouse pointer style
