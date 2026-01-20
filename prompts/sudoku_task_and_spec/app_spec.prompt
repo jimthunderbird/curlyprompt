@@ -12,7 +12,7 @@ spec {
   component.sudokuboard {
     div.id:"sudokuboard" {
       border: 5px silver solid
-      perform action.create_sudoku_board
+      perform action.create_sudoku_board (renderBoard() called on page load, generates board with filled/empty cells)
       for the filled number {
         background should expand and cover the whole number cell
         background should be dark sea green (implemented as background: darkseagreen !important)

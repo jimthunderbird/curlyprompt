@@ -114,3 +114,7 @@ task (closed) {
     {component.control}
   }
 }
+
+task (closed) {
+  critical, now the sudoku board is empty, fix it!
+}
