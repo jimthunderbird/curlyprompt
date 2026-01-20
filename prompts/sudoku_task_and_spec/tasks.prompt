@@ -82,3 +82,11 @@ task (closed) {
   if the board contains invalid numbers and the component.solve is clcked, the page response time is really slow, please fix that
   also, we need to fulfill task.solve_board_no_matter_what
 }
+
+task (closed) {
+  there is a bug if i do the following:
+  1. click on the dropdown in "Pick a Difficulty Level" with a new difficulty
+  2. click "Solve this puzzle" button
+  expect: the solution should show on the sudoku board
+  actual: the sudoku board keeps showing another random problem 
+}
