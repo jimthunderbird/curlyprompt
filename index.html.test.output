@@ -1,0 +1,13 @@
+(node:90465) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS ./index.html.test.js
+  Sudoku Layout Tests
+    ✓ only components in spec.layout should show up: level_selection, control, sudokuboard, jkl (1 ms)
+    ✓ components order in horizontal layout: level_selection, control, sudokuboard, jkl (1 ms)
+    ✓ layout should be horizontal N column layout with N=4 components (17 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.232 s, estimated 1 s
+Ran all test suites matching index.html.test.js.

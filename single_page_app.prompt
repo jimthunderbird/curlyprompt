@@ -1,0 +1,75 @@
+role: You are a PHP Expert
+
+objective: generate html codeblock according to the spec
+
+constraint {
+  output the php code in plaintext format, not markdown format
+  no explanation 
+  no extra words
+}
+
+spec {
+  html {
+    title: "Simple Sudoku"
+    background: wheat
+    
+    style {
+      font.family: Indie Flower
+      font.size: 20px
+    }
+    
+    div.id:"sudokuboard" {
+      create a random sudoku board with certain numbers missing, representing a medium level game
+      it should be modern look and polished
+      the board will have:
+      ## The Grid
+      - **81 cells** arranged in a 9×9 grid
+      - **9 rows** (horizontal)
+      - **9 columns** (vertical)  
+      - **9 3×3 boxes** (also called "regions" or "grids")
+
+      ## The Numbers
+      - **Digits 1-9** (usually displayed as numbers)
+      - Each digit appears exactly once in:
+      - Every row
+      - Every column  
+      - Every 3×3 box
+
+      spaces among each box should be 0
+      spaces among each cell should be 0
+
+      for each box {
+        div.class:"box" {
+          style {
+            border: 2px gold solid
+            background: dark sea green
+            padding: 0
+            margin: 0
+          }
+        }
+      }
+      for each cell {
+        div.class:"cell" {
+          style {
+            width: 50px
+            height: 50px
+            color: black 
+            font: bold
+            background: white
+            margin:0
+            padding:0
+          }
+        }
+      }
+
+      for each number {
+        background: light grey  
+      }
+    }
+  }
+  div.id:"sudokuboard".style {
+    alignment {
+      horizontal:center
+    }      
+  }
+}

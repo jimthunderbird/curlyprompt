@@ -1,0 +1,17 @@
+role: Expert Javascript Jest Test Suite Writer with Deep Knolwedge of HTML/Javascript front end testing
+
+action {
+  remove index.html.test.js
+  create index.html.test.js {
+    do not base on ./index.html, based solely on the description in ./spa_sudoku.prompt as the source of truth
+    generate minimum essential test cases
+    only focus on testing the following {
+      testing the component layout and order
+      test javascript functionalities for sudoku board creation, make sure it works on each related components 
+    }
+    do not test element count matching
+    do not test any positions and colors matching
+  }
+  just create the test code, do not run any tests
+  do not create anything under /tmp/ directory
+}

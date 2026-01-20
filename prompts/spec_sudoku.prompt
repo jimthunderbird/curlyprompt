@@ -1,0 +1,121 @@
+role: "You are an HTML/CSS/Javascript expert"
+
+constraint {
+  EACH section AND EACH nested section in spec is a unit of action to perform
+  SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
+  DO NOT generate summary
+  DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
+  DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
+  AFTER EACH TODO is Completed, update the corresponding content in spec_sudoku.prompt
+}
+
+objective {
+  update ./index.html based on all actions
+}
+
+action.create_sudoku_board = generate a random difficult level sudoku board, must have some filled numbers and some unfilled numbers according to the difficult level
+
+spec {
+  html {
+    title: "Super Simple Sudoku version 3"
+    style {
+      background: wheat
+      font: Courier New (monospace)
+    }
+  }
+
+  component.sudokuboard {
+    div.id:"sudokuboard" {
+      perform action.create_sudoku_board
+      the filled number's background should expand and cover the whole number cell
+      the filled number's background should be dark sea green
+      the filled number's width: 50px
+      the filled number's height: 50px
+      the empty number's background: transparent
+      the empty number's width: 50px
+      the empty number's height: 50px
+    }
+    each 3x3 cells should be grouped into "box"
+    for each "box" {box} {
+      if box.number is even {
+        box.background: orange
+      } else {
+        box.background: light yellow
+      }
+    }
+    when clicked on empty number cell {cell} {
+      for all other empty cells, style should be back to default, with mouse pointer style
+      cell.background: "gold" 
+      allow me to enter a number {number}
+      the blinking cursor {cursor} should show up {
+        {cursor}.alignment.horizontal: center
+        {cursor}.alignment.veritcal: center
+        when @key.enter {
+          set {cell} number to {number} and do not change it
+          mark {cell} is non empty
+          remove focus on {cell}
+        }
+      }
+    }
+
+  }
+
+  component.control {
+    button.id:"control" {
+      text: "Brand New Game"
+      style {
+        width: 200px
+        height: 50px
+        background: Brown
+      }
+      @click {
+        perform action.create_sudoku_board
+      }
+      @hover {
+        background: dark sea green
+      }
+    }
+  }
+
+  component.abc {
+    div.id:"abc" {
+      text: "ABC"
+      style {
+        width: 80px
+        height: 40px
+        background: orange
+      }
+      @click {
+        perform action.create_sudoku_board
+      }
+    }
+
+  }
+
+  component.efg {
+    div.id:"efg" {
+      background: Light Sky Blue
+      text: "EFG"
+      border: 5px silver solid
+      @click {
+        perform action.create_sudoku_board
+      }
+    }
+  }
+
+  layout {
+    row {
+      {component.sudokuboard}
+    }.style {
+      do not expand to full page width
+    }
+    row {
+      {component.abc} {component.control} {component.efg} 
+    }
+  }
+
+}
+
+todo {
+  ✅ the sudoku board is empty, no prefilled number - COMPLETED
+}
