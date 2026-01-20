@@ -144,3 +144,7 @@ task (closed) {
 
   layout: add it next to "Brand New Game" but before "Solve"
 }
+
+task (closed) {
+  the hinting number's background should be LightSalmon
+}
