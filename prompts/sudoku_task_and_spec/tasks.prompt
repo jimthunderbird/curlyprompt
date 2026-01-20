@@ -65,3 +65,7 @@ task (closed) {
 task (closed) {
   for component.LevelSelection, remove div.id:"level-selection"
 }
+
+task (closed) {
+  for component.LevelSelection, after a difficulty level has been selected, the sudoku board update has a "delay" feeling, please make optimization to speed up the board update
+}

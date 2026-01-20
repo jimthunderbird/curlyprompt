@@ -1,5 +1,5 @@
 spec {
-  let action.create_sudoku_board = generate a random extremely difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level (65-74 cells removed for extremely difficult level)
+  let action.create_sudoku_board = generate a random extremely difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level (65-74 cells removed for extremely difficult level). Optimized generation: pre-fills diagonal 3x3 boxes first (which don't conflict with each other) using Fisher-Yates shuffle, then fills remaining cells with sequential number testing for faster completion
 
   html {
     title: "Super Simple Sudoku version 3"

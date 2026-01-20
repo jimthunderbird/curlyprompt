@@ -271,15 +271,35 @@
                 return true;
             }
             
-            function fillBoard(board) {
+            // Optimized: Pre-fill diagonal 3x3 boxes first (they don't conflict)
+            function fillDiagonalBoxes(board) {
+                for (let box = 0; box < 3; box++) {
+                    const startRow = box * 3;
+                    const startCol = box * 3;
+                    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    // Fisher-Yates shuffle
+                    for (let i = nums.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [nums[i], nums[j]] = [nums[j], nums[i]];
+                    }
+                    let idx = 0;
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            board[startRow + i][startCol + j] = nums[idx++];
+                        }
+                    }
+                }
+            }
+            
+            function fillRemaining(board) {
                 for (let row = 0; row < 9; row++) {
                     for (let col = 0; col < 9; col++) {
                         if (board[row][col] === 0) {
-                            const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
-                            for (let num of numbers) {
+                            // Try numbers 1-9 in order (less backtracking needed after diagonal fill)
+                            for (let num = 1; num <= 9; num++) {
                                 if (isValid(board, row, col, num)) {
                                     board[row][col] = num;
-                                    if (fillBoard(board)) {
+                                    if (fillRemaining(board)) {
                                         return true;
                                     }
                                     board[row][col] = 0;
@@ -292,7 +312,8 @@
                 return true;
             }
             
-            fillBoard(board);
+            fillDiagonalBoxes(board);
+            fillRemaining(board);
             
             const range = getDifficultyRange(currentDifficulty);
             const cellsToRemove = range.min + Math.floor(Math.random() * (range.max - range.min + 1));
