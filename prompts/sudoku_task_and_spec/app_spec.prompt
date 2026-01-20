@@ -87,6 +87,23 @@ spec {
     }
   }
 
+  component.hint {
+    button.id:"hint" {
+      text: "Hint"
+      style {
+        width: 200px
+        height: 50px
+        background: Brown
+      }
+      @click {
+        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with yellow pulsing animation for 3 seconds)
+      }
+      @hover {
+        background: DodgerBlue (implemented as #hint:hover with background: DodgerBlue)
+      }
+    }
+  }
+
   component.abc {
     div.id:"abc" {
       text: "ABC"
@@ -121,7 +138,7 @@ spec {
       make components align center
     }
     row {
-      {component.control} {component.solve} (order implemented: control and solve buttons side by side)
+      {component.control} {component.hint} {component.solve} (order implemented: control, hint, and solve buttons side by side)
     }.style {
       make components align center
     }

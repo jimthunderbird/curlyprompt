@@ -108,6 +108,32 @@
             background: DodgerBlue;
         }
         
+        #hint {
+            width: 200px;
+            height: 50px;
+            background: Brown;
+            color: white;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        #hint:hover {
+            background: DodgerBlue;
+        }
+        
+        .hint-cell {
+            background: yellow !important;
+            animation: pulse 1s ease-in-out 3;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
         #abc {
             width: 80px;
             height: 40px;
@@ -133,6 +159,7 @@
         <div id="sudokuboard"></div>
         <div id="controls">
             <button id="control">Brand New Game</button>
+            <button id="hint">Hint</button>
             <button id="solve">Solve this puzzle</button>
         </div>
     </div>
@@ -344,6 +371,43 @@
         }
         
         document.getElementById('control').addEventListener('click', renderBoard);
+        
+        document.getElementById('hint').addEventListener('click', function() {
+            // Remove previous hints
+            document.querySelectorAll('.hint-cell').forEach(cell => {
+                cell.classList.remove('hint-cell');
+            });
+            
+            const board = getCurrentBoardState();
+            const solvedBoard = JSON.parse(JSON.stringify(board));
+            solveSudoku(solvedBoard);
+            
+            // Find all empty cells
+            const emptyCells = [];
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                if (board[row][col] === 0) {
+                    emptyCells.push({cell, row, col});
+                }
+            });
+            
+            // Pick a random empty cell to hint
+            if (emptyCells.length > 0) {
+                const randomIndex = Math.floor(Math.random() * emptyCells.length);
+                const {cell, row, col} = emptyCells[randomIndex];
+                const hintValue = solvedBoard[row][col];
+                
+                cell.textContent = hintValue;
+                cell.classList.add('hint-cell');
+                
+                // Remove hint highlighting after animation
+                setTimeout(() => {
+                    cell.classList.remove('hint-cell');
+                }, 3000);
+            }
+        });
         
         document.getElementById('solve').addEventListener('click', function() {
             const board = getCurrentBoardState();

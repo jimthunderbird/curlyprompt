@@ -130,3 +130,17 @@ task (closed) {
 
   add it next to "Brand New Game"
 }
+
+task (closed) {
+  add the following component:
+  component.hint {
+    text: "Hint"
+    as we click this button {
+      give minimum hints on how to solve the current problem by {
+        highlight one missing cell with a number that might be the answer
+      }
+    }
+  }
+
+  layout: add it next to "Brand New Game" but before "Solve"
+}
