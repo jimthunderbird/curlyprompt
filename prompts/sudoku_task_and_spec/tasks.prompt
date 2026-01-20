@@ -73,3 +73,7 @@ task (closed) {
 task (closed) {
   currenly, if i click on an empty cell and enter a number, if that number is an invalid number, for example, in each "box", i have 2 number 9, then i hit component.solve, the page response time is very very slow, please fix it
 }
+
+task (closed) {
+  please make it so that: when hitting component.solve, even though the board is invalid, still update the board with the solution
+}

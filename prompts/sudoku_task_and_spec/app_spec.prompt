@@ -80,9 +80,8 @@ spec {
       }
       @click {
         solve the sudoku problem and fill in all the missing numbers in the board (implemented with solveSudoku function using backtracking algorithm)
-        validate board before solving using isBoardValid function to check for duplicate numbers in rows, columns, or boxes
-        show alert if board is invalid to prevent slow performance on unsolvable boards
         show alert if no solution is found
+        solves even if board has invalid state (no validation check before solving)
       }
       @hover {
         background: DodgerBlue (implemented as #solve:hover with background: DodgerBlue)
