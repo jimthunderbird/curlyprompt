@@ -103,7 +103,7 @@ spec {
       make components align center
     }
     row {
-      {component.efg} {component.abc} {component.control}
+      {component.control} {component.efg} {component.abc}
     }.style {
       make components align center
     }

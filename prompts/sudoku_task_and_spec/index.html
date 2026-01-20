@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Simple Sudoku version 3</title>
+    <style>
+        body {
+            background: wheat;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        #sudokuboard {
+            display: grid;
+            grid-template-columns: repeat(9, 50px);
+            grid-template-rows: repeat(9, 50px);
+            gap: 0;
+            width: fit-content;
+        }
+        
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background: transparent;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .cell[contenteditable="true"] {
+            line-height: 50px;
+        }
+        
+        .cell.filled {
+            background: darkseagreen !important;
+            cursor: default;
+        }
+        
+        .cell.selected {
+            background: gold;
+        }
+        
+        .cell:focus {
+            outline: 2px solid blue;
+        }
+        
+        /* Box backgrounds */
+        .box-odd {
+            background: orange;
+        }
+        
+        .box-even {
+            background: lightyellow;
+        }
+        
+        #controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #control {
+            width: 200px;
+            height: 50px;
+            background: Brown;
+            color: white;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        #control:hover {
+            background: DodgerBlue;
+        }
+        
+        #abc {
+            width: 80px;
+            height: 40px;
+            background: orange;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #efg {
+            background: LightSkyBlue;
+            border: 5px solid silver;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="sudokuboard"></div>
+        <div id="controls">
+            <button id="control">Brand New Game</button>
+            <div id="efg">EFG</div>
+            <div id="abc">ABC</div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCell = null;
+        
+        function getBoxNumber(row, col) {
+            const boxRow = Math.floor(row / 3);
+            const boxCol = Math.floor(col / 3);
+            return boxRow * 3 + boxCol + 1;
+        }
+        
+        function generateSudoku() {
+            const board = Array(9).fill(null).map(() => Array(9).fill(0));
+            
+            function isValid(board, row, col, num) {
+                for (let x = 0; x < 9; x++) {
+                    if (board[row][x] === num || board[x][col] === num) {
+                        return false;
+                    }
+                }
+                
+                const startRow = row - row % 3;
+                const startCol = col - col % 3;
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[i + startRow][j + startCol] === num) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            function fillBoard(board) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (board[row][col] === 0) {
+                            const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+                            for (let num of numbers) {
+                                if (isValid(board, row, col, num)) {
+                                    board[row][col] = num;
+                                    if (fillBoard(board)) {
+                                        return true;
+                                    }
+                                    board[row][col] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            
+            fillBoard(board);
+            
+            const cellsToRemove = 40 + Math.floor(Math.random() * 10);
+            let removed = 0;
+            while (removed < cellsToRemove) {
+                const row = Math.floor(Math.random() * 9);
+                const col = Math.floor(Math.random() * 9);
+                if (board[row][col] !== 0) {
+                    board[row][col] = 0;
+                    removed++;
+                }
+            }
+            
+            return board;
+        }
+        
+        function renderBoard() {
+            const boardElement = document.getElementById('sudokuboard');
+            boardElement.innerHTML = '';
+            
+            const board = generateSudoku();
+            
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.createElement('div');
+                    const boxNum = getBoxNumber(row, col);
+                    const boxClass = boxNum % 2 === 0 ? 'box-even' : 'box-odd';
+                    
+                    cell.className = `cell ${boxClass}`;
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    const value = board[row][col];
+                    if (value !== 0) {
+                        cell.textContent = value;
+                        cell.classList.add('filled');
+                    } else {
+                        cell.contentEditable = true;
+                        cell.addEventListener('click', function() {
+                            if (selectedCell && selectedCell !== this) {
+                                selectedCell.classList.remove('selected');
+                            }
+                            this.classList.add('selected');
+                            selectedCell = this;
+                            this.focus();
+                        });
+                        
+                        cell.addEventListener('keydown', function(e) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                const num = this.textContent.trim();
+                                if (num >= '1' && num <= '9') {
+                                    this.classList.remove('selected');
+                                    this.classList.add('filled');
+                                    this.contentEditable = false;
+                                    this.blur();
+                                    selectedCell = null;
+                                }
+                            }
+                        });
+                        
+                        cell.addEventListener('input', function(e) {
+                            const text = this.textContent;
+                            const num = text.replace(/[^1-9]/g, '');
+                            if (num.length > 0) {
+                                this.textContent = num[0];
+                            } else {
+                                this.textContent = '';
+                            }
+                            
+                            const range = document.createRange();
+                            const sel = window.getSelection();
+                            if (this.childNodes.length > 0) {
+                                range.setStart(this.childNodes[0], this.textContent.length);
+                                range.collapse(true);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+                        });
+                        
+                        cell.addEventListener('blur', function() {
+                            this.classList.remove('selected');
+                        });
+                    }
+                    
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+        
+        document.getElementById('control').addEventListener('click', renderBoard);
+        document.getElementById('abc').addEventListener('click', renderBoard);
+        document.getElementById('efg').addEventListener('click', renderBoard);
+        
+        window.addEventListener('load', () => {
+            renderBoard();
+        });
+        
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                renderBoard();
+            }
+        });
+    </script>
+</body>
+</html>
