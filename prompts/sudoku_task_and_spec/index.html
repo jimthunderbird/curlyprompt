@@ -207,8 +207,8 @@
         <div id="board-row">
             <div id="sudokuboard"></div>
             <div id="level-selection">
-                <label for="difficultyLevel">Pick a Difficulty Level</label>
-                <select id="difficultyLevel">
+                <label for="level-selection">Pick a Difficulty Level</label>
+                <select id="level-selection">
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
@@ -520,7 +520,7 @@
             }
         });
         
-        document.getElementById('difficultyLevel').addEventListener('change', function(e) {
+        document.getElementById('level-selection').addEventListener('change', function(e) {
             currentDifficulty = e.target.value;
             renderBoard();
         });

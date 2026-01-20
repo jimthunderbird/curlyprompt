@@ -96,7 +96,7 @@ spec {
           font-size: 16px
         }
       }
-      select.id:"difficultyLevel" {
+      select.id:"level-selection" {
         options {
           "Easy" (value: "easy", removes 36-45 cells)
           "Medium" (value: "medium", removes 46-54 cells)
