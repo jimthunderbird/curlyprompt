@@ -1,4 +1,12 @@
 // Control Component - Brand New Game Button
-document.getElementById('control').addEventListener('click', function() {
-    createSudokuBoard();
-});
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('control').addEventListener('click', function() {
+            createSudokuBoard();
+        });
+    });
+} else {
+    document.getElementById('control').addEventListener('click', function() {
+        createSudokuBoard();
+    });
+}

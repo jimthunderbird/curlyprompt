@@ -91,9 +91,14 @@ task (closed) {
   actual: the sudoku board keeps showing another random problem 
 }
 
-task (closed) {
-  when page is loaded, the board is empty! please fix it!
+task (reopen) {
+  when page is loaded, the board is still empty! please fix it!
 
   we should do the following:
   generate a random extremely difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level (65-74 cells removed for extremely difficult level). Optimized generation: pre-fills diagonal 3x3 boxes first (which don't conflict with each other) using Fisher-Yates shuffle, then fills remaining cells with sequential number testing for faster completion
+
+  i noticed, in chrome dev tool, we got errors like:
+  Uncaught SyntaxError: Unexpected token '<' (at sudokuboard.js:1:1)
+  Uncaught SyntaxError: Unexpected token '<' (at control.js:1:1)
+  ...
 }

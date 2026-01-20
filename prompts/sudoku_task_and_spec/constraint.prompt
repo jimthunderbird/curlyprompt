@@ -3,7 +3,7 @@ constraint {
   SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
   DO NOT generate summary
   DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
-  DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
+  DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY, IF IT REALLY NEEDS TO CREATE ANYTHING TEMPORARY, CREATE IT UNDER ./tmp DIRECTORY INSTEAD
   FOR each task {task} in tasks, when task is completed {
     update ./app_spec.prompt {
       do not update the status 

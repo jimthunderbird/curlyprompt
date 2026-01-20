@@ -168,7 +168,7 @@ function createSudokuBoard() {
     renderBoard();
 }
 
-// Initialize board on page load - scripts load after DOM elements, so board is ready
+// Initialize board on page load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', createSudokuBoard);
 } else {
