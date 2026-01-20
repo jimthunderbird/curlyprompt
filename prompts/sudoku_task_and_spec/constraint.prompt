@@ -1,0 +1,18 @@
+constraint {
+  EACH section AND EACH nested section in spec is a unit of action to perform
+  SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
+  DO NOT generate summary
+  DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
+  DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
+  FOR each task {task} in tasks, when task is completed {
+    update ./app_spec.prompt {
+      do not update the status 
+      merge the changes you made into the spec
+    }
+    in task.prompt, mark the latest task to closed
+    create a git commit {
+      only add the files in the current directory
+      with the brief message describing the changes, less than 20 words
+    }
+  }
+}

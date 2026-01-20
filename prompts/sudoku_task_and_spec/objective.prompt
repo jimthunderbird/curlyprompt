@@ -1,0 +1,4 @@
+objective {
+  create or update ./index.html in the current directory based on all actions
+  DO NOT search any directores outside the current directory
+}
