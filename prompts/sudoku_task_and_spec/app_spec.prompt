@@ -12,7 +12,7 @@ spec {
   component.sudokuboard {
     div.id:"sudokuboard" {
       border: 5px silver solid
-      perform action.create_sudoku_board (renderBoard() called on page load, generates board with filled/empty cells)
+      perform action.create_sudoku_board (renderBoard() called on page load with readyState check to ensure proper initialization, generates board with filled/empty cells)
       for the filled number {
         background should expand and cover the whole number cell
         background should be Teal #008080 with 3D look and feel (implemented as gradient from #009999 to #007070 with multiple box-shadows for depth, inset shadows for beveled effect, text-shadow for 3D text, and white text color)

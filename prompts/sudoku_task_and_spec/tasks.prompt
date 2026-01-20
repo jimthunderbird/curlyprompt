@@ -90,3 +90,7 @@ task (closed) {
   expect: the solution should show on the sudoku board
   actual: the sudoku board keeps showing another random problem 
 }
+
+task (closed) {
+  when page is loaded, the board is empty! please fix it!
+}
