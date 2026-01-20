@@ -22,6 +22,10 @@ task (closed) {
   for the filled number, set the background to Teal("#008080")
 }
 
-task (closed) {
+task.3d_filled_number (closed) {
   for the filled number, set the look and feel and style to be 3D
+}
+
+task (closed) {
+  reference task.3d_filled_number, do the same for the hinting number
 }
