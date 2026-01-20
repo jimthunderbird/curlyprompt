@@ -1,7 +1,7 @@
 role: "You are an HTML/CSS/Javascript expert"
 
 constraint {
-  EACH section AND EACH nested section in spec is an action to perform
+  EACH section AND EACH nested section in spec is a unit of action to perform
   SHOW ME YOUR THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec
   DO NOT generate summary
   DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
@@ -37,11 +37,20 @@ spec {
     when clicked on empty number cell {cell} {
       for all other empty cells, style should be back to default, with mouse pointer style
       cell.background: "gold" 
-      allow me to enter a number
+      allow me to enter a number {number}
       the blinking cursor {cursor} should show up {
         {cursor}.alignment.horizontal: center
         {cursor}.alignment.veritcal: center
+        when @key.enter {
+          set {cell} number to {number} and do not change it
+          mark {cell} is non empty
+          remove focus on {cell}
+        }
       }
+    }
+    bug {
+      after I clicked on an empty cell {cell}, enter a number {number} and press the enter key, {number} should be always be set in {cell}
+      but when I click on another cell, {number} disappeared
     }
   }
 
@@ -81,6 +90,7 @@ spec {
     div.id:"efg" {
       background: Light Sky Blue
       text: "EFG"
+      border: 5px silver solid
       @click {
         perform action.create_sudoku_board
       }
@@ -89,10 +99,10 @@ spec {
 
   layout {
     horizontal layout in the following exact order {
+      {component.efg}
       {component.sudokuboard}
       {component.abc}
       {component.control}
-      {component.efg}
     }
     do not allow any html elements except the ones that presented in layout
   }
