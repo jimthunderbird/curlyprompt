@@ -26,16 +26,21 @@ spec {
   component.sudokuboard {
     div.id:"sudokuboard" {
       perform action.create_sudoku_board
-      the filled number's background should expand and cover the whole number cell
-      the filled number's background should be dark sea green
-      the filled number's width: 50px
-      the filled number's height: 50px
-      the empty number's background: transparent
-      the empty number's width: 50px
-      the empty number's height: 50px
+      for the filled number {
+        background should expand and cover the whole number cell
+        background should be dark sea green
+        width: 50px
+        height: 50px
+      }
+      for the emtpty number {
+        background: transparent
+        width: 50px
+        height: 50px
+      }
     }
+   
     each 3x3 cells should be grouped into "box"
-    for each "box" {box} {
+    for each box {box} {
       if box.number is even {
         box.background: orange
       } else {
@@ -118,6 +123,18 @@ spec {
 
 }
 
-bug {
+task (completed) {
   the sudoku board is empty, no prefilled number, it should have some prefilled number 
+}
+
+task (completed) {
+  each 3x3 cells should be grouped into "box"
+  for each box {box} {
+    if box.number is even {
+      box.background: orange
+    } else {
+      box.background: light yellow
+    }
+  }
+  but for boxes that has even number, orange does not show up, please fix it
 }
