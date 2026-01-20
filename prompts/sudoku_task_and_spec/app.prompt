@@ -1,0 +1,89 @@
+role: "You are an HTML/CSS/Javascript expert"
+
+context {
+  ./app_spec.prompt
+}
+
+constraint {
+  EACH section AND EACH nested section in spec is a unit of action to perform
+  SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
+  DO NOT generate summary
+  DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
+  DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
+  FOR each task {task} in tasks, when task is completed {
+    update ./app_spec.prompt {
+      do not update the status 
+      merge the changes you made into the spec
+    }
+  }
+}
+
+objective {
+  create or update ./index.html in the current directory based on all actions
+  DO NOT search any directores outside the current directory
+}
+
+task (closed) {
+  the sudoku board is empty, no prefilled number, it should have some prefilled number 
+}
+
+task.box_background (closed) {
+  please use the following as the requirement {
+    each 3x3 cells should be grouped into "box"
+    for each box {box} {
+      if box.number is even {
+        box.background: orange
+      } else {
+        box.background: light yellow
+      }
+    }
+  }
+  I am currently seeing filled cell numbers are in dark sea green, that is correct
+  but for the box with odd or even number, the background is not showing up
+}
+
+task (closed) {
+  description {
+    on each page refresh, a new sudoku board should be created
+    but currently on each page refresh, the board sometimes refreshes but sometimes do not
+  }
+  feedback {
+    now looks better, but in some page refreshes, the board still stay the same
+  }
+  feedback {
+    now it is way better, but if i refresh the page really fast, the board sometimes still stay the same
+  }
+}
+
+task (closed) {
+  in the second row of the layout, it should have the following components in order {
+    {component.control} {component.efg} {component.abc} 
+  }
+}
+
+task (closed) {
+  reference task.box_background
+  now, 
+  for the box with odd number {
+    box.background: "orange"  
+  }
+  for the box with even number {
+    box.background: "light yellow"  
+  }
+}
+
+task (closed) {
+  in the second row of the layout, it should have the following components in order {
+   {component.efg} {component.abc} {component.control} 
+  }
+}
+
+task (closed){
+  when clicking on the empty cell, the blinking cursor is showd in the top left of the cell
+  it should show up in the horizontal and vertical center of the cell
+}
+
+task (closed){
+  (done)when clicking on the empty cell, the blinking cursor is too closed to the bottom, move it up so that it will be vertically centered
+  now the empty cell looks bad, it becomes a rectangle, it should be square with width 50px and height 50px
+}
