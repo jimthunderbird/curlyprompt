@@ -1,4 +1,4 @@
 objective {
-  create or update ./index.html in the current directory based on all actions
+  create or update the files in directory ./app/ based on all app_spec.prompt and tasks.prompt
   DO NOT search any directores outside the current directory
 }
