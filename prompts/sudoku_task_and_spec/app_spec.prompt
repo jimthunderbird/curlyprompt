@@ -59,7 +59,7 @@ spec {
       style {
         width: 200px
         height: 50px
-        background: Brown
+        background: OliveDrab
       }
       @click {
         perform action.create_sudoku_board
@@ -76,7 +76,7 @@ spec {
       style {
         width: 200px
         height: 50px
-        background: Brown
+        background: OliveDrab
       }
       @click {
         solve the sudoku problem and fill in all the missing numbers in the board (implemented with solveSudoku function using backtracking algorithm)
@@ -93,7 +93,7 @@ spec {
       style {
         width: 200px
         height: 50px
-        background: Brown
+        background: OliveDrab
       }
       @click {
         give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with LightSalmon background and pulsing animation for 3 seconds)
