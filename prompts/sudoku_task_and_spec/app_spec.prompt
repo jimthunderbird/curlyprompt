@@ -64,7 +64,7 @@ spec {
         perform action.create_sudoku_board
       }
       @hover {
-        background: dark sea green
+        background: DodgerBlue (implemented as #control:hover with background: DodgerBlue)
       }
     }
   }
