@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="board-row" style="display: flex; gap: 20px; align-items: flex-start;">
+    <div id="board-row" style="display: flex; gap: 20px; align-items: flex-start; justify-content: center;">
       <SudokuBoard ref="sudokuBoard" />
       <LevelSelection @difficulty-changed="handleDifficultyChange" />
     </div>

@@ -22,3 +22,10 @@ task (closed) {
 
   RESOLUTION: Modified sudokuboard.vue template to use nested v-for loops creating 3 rows with 3 boxes each. Each row uses display: flex to properly arrange boxes horizontally, and rows stack vertically to form a 3x3 grid layout.
 }
+
+task (closed) {
+  1.the sudoku board should align in the center
+  2.the cells are way "off" with different "spacing gap", fix it and make it look like a perfect sodoku obard!
+
+  RESOLUTION: Added justify-content: center to board-row layout for horizontal centering. Changed box layout from inline-block to CSS grid (3x3) for perfect cell alignment. Removed cell borders to eliminate spacing gaps between cells, creating a clean sudoku board appearance.
+}

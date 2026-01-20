@@ -15,7 +15,7 @@ spec {
     div.id:"sudokuboard" {
       border: 5px silver solid
       perform action.create_sudoku_board (createSudokuBoard() called on component mounted lifecycle hook in Vue.js, generates board with filled/empty cells based on current difficulty level)
-      layout: 3x3 grid of boxes (template uses nested v-for loops: outer loop for 3 rows, inner loop for 3 columns per row, creating proper 3x3 grid with display: flex for row containers)
+      layout: 3x3 grid of boxes (template uses nested v-for loops: outer loop for 3 rows, inner loop for 3 columns per row, creating proper 3x3 grid with display: flex for row containers, each box uses CSS grid with 3x3 layout for perfect cell alignment)
       for the filled number {
         background should expand and cover the whole number cell
         background should be Teal #008080 with 3D look and feel (implemented as gradient from #009999 to #007070 with multiple box-shadows for depth, inset shadows for beveled effect, text-shadow for 3D text, and white text color)
@@ -26,7 +26,7 @@ spec {
         background: transparent
         width: 50px
         height: 50px
-        cells maintain square shape (box-sizing: border-box ensures 50px × 50px)
+        cells maintain square shape (box-sizing: border-box ensures 50px × 50px, no borders between cells for perfect alignment)
       }
     }
 
@@ -180,6 +180,7 @@ spec {
       display: flex
       gap: 20px
       align-items: flex-start
+      justify-content: center (centers the board and level selection horizontally)
     }
     row {
       {component.control} {component.hint} {component.solve} (order implemented: control, hint, and solve buttons side by side)

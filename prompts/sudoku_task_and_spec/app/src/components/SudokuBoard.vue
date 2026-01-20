@@ -1,11 +1,12 @@
 <template>
-  <div id="sudokuboard" style="border: 5px silver solid; display: inline-block;">
+  <div id="sudokuboard" style="border: 5px silver solid;">
     <div v-for="rowIndex in 3" :key="rowIndex" style="display: flex;">
       <div v-for="colIndex in 3" :key="colIndex"
            :style="{
-             display: 'inline-block',
-             background: ((rowIndex - 1) * 3 + (colIndex - 1)) % 2 === 1 ? 'lightyellow' : 'orange',
-             width: '150px'
+             display: 'grid',
+             gridTemplateColumns: 'repeat(3, 50px)',
+             gridTemplateRows: 'repeat(3, 50px)',
+             background: ((rowIndex - 1) * 3 + (colIndex - 1)) % 2 === 1 ? 'lightyellow' : 'orange'
            }">
         <div v-for="(cell, cellIndex) in boxes[(rowIndex - 1) * 3 + (colIndex - 1)]" :key="cellIndex"
              :contenteditable="!cell.filled && !cell.isHint"
@@ -214,11 +215,11 @@ export default {
       const baseStyle = {
         width: '50px',
         height: '50px',
-        display: 'inline-flex',
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         boxSizing: 'border-box',
-        border: '1px solid #ccc',
+        border: 'none',
         fontSize: '20px',
         fontWeight: 'bold',
         cursor: cell.filled ? 'default' : 'pointer',
