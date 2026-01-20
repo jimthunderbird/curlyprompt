@@ -96,7 +96,7 @@ spec {
         background: OliveDrab
       }
       @click {
-        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with LightSalmon background and pulsing animation for 3 seconds)
+        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with LightSalmon background and pulsing animation for 5 seconds)
       }
       @hover {
         background: DodgerBlue (implemented as #hint:hover with background: DodgerBlue)

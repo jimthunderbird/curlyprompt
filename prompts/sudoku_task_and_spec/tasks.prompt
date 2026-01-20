@@ -1,0 +1,19 @@
+task (closed) {
+  make the background of "Brand New Game","Hint" and "Solve this puzzle" to "OliveDrab"  
+}
+
+task (closed) {
+  when creating a new board, it should very a difficult level problem
+}
+
+task (closed) {
+  when creating a new board, it should very a very difficult level problem
+}
+
+task (closed) {
+  when creating a new board, it should be an extremely difficult level problem
+}
+
+task (closed) {
+  for the hinting anaimation, make it last for 5 seconds
+}
