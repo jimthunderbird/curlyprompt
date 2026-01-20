@@ -1,20 +1,21 @@
 <template>
   <div id="sudokuboard" style="border: 5px silver solid; display: inline-block;">
-    <div v-for="(box, boxIndex) in boxes" :key="boxIndex" 
-         :style="{
-           display: 'inline-block',
-           background: boxIndex % 2 === 1 ? 'lightyellow' : 'orange',
-           width: '150px',
-           verticalAlign: 'top'
-         }">
-      <div v-for="(cell, cellIndex) in box" :key="cellIndex"
-           :contenteditable="!cell.filled && !cell.isHint"
-           @click="handleCellClick(boxIndex, cellIndex)"
-           @keydown.enter.prevent="handleEnter($event, boxIndex, cellIndex)"
-           :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected }]"
-           :style="getCellStyle(cell)"
-           @input="handleInput($event, boxIndex, cellIndex)">
-        {{ cell.value || '' }}
+    <div v-for="rowIndex in 3" :key="rowIndex" style="display: flex;">
+      <div v-for="colIndex in 3" :key="colIndex"
+           :style="{
+             display: 'inline-block',
+             background: ((rowIndex - 1) * 3 + (colIndex - 1)) % 2 === 1 ? 'lightyellow' : 'orange',
+             width: '150px'
+           }">
+        <div v-for="(cell, cellIndex) in boxes[(rowIndex - 1) * 3 + (colIndex - 1)]" :key="cellIndex"
+             :contenteditable="!cell.filled && !cell.isHint"
+             @click="handleCellClick((rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
+             @keydown.enter.prevent="handleEnter($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
+             :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected }]"
+             :style="getCellStyle(cell)"
+             @input="handleInput($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)">
+          {{ cell.value || '' }}
+        </div>
       </div>
     </div>
   </div>

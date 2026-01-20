@@ -1,97 +1,4 @@
 task (closed) {
-  make the background of "Brand New Game","Hint" and "Solve this puzzle" to "OliveDrab"  
-}
-
-task (closed) {
-  when creating a new board, it should very a difficult level problem
-}
-
-task (closed) {
-  when creating a new board, it should very a very difficult level problem
-}
-
-task (closed) {
-  when creating a new board, it should be an extremely difficult level problem
-}
-
-task (closed) {
-  for the hinting anaimation, make it last for 5 seconds
-}
-
-task (closed) {
-  for the filled number, set the background to Teal("#008080")
-}
-
-task.3d_filled_number (closed) {
-  for the filled number, set the look and feel and style to be 3D
-}
-
-task (closed) {
-  reference task.3d_filled_number, do the same for the hinting number
-}
-
-task (closed) {
-  make the hinting number hightlighting color to "Tomato"
-}
-
-task (closed) {
-  once the hinting number highlighting animation is done, change the hinting cell's background to the same as the filled number
-}
-
-task (closed) {
-  create a new component 
-  component.LevelSelection {
-    allow me to choose the following option {option} from a dropdown:
-    - Easy
-    - Medium
-    - Hard
-    - Super Hard
-
-    once the {option} is selected {
-      update the sudoku board based on the option's difficulty level
-    }
-  }
-  layout: put it on the right side of the sudoku board
-}
-
-task (closed) {
-  component.LevelSelection.title should be "Pick a Difficulty Level"
-}
-
-task (closed) {
-  the select element id of component.LevelSelection should be "level-selection"
-}
-
-task (closed) {
-  for component.LevelSelection, remove div.id:"level-selection"
-}
-
-task (closed) {
-  for component.LevelSelection, after a difficulty level has been selected, the sudoku board update has a "delay" feeling, please make optimization to speed up the board update
-}
-
-task (closed) {
-  currenly, if i click on an empty cell and enter a number, if that number is an invalid number, for example, in each "box", i have 2 number 9, then i hit component.solve, the page response time is very very slow, please fix it
-}
-
-task.solve_board_no_matter_what (closed) {
-  please make it so that: when hitting component.solve, even though the board is invalid, still update the board with a valid solution
-}
-
-task (closed) {
-  if the board contains invalid numbers and the component.solve is clcked, the page response time is really slow, please fix that
-  also, we need to fulfill task.solve_board_no_matter_what
-}
-
-task (closed) {
-  there is a bug if i do the following:
-  1. click on the dropdown in "Pick a Difficulty Level" with a new difficulty
-  2. click "Solve this puzzle" button
-  expect: the solution should show on the sudoku board
-  actual: the sudoku board keeps showing another random problem 
-}
-
-task (closed) {
   when page is loaded, the board is still empty! please fix it!
 
   we should do the following:
@@ -107,4 +14,11 @@ task (closed) {
 
 task (closed) {
   create a README.md file to describe how do i run this vue js app
+}
+
+task (closed) {
+  when page is loaded, the sudoku board is "flat", all boxes are align horizontally, this is incorrect
+  the boxes should be 3 by 3 and form a square
+
+  RESOLUTION: Modified sudokuboard.vue template to use nested v-for loops creating 3 rows with 3 boxes each. Each row uses display: flex to properly arrange boxes horizontally, and rows stack vertically to form a 3x3 grid layout.
 }
