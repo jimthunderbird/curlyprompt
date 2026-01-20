@@ -88,7 +88,7 @@ spec {
   }
 
   component.LevelSelection {
-    div.id:"level-selection" {
+    div.class:"level-selection-container" {
       label {
         text: "Pick a Difficulty Level"
         style {

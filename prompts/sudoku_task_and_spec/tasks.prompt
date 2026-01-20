@@ -61,3 +61,7 @@ task (closed) {
 task (closed) {
   the select element id of component.LevelSelection should be "level-selection"
 }
+
+task (closed) {
+  for component.LevelSelection, remove div.id:"level-selection"
+}
