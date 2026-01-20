@@ -3,5 +3,10 @@ context {
   ./objective.prompt
   ./constraint.prompt
   ./app_spec.prompt
+}
+
+perform the following tasks 
+
+context {
   ./tasks.prompt
 }

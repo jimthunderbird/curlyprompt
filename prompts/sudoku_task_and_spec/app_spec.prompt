@@ -87,6 +87,44 @@ spec {
     }
   }
 
+  component.LevelSelection {
+    div.id:"levelSelection" {
+      label {
+        text: "Difficulty:"
+        style {
+          font-weight: bold
+          font-size: 16px
+        }
+      }
+      select.id:"difficultyLevel" {
+        options {
+          "Easy" (value: "easy", removes 36-45 cells)
+          "Medium" (value: "medium", removes 46-54 cells)
+          "Hard" (value: "hard", removes 55-64 cells)
+          "Super Hard" (value: "superhard", removes 65-74 cells, selected by default)
+        }
+        style {
+          width: 150px
+          height: 40px
+          font: Courier New (monospace)
+          font-size: 16px
+          background: white
+          border: 2px silver solid
+          cursor: pointer
+          padding: 5px
+        }
+        @change {
+          update currentDifficulty variable and regenerate board with new difficulty level using getDifficultyRange function
+        }
+      }
+      style {
+        display: flex
+        flex-direction: column
+        gap: 10px
+      }
+    }
+  }
+
   component.hint {
     button.id:"hint" {
       text: "Hint"
@@ -131,11 +169,12 @@ spec {
   }
 
   layout {
-    row {
-      {component.sudokuboard}
+    row.id:"board-row" {
+      {component.sudokuboard} {component.LevelSelection}
     }.style {
-      do not expand to full page width
-      make components align center
+      display: flex
+      gap: 20px
+      align-items: flex-start
     }
     row {
       {component.control} {component.hint} {component.solve} (order implemented: control, hint, and solve buttons side by side)

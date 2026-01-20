@@ -19,6 +19,34 @@
             gap: 20px;
         }
         
+        #board-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        #levelSelection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        #levelSelection label {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        #levelSelection select {
+            width: 150px;
+            height: 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            background: white;
+            border: 2px solid silver;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
         #sudokuboard {
             display: grid;
             grid-template-columns: repeat(9, 50px);
@@ -176,7 +204,18 @@
 </head>
 <body>
     <div id="container">
-        <div id="sudokuboard"></div>
+        <div id="board-row">
+            <div id="sudokuboard"></div>
+            <div id="levelSelection">
+                <label for="difficultyLevel">Difficulty:</label>
+                <select id="difficultyLevel">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="superhard" selected>Super Hard</option>
+                </select>
+            </div>
+        </div>
         <div id="controls">
             <button id="control">Brand New Game</button>
             <button id="hint">Hint</button>
@@ -187,6 +226,21 @@
     <script>
         let selectedCell = null;
         let currentBoard = null;
+        let currentDifficulty = 'superhard';
+        
+        function getDifficultyRange(difficulty) {
+            switch(difficulty) {
+                case 'easy':
+                    return { min: 36, max: 45 }; // 36-45 cells removed
+                case 'medium':
+                    return { min: 46, max: 54 }; // 46-54 cells removed
+                case 'hard':
+                    return { min: 55, max: 64 }; // 55-64 cells removed
+                case 'superhard':
+                default:
+                    return { min: 65, max: 74 }; // 65-74 cells removed (extremely difficult)
+            }
+        }
         
         function getBoxNumber(row, col) {
             const boxRow = Math.floor(row / 3);
@@ -240,7 +294,8 @@
             
             fillBoard(board);
             
-            const cellsToRemove = 65 + Math.floor(Math.random() * 10);
+            const range = getDifficultyRange(currentDifficulty);
+            const cellsToRemove = range.min + Math.floor(Math.random() * (range.max - range.min + 1));
             let removed = 0;
             while (removed < cellsToRemove) {
                 const row = Math.floor(Math.random() * 9);
@@ -463,6 +518,11 @@
             if (event.persisted) {
                 renderBoard();
             }
+        });
+        
+        document.getElementById('difficultyLevel').addEventListener('change', function(e) {
+            currentDifficulty = e.target.value;
+            renderBoard();
         });
     </script>
 </body>

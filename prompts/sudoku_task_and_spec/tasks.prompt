@@ -37,3 +37,19 @@ task (closed) {
 task (closed) {
   once the hinting number highlighting animation is done, change the hinting cell's background to the same as the filled number
 }
+
+task (closed) {
+  create a new component 
+  component.LevelSelection {
+    allow me to choose the following option {option} from a dropdown:
+    - Easy
+    - Medium
+    - Hard
+    - Super Hard
+
+    once the {option} is selected {
+      update the sudoku board based on the option's difficulty level
+    }
+  }
+  layout: put it on the right side of the sudoku board
+}
