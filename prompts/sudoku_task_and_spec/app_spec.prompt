@@ -90,7 +90,7 @@ spec {
   component.LevelSelection {
     div.id:"levelSelection" {
       label {
-        text: "Difficulty:"
+        text: "Pick a Difficulty Level"
         style {
           font-weight: bold
           font-size: 16px

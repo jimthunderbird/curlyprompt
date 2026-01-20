@@ -53,3 +53,7 @@ task (closed) {
   }
   layout: put it on the right side of the sudoku board
 }
+
+task (closed) {
+  component.LevelSelection.title should be "Pick a Difficulty Level"
+}
