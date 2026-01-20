@@ -35,3 +35,7 @@ task (closed) {
 task (closed) {
   when creating a new board, it should very a difficult level problem
 }
+
+task (closed) {
+  when creating a new board, it should very a very difficult level problem
+}
