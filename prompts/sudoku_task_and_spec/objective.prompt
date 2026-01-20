@@ -1,9 +1,12 @@
 objective {
   create or update the files in directory ./app/ based on all app_spec.prompt and tasks.prompt
-  
+ 
+  this is a vue.js version 3 application
   application structure {
-    index.html -- the main html file
-    components/{component_name}.js -- map to spec.html.component.{component_name} in app_spec.prompt, one file per component
+    ./app/public -- the public directory 
+    ./app/public/index.html -- the main html file
+    ./app/src/components/{component_name}.vue -- map to spec.html.component.{component_name} in app_spec.prompt, one file per component
+    ./app/package.json -- the javascript package file
   }
   
   DO NOT search any directores outside the current directory

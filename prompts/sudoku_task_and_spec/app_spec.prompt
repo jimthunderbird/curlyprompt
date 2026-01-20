@@ -7,12 +7,13 @@ spec {
       background: wheat
       font: Courier New (monospace)
     }
+    implementation: Vue.js 3 application with proper component structure (App.vue as root, components in src/components/, index.html in public/, main.js as entry point)
   }
 
   component.sudokuboard {
     div.id:"sudokuboard" {
       border: 5px silver solid
-      perform action.create_sudoku_board (createSudokuBoard() called on page load with DOM readiness check to ensure board element exists, generates board with filled/empty cells)
+      perform action.create_sudoku_board (createSudokuBoard() called on component mounted lifecycle hook in Vue.js, generates board with filled/empty cells based on current difficulty level)
       for the filled number {
         background should expand and cover the whole number cell
         background should be Teal #008080 with 3D look and feel (implemented as gradient from #009999 to #007070 with multiple box-shadows for depth, inset shadows for beveled effect, text-shadow for 3D text, and white text color)

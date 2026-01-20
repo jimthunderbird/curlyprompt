@@ -91,7 +91,7 @@ task (closed) {
   actual: the sudoku board keeps showing another random problem 
 }
 
-task (reopen) {
+task (closed) {
   when page is loaded, the board is still empty! please fix it!
 
   we should do the following:
@@ -101,4 +101,6 @@ task (reopen) {
   Uncaught SyntaxError: Unexpected token '<' (at sudokuboard.js:1:1)
   Uncaught SyntaxError: Unexpected token '<' (at control.js:1:1)
   ...
+
+  RESOLUTION: Created proper Vue.js 3 application structure with all components as .vue files instead of .js files. Board now generates on mount with extremely difficult level by default. All JavaScript errors resolved.
 }
