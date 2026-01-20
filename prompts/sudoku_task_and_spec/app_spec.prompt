@@ -80,7 +80,7 @@ spec {
       }
       @click {
         solve the sudoku problem and fill in all the missing numbers in the board (implemented with solveSudoku function using backtracking algorithm)
-        solves even if board has invalid state (generates new valid solution if current board cannot be solved)
+        solves even if board has invalid state (validates board first with isBoardValid, generates new valid solution immediately if invalid or unsolvable)
       }
       @hover {
         background: DodgerBlue (implemented as #solve:hover with background: DodgerBlue)

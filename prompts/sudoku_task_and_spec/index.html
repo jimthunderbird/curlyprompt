@@ -376,7 +376,11 @@
 
         document.getElementById('solve').addEventListener('click', () => {
             const boardCopy = currentBoard.map(row => [...row]);
-            if (!solveSudoku(boardCopy)) {
+            if (!isBoardValid(boardCopy)) {
+                const emptyBoard = Array(9).fill(0).map(() => Array(9).fill(0));
+                fillBoard(emptyBoard);
+                currentBoard = emptyBoard;
+            } else if (!solveSudoku(boardCopy)) {
                 const emptyBoard = Array(9).fill(0).map(() => Array(9).fill(0));
                 fillBoard(emptyBoard);
                 currentBoard = emptyBoard;
