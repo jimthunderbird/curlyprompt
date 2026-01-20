@@ -422,9 +422,11 @@
                 cell.textContent = hintValue;
                 cell.classList.add('hint-cell');
                 
-                // Remove hint highlighting after animation
+                // Remove hint highlighting after animation and apply filled cell styling
                 setTimeout(() => {
                     cell.classList.remove('hint-cell');
+                    cell.classList.add('filled');
+                    cell.contentEditable = false;
                 }, 5000);
             }
         });

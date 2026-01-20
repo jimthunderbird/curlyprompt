@@ -33,3 +33,7 @@ task (closed) {
 task (closed) {
   make the hinting number hightlighting color to "Tomato"
 }
+
+task (closed) {
+  once the hinting number highlighting animation is done, change the hinting cell's background to the same as the filled number
+}

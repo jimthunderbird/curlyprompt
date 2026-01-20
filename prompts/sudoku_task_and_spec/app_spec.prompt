@@ -96,7 +96,7 @@ spec {
         background: OliveDrab
       }
       @click {
-        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with Tomato background, box-shadows for depth effect, inset shadows for bevel, text-shadow for 3D text, white text color, and pulsing animation for 5 seconds)
+        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with Tomato background, box-shadows for depth effect, inset shadows for bevel, text-shadow for 3D text, white text color, and pulsing animation for 5 seconds, then applies filled cell styling with Teal 3D background after animation completes)
       }
       @hover {
         background: DodgerBlue (implemented as #hint:hover with background: DodgerBlue)
