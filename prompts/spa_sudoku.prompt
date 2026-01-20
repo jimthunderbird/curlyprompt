@@ -2,7 +2,7 @@ role: "You are an HTML/CSS/Javascript expert"
 
 constraint {
   EACH section AND EACH nested section in spec is a unit of action to perform
-  SHOW ME YOUR THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
+  SHOW ME YOUR PLANNING AND THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
   DO NOT generate summary
   DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
   DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
@@ -12,7 +12,7 @@ objective {
   update ./index.html based on all actions
 }
 
-action.create_sudoku_board = generate a random difficult level sudoku board, with some filled numbers and some unfilled numbers according to the difficult level
+action.create_sudoku_board = generate a random difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level
 
 spec {
   html {
@@ -56,10 +56,7 @@ spec {
         }
       }
     }
-    bug {
-      after I clicked on an empty cell {cell}, enter a number {number} and press the enter key, {number} should be always be set in {cell}
-      but when I click on another cell, {number} disappeared
-    }
+
   }
 
   component.control {
@@ -91,7 +88,7 @@ spec {
         perform action.create_sudoku_board
       }
     }
-    bug: sometimes when click on div.id "abc", the sudoku board is not refreshed with a new game, i need to click a couple more time for it to do so
+
   }
 
   component.efg {
@@ -106,12 +103,21 @@ spec {
   }
 
   layout {
-    horizontal layout in the following exact order {
+    row {
       {component.sudokuboard}
-      {component.abc}
-      {component.control}
-      {component.efg}
+    }.style {
+      do not expand to full page width
+      make components align center
     }
-    do not allow any html elements except the ones that presented in layout
+    row {
+      {component.abc} {component.control} {component.efg} 
+    }.style {
+      make components align center
+    }
   }
+
+}
+
+bug {
+  the sudoku board is empty, no prefilled number, it should have some prefilled number 
 }
