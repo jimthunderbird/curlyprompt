@@ -57,3 +57,7 @@ task (closed) {
 task (closed) {
   component.LevelSelection.title should be "Pick a Difficulty Level"
 }
+
+task (closed) {
+  the html element id of component.LevelSelection should be "level-selection"
+}
