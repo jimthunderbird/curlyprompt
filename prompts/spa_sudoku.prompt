@@ -12,7 +12,7 @@ objective {
   update ./index.html based on all actions
 }
 
-action.create_sudoku_board = generate a random difficult level sudoku board, with unfilled numbers
+action.create_sudoku_board = generate a random difficult level sudoku board, with some filled numbers and some unfilled numbers according to the difficult level
 
 spec {
   html {
@@ -107,10 +107,10 @@ spec {
 
   layout {
     horizontal layout in the following exact order {
+      {component.sudokuboard}
       {component.abc}
       {component.control}
       {component.efg}
-      {component.sudokuboard}
     }
     do not allow any html elements except the ones that presented in layout
   }
