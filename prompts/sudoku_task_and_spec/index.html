@@ -92,6 +92,22 @@
             background: DodgerBlue;
         }
         
+        #solve {
+            width: 200px;
+            height: 50px;
+            background: Brown;
+            color: white;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        #solve:hover {
+            background: DodgerBlue;
+        }
+        
         #abc {
             width: 80px;
             height: 40px;
@@ -117,11 +133,13 @@
         <div id="sudokuboard"></div>
         <div id="controls">
             <button id="control">Brand New Game</button>
+            <button id="solve">Solve this puzzle</button>
         </div>
     </div>
 
     <script>
         let selectedCell = null;
+        let currentBoard = null;
         
         function getBoxNumber(row, col) {
             const boxRow = Math.floor(row / 3);
@@ -189,11 +207,73 @@
             return board;
         }
         
+        function solveSudoku(board) {
+            function isValid(board, row, col, num) {
+                for (let x = 0; x < 9; x++) {
+                    if (board[row][x] === num || board[x][col] === num) {
+                        return false;
+                    }
+                }
+                
+                const startRow = row - row % 3;
+                const startCol = col - col % 3;
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[i + startRow][j + startCol] === num) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            function solve(board) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (board[row][col] === 0) {
+                            for (let num = 1; num <= 9; num++) {
+                                if (isValid(board, row, col, num)) {
+                                    board[row][col] = num;
+                                    if (solve(board)) {
+                                        return true;
+                                    }
+                                    board[row][col] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            
+            solve(board);
+            return board;
+        }
+        
+        function getCurrentBoardState() {
+            const board = Array(9).fill(null).map(() => Array(9).fill(0));
+            const cells = document.querySelectorAll('.cell');
+            
+            cells.forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                const value = cell.textContent.trim();
+                if (value && value >= '1' && value <= '9') {
+                    board[row][col] = parseInt(value);
+                }
+            });
+            
+            return board;
+        }
+        
         function renderBoard() {
             const boardElement = document.getElementById('sudokuboard');
             boardElement.innerHTML = '';
             
             const board = generateSudoku();
+            currentBoard = board;
             
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
@@ -264,6 +344,30 @@
         }
         
         document.getElementById('control').addEventListener('click', renderBoard);
+        
+        document.getElementById('solve').addEventListener('click', function() {
+            const board = getCurrentBoardState();
+            solveSudoku(board);
+            
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+                const value = board[row][col];
+                
+                if (!cell.classList.contains('filled')) {
+                    cell.textContent = value;
+                    cell.classList.add('filled');
+                    cell.contentEditable = false;
+                    cell.classList.remove('selected');
+                }
+            });
+            
+            if (selectedCell) {
+                selectedCell.classList.remove('selected');
+                selectedCell = null;
+            }
+        });
         
         window.addEventListener('load', () => {
             renderBoard();

@@ -70,6 +70,23 @@ spec {
     }
   }
 
+  component.solve {
+    button.id:"solve" {
+      text: "Solve this puzzle"
+      style {
+        width: 200px
+        height: 50px
+        background: Brown
+      }
+      @click {
+        solve the sudoku problem and fill in all the missing numbers in the board (implemented with solveSudoku function using backtracking algorithm)
+      }
+      @hover {
+        background: DodgerBlue (implemented as #solve:hover with background: DodgerBlue)
+      }
+    }
+  }
+
   component.abc {
     div.id:"abc" {
       text: "ABC"
@@ -104,7 +121,7 @@ spec {
       make components align center
     }
     row {
-      {component.control} (order implemented: control only as per line 119 in HTML)
+      {component.control} {component.solve} (order implemented: control and solve buttons side by side)
     }.style {
       make components align center
     }

@@ -118,3 +118,15 @@ task (closed) {
 task (closed) {
   critical, now the sudoku board is empty, fix it!
 }
+
+task (closed) {
+  add the following component:
+  component.solve {
+    text: "Solve this puzzle"
+    @click {
+      solve the sudoku problem and by filling in all the missing numbers in the board
+    }
+  }
+
+  add it next to "Brand New Game"
+}
