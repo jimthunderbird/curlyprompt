@@ -330,6 +330,23 @@
             }
         }
 
+        function isBoardValid(board) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (board[row][col] !== 0) {
+                        const num = board[row][col];
+                        board[row][col] = 0;
+                        if (!isValid(board, row, col, num)) {
+                            board[row][col] = num;
+                            return false;
+                        }
+                        board[row][col] = num;
+                    }
+                }
+            }
+            return true;
+        }
+
         function solveSudoku(board) {
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
@@ -359,9 +376,15 @@
 
         document.getElementById('solve').addEventListener('click', () => {
             const boardCopy = currentBoard.map(row => [...row]);
+            if (!isBoardValid(boardCopy)) {
+                alert('Invalid board! Please check for duplicate numbers in rows, columns, or boxes.');
+                return;
+            }
             if (solveSudoku(boardCopy)) {
                 currentBoard = boardCopy;
                 renderBoard();
+            } else {
+                alert('No solution found for this puzzle.');
             }
         });
 

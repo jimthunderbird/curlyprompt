@@ -69,3 +69,7 @@ task (closed) {
 task (closed) {
   for component.LevelSelection, after a difficulty level has been selected, the sudoku board update has a "delay" feeling, please make optimization to speed up the board update
 }
+
+task (closed) {
+  currenly, if i click on an empty cell and enter a number, if that number is an invalid number, for example, in each "box", i have 2 number 9, then i hit component.solve, the page response time is very very slow, please fix it
+}
