@@ -15,8 +15,11 @@ constraint {
       do not update the status 
       merge the changes you made into the spec
     }
-    in the current document, mark the latest task to task (closed)
-    create a git commit with the brief message describing the changes, less than 20 words
+    in the app.prompt, mark the latest task to task (closed)
+    create a git commit {
+      only add app.prompt,app_spec.prompt and index.html
+      with the brief message describing the changes, less than 20 words
+    }
   }
 }
 
@@ -96,8 +99,12 @@ task (closed){
   } 
 }
 
-task {
+task (closed){
   in the second row of the layout, it should have the following components in order {
     {component.control} {component.efg} {component.abc} 
   }
+}
+
+task (closed) {
+  for the sudokuboard, add a 5px silver solid border
 }

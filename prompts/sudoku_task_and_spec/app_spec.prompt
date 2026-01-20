@@ -11,6 +11,7 @@ spec {
 
   component.sudokuboard {
     div.id:"sudokuboard" {
+      border: 5px silver solid
       perform action.create_sudoku_board
       for the filled number {
         background should expand and cover the whole number cell
