@@ -104,3 +104,7 @@ task (closed) {
 
   RESOLUTION: Created proper Vue.js 3 application structure with all components as .vue files instead of .js files. Board now generates on mount with extremely difficult level by default. All JavaScript errors resolved.
 }
+
+task (closed) {
+  create a README.md file to describe how do i run this vue js app
+}
