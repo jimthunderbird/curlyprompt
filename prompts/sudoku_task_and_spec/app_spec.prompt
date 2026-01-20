@@ -1,5 +1,5 @@
 spec {
-  let action.create_sudoku_board = generate a random difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level
+  let action.create_sudoku_board = generate a random very difficult level sudoku board, must have some filled number cells and some unfilled number cells according to the difficult level (55-64 cells removed for very difficult level)
 
   html {
     title: "Super Simple Sudoku version 3"
