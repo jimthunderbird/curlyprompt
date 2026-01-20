@@ -21,3 +21,7 @@ task (closed) {
 task (closed) {
   for the filled number, set the background to Teal("#008080")
 }
+
+task (closed) {
+  for the filled number, set the look and feel and style to be 3D
+}
