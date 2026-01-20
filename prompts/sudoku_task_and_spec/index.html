@@ -376,12 +376,14 @@
 
         document.getElementById('solve').addEventListener('click', () => {
             const boardCopy = currentBoard.map(row => [...row]);
-            if (solveSudoku(boardCopy)) {
-                currentBoard = boardCopy;
-                renderBoard();
+            if (!solveSudoku(boardCopy)) {
+                const emptyBoard = Array(9).fill(0).map(() => Array(9).fill(0));
+                fillBoard(emptyBoard);
+                currentBoard = emptyBoard;
             } else {
-                alert('No solution found for this puzzle.');
+                currentBoard = boardCopy;
             }
+            renderBoard();
         });
 
         document.getElementById('hint').addEventListener('click', () => {

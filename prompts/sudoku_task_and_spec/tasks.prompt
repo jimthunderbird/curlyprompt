@@ -75,5 +75,5 @@ task (closed) {
 }
 
 task (closed) {
-  please make it so that: when hitting component.solve, even though the board is invalid, still update the board with the solution
+  please make it so that: when hitting component.solve, even though the board is invalid, still update the board with a valid solution
 }
