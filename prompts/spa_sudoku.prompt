@@ -2,7 +2,7 @@ role: "You are an HTML/CSS/Javascript expert"
 
 constraint {
   EACH section AND EACH nested section in spec is a unit of action to perform
-  SHOW ME YOUR THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec
+  SHOW ME YOUR THOUGHT PROCESS WITH LIST OF ITEMS TO CHECK ACCORDING TO spec, Completed Item should have green checkmark, InCompleted Item should have a red cross next to it
   DO NOT generate summary
   DO NOT SHOW ME THE FILE EDITING DETAILS AND CODE DIFFERENCE
   DO NOT CREATE ANYTHING UNDER /tmp/ DIRECTORY
@@ -99,10 +99,10 @@ spec {
 
   layout {
     horizontal layout in the following exact order {
-      {component.efg}
-      {component.sudokuboard}
       {component.abc}
       {component.control}
+      {component.efg}
+      {component.sudokuboard}
     }
     do not allow any html elements except the ones that presented in layout
   }
