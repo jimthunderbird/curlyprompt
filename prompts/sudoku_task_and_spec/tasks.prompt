@@ -29,3 +29,7 @@ task.3d_filled_number (closed) {
 task (closed) {
   reference task.3d_filled_number, do the same for the hinting number
 }
+
+task (closed) {
+  make the hinting number hightlighting color to "Tomato"
+}
