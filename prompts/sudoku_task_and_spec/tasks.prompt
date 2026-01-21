@@ -79,3 +79,10 @@ task (closed) {
   
   RESOLUTION: Fixed hint animation by using CSS class .animating-hint with !important flag to override inline styles. Removed animation property from inline getCellStyle() method and applied colorFade animation through CSS class instead. The Tomato background now properly displays and pulses during the 5-second hint animation.
 }
+
+task (closed) {
+  now the animation on hinting is working as expected
+  please change the pulse interval from every second to every 1.8 second
+  
+  RESOLUTION: Changed colorFade animation duration from 1s to 1.8s in SudokuBoard.vue .animating-hint CSS class. The hint animation now pulses every 1.8 seconds.
+}
