@@ -22,7 +22,7 @@ export default {
   border: 2px outset #6B8E23;
   cursor: pointer;
   font-family: 'Courier New', monospace;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: 1px;
   box-shadow: 
