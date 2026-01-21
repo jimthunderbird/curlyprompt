@@ -10,8 +10,9 @@ constraint {
       merge the changes you made into the spec
     }
     in task.prompt, mark the latest task to closed
+    let files = use "git status" cli command to find all the files that are created or changed in the current directory and all of its subdirectories
     create a git commit {
-      find all files that are changed in the current directory and all of its subdirectories
+      add all {files}
       with the brief message describing the changes, less than 20 words
     }
   }

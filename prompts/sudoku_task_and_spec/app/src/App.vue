@@ -48,7 +48,7 @@ export default {
 
 <style>
 body {
-  background: SeaShell;
+  background: wheat;
   font-family: 'Garamond', serif;
   margin: 20px;
 }
