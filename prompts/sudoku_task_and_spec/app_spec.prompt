@@ -118,9 +118,10 @@ spec {
           font: Courier New (monospace)
           font-size: 16px
           background: white
-          border: 2px silver solid
+          border: 2px outset silver
           cursor: pointer
           padding: 5px
+          3D effect: implemented with outset border, inset/outset box-shadows for depth and beveled edges, text-shadow for raised text, and active state with inset border for pressed effect
         }
         @change {
           update currentDifficulty variable and regenerate board with new difficulty level using getDifficultyRange function

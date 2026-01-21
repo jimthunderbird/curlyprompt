@@ -39,8 +39,20 @@ export default {
   font-family: 'Courier New', monospace;
   font-size: 16px;
   background: white;
-  border: 2px silver solid;
+  border: 2px outset silver;
   cursor: pointer;
   padding: 5px;
+  box-shadow: 
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+    2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+#level-selection:active {
+  border: 2px inset silver;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
 }
 </style>

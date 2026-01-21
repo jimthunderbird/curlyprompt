@@ -98,3 +98,9 @@ task (closed) {
   
   RESOLUTION: Added 3D styling to all three buttons (Control, Hint, and Solve) using outset borders, inset and outset box-shadows for depth and beveled edges, text-shadow for raised text appearance, and active state with inset border for pressed effect when clicked.
 }
+
+task (closed) {
+  make 3D looks on component.LevelSelection
+  
+  RESOLUTION: Added 3D styling to LevelSelection dropdown with outset border, inset and outset box-shadows for depth and beveled edges, text-shadow for raised text appearance, and active state with inset border for pressed effect when interacting with the dropdown.
+}
