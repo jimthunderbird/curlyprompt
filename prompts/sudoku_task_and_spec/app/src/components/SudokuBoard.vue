@@ -219,7 +219,7 @@ export default {
         justifyContent: 'center',
         alignItems: 'center',
         boxSizing: 'border-box',
-        border: 'none',
+        border: '1px black solid',
         fontSize: '20px',
         fontWeight: 'bold',
         cursor: cell.filled ? 'default' : 'pointer',

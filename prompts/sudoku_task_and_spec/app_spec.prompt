@@ -21,12 +21,14 @@ spec {
         background should be Teal #008080 with 3D look and feel (implemented as gradient from #009999 to #007070 with multiple box-shadows for depth, inset shadows for beveled effect, text-shadow for 3D text, and white text color)
         width: 50px
         height: 50px
+        border: 1px black solid
       }
       for the emtpty number {
         background: transparent
         width: 50px
         height: 50px
-        cells maintain square shape (box-sizing: border-box ensures 50px × 50px, no borders between cells for perfect alignment)
+        border: 1px black solid
+        cells maintain square shape (box-sizing: border-box ensures 50px × 50px including borders)
       }
     }
 

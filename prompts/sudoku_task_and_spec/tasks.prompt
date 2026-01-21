@@ -29,3 +29,11 @@ task (closed) {
 
   RESOLUTION: Added justify-content: center to board-row layout for horizontal centering. Changed box layout from inline-block to CSS grid (3x3) for perfect cell alignment. Removed cell borders to eliminate spacing gaps between cells, creating a clean sudoku board appearance.
 }
+
+task (closed) {
+  each cell should have a border: 1px block solid
+  make sure that when the ajacent cell borders are combined, only keep one cell's border
+  the goal is to make the sudoku board looks like a grid layout with actual "grid" look and feel
+
+  RESOLUTION: Added border: 1px black solid to all cells in getCellStyle baseStyle. With box-sizing: border-box, adjacent borders naturally overlap creating a single-line grid appearance. The sudoku board now has proper grid lines between all cells.
+}
