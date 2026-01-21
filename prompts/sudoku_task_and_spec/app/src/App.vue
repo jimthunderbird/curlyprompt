@@ -45,3 +45,11 @@ export default {
   }
 }
 </script>
+
+<style>
+body {
+  background: SeaShell;
+  font-family: 'Garamond', serif;
+  margin: 20px;
+}
+</style>
