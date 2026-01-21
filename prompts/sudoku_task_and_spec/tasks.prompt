@@ -67,3 +67,9 @@ task (closed) {
   
   RESOLUTION: Modified colorFade CSS keyframes animation to pulse between full opacity (100%) and 30% opacity repeatedly using infinite iteration. Changed animation duration from 5s forwards to 1s infinite for continuous pulsing effect. The Tomato background now fades in and out every second for the full 5-second duration until the cell becomes filled with Teal background.
 }
+
+task (closed) {
+  the hinting is still not good, i do not see the opacity change from 30% to 100%, looks like it stays the same
+  
+  RESOLUTION: Fixed animation by using rgba() color values instead of element opacity. Changed colorFade keyframes to animate background from rgba(255, 99, 71, 1) to rgba(255, 99, 71, 0.3), creating visible pulsing effect. Removed static background/boxShadow from inline style during animation, allowing CSS keyframes animation to fully control the fade-in/fade-out effect. The Tomato background now properly pulses between full visibility and 30% visibility every second for 5 seconds.
+}

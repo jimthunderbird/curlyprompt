@@ -232,8 +232,6 @@ export default {
       if (cell.animatingHint) {
         return {
           ...baseStyle,
-          background: 'Tomato',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3)',
           textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
           color: 'white',
           animation: 'colorFade 1s ease-in-out infinite'
@@ -366,14 +364,12 @@ export default {
 <style scoped>
 @keyframes colorFade {
   0%, 100% {
-    background: Tomato;
-    box-shadow: 0 4px 8px rgba(255, 99, 71, 0.4), 0 2px 4px rgba(255, 99, 71, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-    opacity: 1;
+    background: rgba(255, 99, 71, 1);
+    box-shadow: 0 4px 8px rgba(255, 99, 71, 0.5), 0 2px 4px rgba(255, 99, 71, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
   }
   50% {
-    background: Tomato;
-    box-shadow: 0 4px 8px rgba(255, 99, 71, 0.2), 0 2px 4px rgba(255, 99, 71, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-    opacity: 0.3;
+    background: rgba(255, 99, 71, 0.3);
+    box-shadow: 0 4px 8px rgba(255, 99, 71, 0.15), 0 2px 4px rgba(255, 99, 71, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   }
 }
 
