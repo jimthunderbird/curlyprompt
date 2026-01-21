@@ -61,3 +61,9 @@ task (closed) {
   
   RESOLUTION: Replaced pulse animation with colorFade CSS keyframes animation that smoothly transitions from Tomato background to Teal gradient over 5 seconds. Animation includes box-shadow transitions for a complete fading effect from hint color to filled cell styling.
 }
+
+task (closed) {
+  the hinting animation does not seem to work, the hinting number should fade-in and fade-out repeatly until the animation ends
+  
+  RESOLUTION: Modified colorFade CSS keyframes animation to pulse between full opacity (100%) and 30% opacity repeatedly using infinite iteration. Changed animation duration from 5s forwards to 1s infinite for continuous pulsing effect. The Tomato background now fades in and out every second for the full 5-second duration until the cell becomes filled with Teal background.
+}
