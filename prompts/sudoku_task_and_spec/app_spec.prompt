@@ -65,6 +65,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
         perform action.create_sudoku_board
@@ -82,6 +83,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
         solve the sudoku problem and fill in all the missing numbers in the board (implemented with solveSudoku function using backtracking algorithm)
@@ -139,6 +141,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
         give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with pulsing fade-in/fade-out animation using Tomato (#FF6347) background that repeats for 5 seconds using animatingHint reactive flag, colorFade CSS keyframes animation applied via .animating-hint CSS class with !important to override inline styles, animation uses infinite iteration pulsing between background rgba(255, 99, 71, 1) at full visibility and rgba(255, 99, 71, 0.3) at 30% visibility at 1.8 second intervals with synchronized box-shadow fading for depth effect, text-shadow for 3D text, white text color, then applies filled cell styling with Teal 3D background after animation completes by setting filled and isHint flags)

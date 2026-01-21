@@ -92,3 +92,9 @@ task (closed) {
   
   RESOLUTION: Updated sudoku board border from 5px silver solid to 8px solid Maroon (#800000) with 3D picture frame effect. Added multiple box-shadows including inset shadows for beveled depth (dark shadows on top-left, light highlights on bottom-right), and outer shadows for raised frame appearance.
 }
+
+task (closed) {
+  make 3D looks on {component.control}, {component.hint} and {component.solve}
+  
+  RESOLUTION: Added 3D styling to all three buttons (Control, Hint, and Solve) using outset borders, inset and outset box-shadows for depth and beveled edges, text-shadow for raised text appearance, and active state with inset border for pressed effect when clicked.
+}
