@@ -73,3 +73,9 @@ task (closed) {
   
   RESOLUTION: Fixed animation by using rgba() color values instead of element opacity. Changed colorFade keyframes to animate background from rgba(255, 99, 71, 1) to rgba(255, 99, 71, 0.3), creating visible pulsing effect. Removed static background/boxShadow from inline style during animation, allowing CSS keyframes animation to fully control the fade-in/fade-out effect. The Tomato background now properly pulses between full visibility and 30% visibility every second for 5 seconds.
 }
+
+task (closed) {
+  now the hinting is bad, i do not see the Tomato ("#FF6347") background on the hinting number at all!
+  
+  RESOLUTION: Fixed hint animation by using CSS class .animating-hint with !important flag to override inline styles. Removed animation property from inline getCellStyle() method and applied colorFade animation through CSS class instead. The Tomato background now properly displays and pulses during the 5-second hint animation.
+}

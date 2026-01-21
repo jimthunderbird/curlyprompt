@@ -12,7 +12,7 @@
              :contenteditable="!cell.filled && !cell.isHint && !cell.animatingHint"
              @click="handleCellClick((rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
              @keydown.enter.prevent="handleEnter($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
-             :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected, 'animating': cell.animatingHint }]"
+             :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected, 'animating-hint': cell.animatingHint }]"
              :style="getCellStyle(cell)"
              @input="handleInput($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)">
           {{ cell.value || '' }}
@@ -233,8 +233,7 @@ export default {
         return {
           ...baseStyle,
           textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-          color: 'white',
-          animation: 'colorFade 1s ease-in-out infinite'
+          color: 'white'
         }
       } else if (cell.filled) {
         return {
@@ -379,5 +378,9 @@ export default {
 
 .cell:focus {
   outline: 2px solid blue;
+}
+
+.animating-hint {
+  animation: colorFade 1s ease-in-out infinite !important;
 }
 </style>
