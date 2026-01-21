@@ -1,5 +1,5 @@
 <template>
-  <div id="sudokuboard" style="border: 5px silver solid;">
+  <div id="sudokuboard" style="border: 8px solid #800000; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), inset 3px 3px 6px rgba(0,0,0,0.4), inset -3px -3px 6px rgba(255,255,255,0.3), 0 8px 16px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);">
     <div v-for="rowIndex in 3" :key="rowIndex" style="display: flex;">
       <div v-for="colIndex in 3" :key="colIndex"
            :style="{

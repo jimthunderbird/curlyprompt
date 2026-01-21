@@ -5,8 +5,4 @@ context {
   ./app_spec.prompt
 }
 
-perform the following tasks 
-
-context {
-  ./tasks.prompt
-}
+perform the tasks in ./tasks.prompt

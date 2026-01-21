@@ -86,3 +86,9 @@ task (closed) {
   
   RESOLUTION: Changed colorFade animation duration from 1s to 1.8s in SudokuBoard.vue .animating-hint CSS class. The hint animation now pulses every 1.8 seconds.
 }
+
+task (closed) {
+  please make the border of the sudoku board 3D picture frame type of look and feel, with the main border color to Maroon("#800000")
+  
+  RESOLUTION: Updated sudoku board border from 5px silver solid to 8px solid Maroon (#800000) with 3D picture frame effect. Added multiple box-shadows including inset shadows for beveled depth (dark shadows on top-left, light highlights on bottom-right), and outer shadows for raised frame appearance.
+}

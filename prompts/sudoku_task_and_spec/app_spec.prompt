@@ -13,7 +13,7 @@ spec {
 
   component.sudokuboard {
     div.id:"sudokuboard" {
-      border: 5px silver solid
+      border: 8px solid Maroon (#800000) with 3D picture frame effect (implemented using box-shadow with inset shadows for beveled depth, light/dark gradients for dimensional appearance, and outer shadows for raised frame effect)
       perform action.create_sudoku_board (createSudokuBoard() called on component mounted lifecycle hook in Vue.js, generates board with filled/empty cells based on current difficulty level)
       layout: 3x3 grid of boxes (template uses nested v-for loops: outer loop for 3 rows, inner loop for 3 columns per row, creating proper 3x3 grid with display: flex for row containers, each box uses CSS grid with 3x3 layout for perfect cell alignment)
       for the filled number {
