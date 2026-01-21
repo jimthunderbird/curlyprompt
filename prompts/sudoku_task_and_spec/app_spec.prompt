@@ -124,6 +124,7 @@ spec {
           cursor: pointer
           padding: 5px
           3D effect: implemented with outset border, inset/outset box-shadows for depth and beveled edges, text-shadow for raised text, and active state with inset border for pressed effect
+          options styling: background SaddleBrown (#8B4513), white bold font color applied to dropdown options
         }
         @change {
           update currentDifficulty variable and regenerate board with new difficulty level using getDifficultyRange function

@@ -109,7 +109,8 @@ task (closed) {
   for component.LevelSelection {
     the background of the selection dropdown should be SaddleBrown("#8B4513")
     the font color should be white bold to stand out
+    this style should also be applied to each dropdown option
   }
   
-  RESOLUTION: Changed LevelSelection dropdown background to SaddleBrown (#8B4513), keeping white bold font color for better visibility and contrast.
+  RESOLUTION: Added SaddleBrown (#8B4513) background with white bold font to dropdown options. The styling is now consistently applied to both the select element and its option elements.
 }

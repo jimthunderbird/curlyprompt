@@ -57,4 +57,10 @@ export default {
     inset 2px 2px 4px rgba(0, 0, 0, 0.4),
     inset -1px -1px 2px rgba(255, 255, 255, 0.5);
 }
+
+#level-selection option {
+  background: #8B4513;
+  color: white;
+  font-weight: bold;
+}
 </style>
