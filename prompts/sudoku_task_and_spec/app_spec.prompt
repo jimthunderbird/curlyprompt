@@ -66,7 +66,10 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-size: 16px (increased from 14px for better prominence)
         font-weight: 900 (bolder/extra bold for prominent display)
+        letter-spacing: 0.5px (enhanced readability and boldness perception)
+        text-shadow: enhanced with multiple shadows for stronger bold appearance
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
@@ -85,7 +88,10 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-size: 16px (increased from 14px for better prominence)
         font-weight: 900 (bolder/extra bold for prominent display)
+        letter-spacing: 0.5px (enhanced readability and boldness perception)
+        text-shadow: enhanced with multiple shadows for stronger bold appearance
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
@@ -154,7 +160,10 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-size: 16px (increased from 14px for better prominence)
         font-weight: 900 (bolder/extra bold for prominent display)
+        letter-spacing: 0.5px (enhanced readability and boldness perception)
+        text-shadow: enhanced with multiple shadows for stronger bold appearance
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {

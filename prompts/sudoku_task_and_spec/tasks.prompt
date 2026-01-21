@@ -140,5 +140,5 @@ task (closed) {
 task (closed) {
   make {component.control} {component.hint} {component.solve} font bolder
   
-  RESOLUTION: Updated font-weight from bold (700) to 900 (extra bold) in Control.vue, Hint.vue, and Solve.vue components for more prominent button text display. Font-weight 900 is the maximum boldness value in CSS.
+  RESOLUTION: Enhanced button text boldness and prominence by: (1) Increased font-weight from bold (700) to 900 (maximum CSS value), (2) Increased font-size from 14px to 16px for larger, more prominent text, (3) Added letter-spacing: 0.5px for enhanced readability and boldness perception, (4) Enhanced text-shadow with multiple layered shadows for stronger bold appearance. All three button components (Control.vue, Hint.vue, Solve.vue) now have maximum visual boldness.
 }
