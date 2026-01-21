@@ -111,6 +111,10 @@ task (closed) {
     the font color should be white bold to stand out
     this style should also be applied to each dropdown option
   }
-  
-  RESOLUTION: Added SaddleBrown (#8B4513) background with white bold font to dropdown options. The styling is now consistently applied to both the select element and its option elements.
+ 
+  bug: when i click open on component.LevelSelection's selection box, i do not see the background of the options changing, it should have background: SaddleBrown("#8B4513") and font bold and white
+
+  bug: the selection menu that pops up when i click on component.LevelSelection should have the background SaddleBrown("#8B4513")
+
+  RESOLUTION: Replaced native HTML select element with custom dropdown using div elements. This provides full styling control over the dropdown menu and options. Implemented with Vue reactive isOpen state, custom CSS for SaddleBrown background, white bold text, hover effects, selected state styling, and click-outside-to-close functionality. The dropdown now displays all options with proper SaddleBrown (#8B4513) background and white bold text.
 }

@@ -105,7 +105,7 @@ spec {
           font-size: 16px
         }
       }
-      select.id:"level-selection" {
+      custom-select.id:"level-selection" (implemented as custom dropdown with div elements to enable full styling control) {
         options {
           "Easy" (value: "easy", removes 36-45 cells)
           "Medium" (value: "medium", removes 46-54 cells)
@@ -124,10 +124,16 @@ spec {
           cursor: pointer
           padding: 5px
           3D effect: implemented with outset border, inset/outset box-shadows for depth and beveled edges, text-shadow for raised text, and active state with inset border for pressed effect
-          options styling: background SaddleBrown (#8B4513), white bold font color applied to dropdown options
+          options styling: custom dropdown menu with SaddleBrown (#8B4513) background, white bold font color, implemented using absolute positioned div elements for full style control, includes hover state (#A0522D), selected state (#704214), and proper borders/shadows for 3D effect
         }
         @change {
           update currentDifficulty variable and regenerate board with new difficulty level using getDifficultyRange function
+        }
+        @click {
+          toggle dropdown menu visibility (isOpen state variable controls v-if directive on select-items div)
+        }
+        click-outside-handler {
+          close dropdown when clicking outside the component (implemented with document event listener added on mounted, removed on beforeUnmount)
         }
       }
       style {
