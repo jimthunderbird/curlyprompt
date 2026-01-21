@@ -141,7 +141,7 @@ spec {
         background: OliveDrab
       }
       @click {
-        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with Tomato (#FF6347) background during animation using animatingHint reactive flag, box-shadows for depth effect, inset shadows for bevel, text-shadow for 3D text, white text color, and pulsing animation for 5 seconds via CSS animation property, then applies filled cell styling with Teal 3D background after animation completes by setting filled and isHint flags)
+        give minimum hints by highlighting one random empty cell with correct answer value (solves current board, picks random empty cell, shows answer with animated color fading effect transitioning from Tomato (#FF6347) background to Teal gradient background over 5 seconds using animatingHint reactive flag, colorFade CSS keyframes animation with forwards fill mode, box-shadows for depth effect transitioning during fade, inset shadows for bevel, text-shadow for 3D text, white text color, then applies filled cell styling with Teal 3D background after animation completes by setting filled and isHint flags)
       }
       @hover {
         background: DodgerBlue (implemented as #hint:hover with background: DodgerBlue)

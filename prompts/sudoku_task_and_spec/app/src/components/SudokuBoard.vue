@@ -236,7 +236,7 @@ export default {
           boxShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3)',
           textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
           color: 'white',
-          animation: 'pulse 5s ease-in-out'
+          animation: 'colorFade 5s ease-in-out forwards'
         }
       } else if (cell.filled) {
         return {
@@ -364,9 +364,19 @@ export default {
 </script>
 
 <style scoped>
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+@keyframes colorFade {
+  0% {
+    background: Tomato;
+    box-shadow: 0 4px 8px rgba(255, 99, 71, 0.4), 0 2px 4px rgba(255, 99, 71, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    background: linear-gradient(145deg, #FF8C69, #FF6347);
+    box-shadow: 0 4px 8px rgba(0, 153, 153, 0.3), 0 2px 4px rgba(0, 112, 112, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    background: linear-gradient(145deg, #009999, #007070);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  }
 }
 
 .cell {
