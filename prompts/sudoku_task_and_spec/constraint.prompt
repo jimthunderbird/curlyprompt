@@ -11,7 +11,7 @@ constraint {
     }
     in task.prompt, mark the latest task to closed
     create a git commit {
-      only add the files in the current directory
+      find all files that are changed in the current directory and all of its subdirectories
       with the brief message describing the changes, less than 20 words
     }
   }
