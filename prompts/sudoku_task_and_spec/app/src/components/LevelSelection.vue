@@ -38,7 +38,7 @@ export default {
   height: 40px;
   font-family: 'Courier New', monospace;
   font-size: 16px;
-  background: white;
+  background: #008080;
   border: 2px outset silver;
   cursor: pointer;
   padding: 5px;

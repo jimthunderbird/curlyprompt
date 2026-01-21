@@ -104,3 +104,11 @@ task (closed) {
   
   RESOLUTION: Added 3D styling to LevelSelection dropdown with outset border, inset and outset box-shadows for depth and beveled edges, text-shadow for raised text appearance, and active state with inset border for pressed effect when interacting with the dropdown.
 }
+
+task (closed) {
+  for component.LevelSelection {
+    the background of the selection dropdown should be Teal("#008080")
+  }
+  
+  RESOLUTION: Changed LevelSelection dropdown background from white to Teal (#008080).
+}
