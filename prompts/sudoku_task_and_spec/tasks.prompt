@@ -160,3 +160,9 @@ task (closed) {
   
   RESOLUTION: Added "Crazy Hard" difficulty level to LevelSelection component options and SudokuBoard difficulty ranges. Crazy Hard removes 75-81 cells (leaving only 0-6 cells filled initially), making it significantly harder than Super Hard which removes 65-74 cells.
 }
+
+task (closed) {
+  please make the vue js app starts at localhost port 3000
+  
+  RESOLUTION: Added devServer configuration with port 3000 to vue.config.js. The Vue.js app now starts on localhost:3000 when running npm run serve.
+}
