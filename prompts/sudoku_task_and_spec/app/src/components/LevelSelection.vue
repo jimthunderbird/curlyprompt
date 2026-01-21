@@ -38,6 +38,8 @@ export default {
   height: 40px;
   font-family: 'Courier New', monospace;
   font-size: 16px;
+  font-weight: bold;
+  color: white;
   background: #008080;
   border: 2px outset silver;
   cursor: pointer;
