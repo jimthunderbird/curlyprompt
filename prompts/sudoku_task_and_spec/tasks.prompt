@@ -124,3 +124,9 @@ task (closed) {
   
   RESOLUTION: Updated index.html body background from wheat to SeaShell (#FFF5EE) to give the page a softer, warmer appearance.
 }
+
+task (closed) {
+  change the font family to "Garamond, serif"
+  
+  RESOLUTION: Updated index.html body font-family from 'Courier New', monospace to 'Garamond', serif for a more elegant, classic typography style.
+}

@@ -5,7 +5,7 @@ spec {
     title: "Super Simple Sudoku version 3"
     style {
       background: SeaShell (#FFF5EE)
-      font: Courier New (monospace)
+      font: Garamond (serif)
     }
     implementation: Vue.js 3 application with proper component structure (App.vue as root, components in src/components/, index.html in public/, main.js as entry point)
     documentation: README.md file included in ./app/ directory with installation and running instructions
