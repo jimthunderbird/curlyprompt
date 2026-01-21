@@ -148,3 +148,9 @@ task (closed) {
   
   RESOLUTION: Changed body background from SeaShell to wheat in App.vue <style> section. This gives the page a warm, golden appearance while maintaining the Vue.js component-based styling approach.
 }
+
+task (closed) {
+  change page background to light yellow, make sure to change that in App.vue only
+  
+  RESOLUTION: Changed body background from wheat to lightyellow in App.vue <style> section. This gives the page a bright, soft yellow appearance while maintaining the Vue.js component-based styling approach.
+}

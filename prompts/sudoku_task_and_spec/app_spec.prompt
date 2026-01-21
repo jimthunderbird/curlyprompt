@@ -4,7 +4,7 @@ spec {
   html {
     title: "Super Simple Sudoku version 3"
     style {
-      background: wheat
+      background: lightyellow
       font: Garamond (serif)
       location: defined in App.vue <style> section for proper Vue.js component structure
     }
