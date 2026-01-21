@@ -5,7 +5,7 @@ spec {
     title: "Super Simple Sudoku version 3"
     style {
       background: lightyellow
-      font: Garamond (serif)
+      font: Tahoma, Verdana, sans-serif
       location: defined in App.vue <style> section for proper Vue.js component structure
     }
     implementation: Vue.js 3 application with proper component structure (App.vue as root, components in src/components/, index.html in public/, main.js as entry point, vue.config.js configures devServer to run on port 3000)

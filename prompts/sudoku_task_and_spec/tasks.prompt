@@ -166,3 +166,9 @@ task (closed) {
   
   RESOLUTION: Added devServer configuration with port 3000 to vue.config.js. The Vue.js app now starts on localhost:3000 when running npm run serve.
 }
+
+task (closed) {
+  change html font family to "Tahoma, Verdana, sans-serif"
+  
+  RESOLUTION: Changed body font-family from 'Garamond', serif to 'Tahoma', 'Verdana', sans-serif in App.vue <style> section. This gives the page a modern, clean sans-serif typography style.
+}

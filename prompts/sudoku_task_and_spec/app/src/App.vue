@@ -49,7 +49,7 @@ export default {
 <style>
 body {
   background: lightyellow;
-  font-family: 'Garamond', serif;
+  font-family: 'Tahoma', 'Verdana', sans-serif;
   margin: 20px;
 }
 </style>
