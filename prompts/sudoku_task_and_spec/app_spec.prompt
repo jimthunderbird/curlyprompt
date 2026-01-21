@@ -120,6 +120,7 @@ spec {
           "Medium" (value: "medium", removes 46-54 cells)
           "Hard" (value: "hard", removes 55-64 cells)
           "Super Hard" (value: "superhard", removes 65-74 cells, selected by default)
+          "Crazy Hard" (value: "crazyhard", removes 75-81 cells)
         }
         style {
           width: 150px

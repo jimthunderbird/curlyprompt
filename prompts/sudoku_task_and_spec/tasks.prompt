@@ -154,3 +154,9 @@ task (closed) {
   
   RESOLUTION: Changed body background from wheat to lightyellow in App.vue <style> section. This gives the page a bright, soft yellow appearance while maintaining the Vue.js component-based styling approach.
 }
+
+task (closed) {
+  add a new level "crazy hard" that is even harder than "Super Hard"
+  
+  RESOLUTION: Added "Crazy Hard" difficulty level to LevelSelection component options and SudokuBoard difficulty ranges. Crazy Hard removes 75-81 cells (leaving only 0-6 cells filled initially), making it significantly harder than Super Hard which removes 65-74 cells.
+}

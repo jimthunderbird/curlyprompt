@@ -41,7 +41,8 @@ export default {
         easy: [36, 45],
         medium: [46, 54],
         hard: [55, 64],
-        superhard: [65, 74]
+        superhard: [65, 74],
+        crazyhard: [75, 81]
       }
       return ranges[difficulty] || ranges.superhard
     },

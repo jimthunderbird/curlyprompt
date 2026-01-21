@@ -28,7 +28,8 @@ export default {
         { value: 'easy', text: 'Easy' },
         { value: 'medium', text: 'Medium' },
         { value: 'hard', text: 'Hard' },
-        { value: 'superhard', text: 'Super Hard' }
+        { value: 'superhard', text: 'Super Hard' },
+        { value: 'crazyhard', text: 'Crazy Hard' }
       ]
     }
   },
