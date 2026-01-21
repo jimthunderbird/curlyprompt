@@ -9,10 +9,10 @@
              background: ((rowIndex - 1) * 3 + (colIndex - 1)) % 2 === 1 ? 'lightyellow' : 'orange'
            }">
         <div v-for="(cell, cellIndex) in boxes[(rowIndex - 1) * 3 + (colIndex - 1)]" :key="cellIndex"
-             :contenteditable="!cell.filled && !cell.isHint"
+             :contenteditable="!cell.filled && !cell.isHint && !cell.animatingHint"
              @click="handleCellClick((rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
              @keydown.enter.prevent="handleEnter($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)"
-             :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected }]"
+             :class="['cell', { 'filled': cell.filled, 'hint': cell.isHint, 'selected': cell.selected, 'animating': cell.animatingHint }]"
              :style="getCellStyle(cell)"
              @input="handleInput($event, (rowIndex - 1) * 3 + (colIndex - 1), cellIndex)">
           {{ cell.value || '' }}
@@ -156,6 +156,7 @@ export default {
                 filled: value !== 0,
                 selected: false,
                 isHint: false,
+                animatingHint: false,
                 row: row,
                 col: col
               })
@@ -169,14 +170,14 @@ export default {
     handleCellClick(boxIndex, cellIndex) {
       this.boxes.forEach(box => {
         box.forEach(cell => {
-          if (!cell.filled && !cell.isHint) {
+          if (!cell.filled && !cell.isHint && !cell.animatingHint) {
             cell.selected = false
           }
         })
       })
       
       const cell = this.boxes[boxIndex][cellIndex]
-      if (!cell.filled && !cell.isHint) {
+      if (!cell.filled && !cell.isHint && !cell.animatingHint) {
         cell.selected = true
         this.$nextTick(() => {
           const element = document.querySelectorAll('.cell')[boxIndex * 9 + cellIndex]
@@ -228,7 +229,16 @@ export default {
         userSelect: 'none'
       }
       
-      if (cell.filled) {
+      if (cell.animatingHint) {
+        return {
+          ...baseStyle,
+          background: 'Tomato',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3)',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+          color: 'white',
+          animation: 'pulse 5s ease-in-out'
+        }
+      } else if (cell.filled) {
         return {
           ...baseStyle,
           background: 'linear-gradient(145deg, #009999, #007070) !important',
@@ -326,21 +336,13 @@ export default {
       
       cell.value = correctValue
       cell.selected = false
+      cell.animatingHint = true
       
-      const cellElement = document.querySelectorAll('.cell')[boxIndex * 9 + cellIndex]
-      if (cellElement) {
-        cellElement.style.animation = 'pulse 5s ease-in-out'
-        cellElement.style.background = 'Tomato'
-        cellElement.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3)'
-        cellElement.style.textShadow = '1px 1px 2px rgba(0,0,0,0.5)'
-        cellElement.style.color = 'white'
-        
-        setTimeout(() => {
-          cell.filled = true
-          cell.isHint = true
-          cellElement.style.animation = ''
-        }, 5000)
-      }
+      setTimeout(() => {
+        cell.animatingHint = false
+        cell.filled = true
+        cell.isHint = true
+      }, 5000)
     },
     convertBoxesToBoard() {
       const board = Array(9).fill(null).map(() => Array(9).fill(0))
