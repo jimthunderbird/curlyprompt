@@ -22,14 +22,19 @@ export default {
   border: 2px outset #6B8E23;
   cursor: pointer;
   font-family: 'Courier New', monospace;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 900;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   box-shadow: 
     inset -2px -2px 3px rgba(0, 0, 0, 0.3),
     inset 2px 2px 3px rgba(255, 255, 255, 0.3),
     3px 3px 8px rgba(0, 0, 0, 0.4);
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7), 0 0 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.7), 
+    0 0 1px rgba(0, 0, 0, 0.5),
+    2px 2px 5px rgba(0, 0, 0, 0.8),
+    -1px -1px 2px rgba(0, 0, 0, 0.6);
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
 }
 
 #hint:hover {
