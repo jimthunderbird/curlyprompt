@@ -130,3 +130,9 @@ task (closed) {
   
   RESOLUTION: Updated index.html body font-family from 'Courier New', monospace to 'Garamond', serif for a more elegant, classic typography style.
 }
+
+task (closed) {
+  looking at app/public/index.html, i saw that we define css there, i want this to move to vue js component
+  
+  RESOLUTION: Moved body CSS styles (background: SeaShell, font-family: 'Garamond', serif, margin: 20px) from index.html <style> section to App.vue <style> section. Cleaned up index.html to contain only essential HTML structure, following Vue.js best practices for component-based styling.
+}

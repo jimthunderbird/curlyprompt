@@ -6,6 +6,7 @@ spec {
     style {
       background: SeaShell (#FFF5EE)
       font: Garamond (serif)
+      location: defined in App.vue <style> section for proper Vue.js component structure
     }
     implementation: Vue.js 3 application with proper component structure (App.vue as root, components in src/components/, index.html in public/, main.js as entry point)
     documentation: README.md file included in ./app/ directory with installation and running instructions
