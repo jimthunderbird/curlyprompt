@@ -136,3 +136,9 @@ task (closed) {
   
   RESOLUTION: Moved body CSS styles (background: SeaShell, font-family: 'Garamond', serif, margin: 20px) from index.html <style> section to App.vue <style> section. Cleaned up index.html to contain only essential HTML structure, following Vue.js best practices for component-based styling.
 }
+
+task (closed) {
+  make {component.control} {component.hint} {component.solve} font bolder
+  
+  RESOLUTION: Updated font-weight from bold (700) to 900 (extra bold) in Control.vue, Hint.vue, and Solve.vue components for more prominent button text display.
+}

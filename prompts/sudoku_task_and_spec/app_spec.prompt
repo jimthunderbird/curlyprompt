@@ -66,6 +66,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-weight: 900 (bolder/extra bold for prominent display)
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
@@ -84,6 +85,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-weight: 900 (bolder/extra bold for prominent display)
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
@@ -152,6 +154,7 @@ spec {
         width: 200px
         height: 50px
         background: OliveDrab
+        font-weight: 900 (bolder/extra bold for prominent display)
         3D effect: implemented with outset border, inset/outset box-shadows for depth, text-shadow for raised text appearance, and active state with inset border for pressed effect
       }
       @click {
