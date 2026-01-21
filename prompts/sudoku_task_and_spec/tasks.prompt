@@ -142,3 +142,9 @@ task (closed) {
   
   RESOLUTION: Enhanced button text boldness and prominence by: (1) Increased font-weight from bold (700) to 900 (maximum CSS value), (2) Increased font-size from 14px to 16px for larger, more prominent text, (3) Added letter-spacing: 0.5px for enhanced readability and boldness perception, (4) Enhanced text-shadow with multiple layered shadows for stronger bold appearance. All three button components (Control.vue, Hint.vue, Solve.vue) now have maximum visual boldness.
 }
+
+task (closed) {
+  make page background to wheat, make sure to change that in App.vue only
+  
+  RESOLUTION: Changed body background from SeaShell to wheat in App.vue <style> section. This gives the page a warm, golden appearance while maintaining the Vue.js component-based styling approach.
+}
