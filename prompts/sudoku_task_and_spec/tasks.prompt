@@ -43,3 +43,9 @@ task (closed) {
   
   RESOLUTION: Verified Hint.vue component already has background: OliveDrab styling implemented correctly.
 }
+
+task (closed) {
+  when the hinting animation is going on, the hinting cell's background should be Tomato ("#FF6347")
+  
+  RESOLUTION: Modified giveHint() method in SudokuBoard.vue to use Tomato background color instead of gradient during the 5-second hint animation.
+}

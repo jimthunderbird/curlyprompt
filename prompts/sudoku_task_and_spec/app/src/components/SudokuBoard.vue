@@ -330,7 +330,7 @@ export default {
       const cellElement = document.querySelectorAll('.cell')[boxIndex * 9 + cellIndex]
       if (cellElement) {
         cellElement.style.animation = 'pulse 5s ease-in-out'
-        cellElement.style.background = 'linear-gradient(145deg, #ff6347, #cc4d39)'
+        cellElement.style.background = 'Tomato'
         cellElement.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3)'
         cellElement.style.textShadow = '1px 1px 2px rgba(0,0,0,0.5)'
         cellElement.style.color = 'white'
