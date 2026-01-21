@@ -40,7 +40,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background: #008080;
+  background: #8B4513;
   border: 2px outset silver;
   cursor: pointer;
   padding: 5px;

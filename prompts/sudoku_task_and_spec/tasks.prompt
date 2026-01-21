@@ -107,9 +107,9 @@ task (closed) {
 
 task (closed) {
   for component.LevelSelection {
-    the background of the selection dropdown should be Teal("#008080")
+    the background of the selection dropdown should be SaddleBrown("#8B4513")
     the font color should be white bold to stand out
   }
   
-  RESOLUTION: Changed LevelSelection dropdown background to Teal (#008080), added white bold font color for better visibility and contrast.
+  RESOLUTION: Changed LevelSelection dropdown background to SaddleBrown (#8B4513), keeping white bold font color for better visibility and contrast.
 }
