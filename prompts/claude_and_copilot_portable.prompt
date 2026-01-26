@@ -1,0 +1,87 @@
+let target_file = hello.php
+let target_prompt = hello.prompt
+
+role: PHP 8 Coding Expert
+
+objective {
+  create or upate a file named {target_file} based on app_spec and task
+}
+
+constraint {
+  if a task is completed, do not run the logic inside
+  after a task is completed, update {target_prompt}, mark the related task as completed in the following format:
+  task (completed) {
+    ...
+  }
+}
+
+app_spec {
+  html {
+    title: "simple sudoku"
+    div.id:"sudokuboard" {
+      it should have a box of 3x3 cells, and it should have 3x3 boxes
+      create a mid level sudoku board with 30 cells empty
+    }.style {
+      background: wheat
+      width: fit to the content automatically
+    }.cell.style {
+      vertical_alignment: center
+      horizaontal_alignment: center
+      border: 1px black solid
+      padding: 0
+      margin: 0
+      background: gold
+    }.cell.@click {
+      allow inputting a number
+    }
+  }
+}
+
+task (completed) {
+  change the cell background to Azure
+}
+
+task (completed) {
+  cell editing should be in-place, not using a modal or popup
+}
+
+task (completed) {
+  we should allow in-place cell number editing for both filled or unfilled cells
+}
+
+task (completed) {
+  change page background to wheat
+  align the whole sudoku board in the middle horizontally
+}
+
+task (completed) {
+  change page background to light blue
+}
+
+task (completed) {
+  there should be 3x3 boxes
+}
+
+task (completed) {
+  for each box {box} with even number {
+    box.style.background = "gold"
+  }
+  for each box {box} with odd number {
+    box.style.background = "orange"
+  }
+  for each cell {cell} {
+    cell.style.background = "transparent"
+  }
+}
+
+task {
+  plan only, no action {
+    add button {
+      text: "Solve"
+      id: "control-button-solve"
+      @click {
+        solve the sudoku board
+      }
+    }  
+  }
+}
