@@ -9,36 +9,70 @@ objective {
 
 constraint {
   if a task is completed, do not run the logic inside
-  after a task is completed, update {target_prompt}, mark the related task as completed in the following format:
-  task (completed) {
-    ...
+  after a task is completed {
+    update {target_prompt}, mark the related task as completed in the following format:
+    task (completed) {
+      ...
+    }
+    merge the result of the logic performed in task into app_spec
   }
 }
 
 app_spec {
   html {
     title: "simple sudoku"
+    body.style {
+      background: lightblue
+      display: flex
+      flex-direction: column
+      align-items: center
+      justify-content: center
+      min-height: 100vh
+    }
     div.id:"sudokuboard" {
       it should have a box of 3x3 cells, and it should have 3x3 boxes
       create a mid level sudoku board with 30 cells empty
     }.style {
-      background: wheat
-      width: fit to the content automatically
+      font-weight: bold
+      font-size: 25px
+      width: fit-content
+      display: grid
+      grid-template-columns: repeat(3, auto)
+      gap: 3px
+      background: #333
+    }.box.style {
+      display: grid
+      grid-template-columns: repeat(3, 1fr)
+    }.box-even.style {
+      background: gold
+    }.box-odd.style {
+      background: orange
     }.cell.style {
+      width: 50px
+      height: 50px
       vertical_alignment: center
-      horizaontal_alignment: center
+      horizontal_alignment: center
       border: 1px black solid
       padding: 0
       margin: 0
-      background: gold
+      background: transparent
+      cursor: pointer
     }.cell.@click {
-      allow inputting a number
+      allow in-place editing via inline input
+      supports both filled and unfilled cells
+    }
+    div.id:"controls" {
+      button.id:"control-button-solve" {
+        text: "Solve"
+        @click: solve the sudoku board using backtracking algorithm without showing alerts
+      }
     }
   }
 }
 
 task (completed) {
   change the cell background to Azure
+  NOTE: Superseded by task for transparent cells - cells now use transparent background
 }
 
 task (completed) {
@@ -52,6 +86,7 @@ task (completed) {
 task (completed) {
   change page background to wheat
   align the whole sudoku board in the middle horizontally
+  NOTE: Background was later changed to lightblue by subsequent task
 }
 
 task (completed) {
@@ -74,14 +109,20 @@ task (completed) {
   }
 }
 
-task {
-  plan only, no action {
+task (completed) {
+  action {
     add button {
       text: "Solve"
       id: "control-button-solve"
       @click {
         solve the sudoku board
       }
-    }  
+    }
+  }
+}
+
+task (completed) {
+  after clicking on button.id:"control-button-solve" {
+    do not show the alert
   }
 }
