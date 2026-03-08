@@ -5,7 +5,7 @@ objective: generate ./app_spec.md based on app_spec below
 example {
   source {
     app_spec {
-      language: php
+      language: PHP8
       type: "class"
       name: "Car"
       methods: {
@@ -22,7 +22,7 @@ example {
     }   
   }  
   target {
-    # Car Class Specification
+    # PHP 8 Car Class Specification
 
     ## Overview
     This class represents a car with basic functionalities.
@@ -55,7 +55,7 @@ example {
 }
 
 app_spec {
-  language: php
+  language: PHP8
   type: "class"
   name: "Engine"
   methods: {
