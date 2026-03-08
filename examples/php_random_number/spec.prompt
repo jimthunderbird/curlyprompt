@@ -11,7 +11,7 @@ tests {
   newline character should use PHP_EOL
   it should start with "<?php"
   it should not close with "?>"
-  it should not use array_map
+  it should use array_map
 }
 
 app_spec {
