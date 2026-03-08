@@ -1,0 +1,45 @@
+role: PHP 8 Expert
+
+objective: {
+  generate spec.php based on app_spec below, learn from examples, no extra words, no explanation
+  must pass tests
+}
+
+app_spec {
+  logic {
+    let numbers = get 100 random numbers ranging from 1 to 500
+    foreach({numbers} as {number}) {
+      print {number} with newline
+    }
+  }
+}
+
+examples {
+  example {
+    source {
+      foreach({numbers} as {number}) {
+        print {number} with newline
+      }
+    }
+    target {
+      foreach($numbers as $number) {
+        print $number . "\n"
+      }
+    }
+  }
+
+  example {
+    source {
+      let numbers = get 10 random numbers ranging from 1 to 100
+    }
+    target {
+      $allNumbers = range(1, 100);
+      shuffle($allNumbers);
+      $numbers = array_slice($allNumbers, 0, 10);
+    }
+  }
+}
+
+tests {
+  - must use shuffle and array_slice
+}
