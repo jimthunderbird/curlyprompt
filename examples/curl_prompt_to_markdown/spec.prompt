@@ -2,19 +2,69 @@ role: Markdown file generator
 
 objective: generate ./app_spec.md based on app_spec below
 
+example {
+  source {
+    app_spec {
+      language: php
+      type: "class"
+      name: "Car"
+      methods: {
+        start() {
+        }
+
+        drive(duration:integer) {
+          print "drve for {duration} seconds"
+        }
+
+        stop() {
+        }
+      }
+    }   
+  }  
+  target {
+    # Car Class Specification
+
+    ## Overview
+    This class represents a car with basic functionalities.
+
+    ## Methods
+
+    ### start()
+    Starts the car.  
+    **Signature:** `start()`  
+    **Parameters:** None  
+    **Returns:** None
+
+    ### drive(duration: integer)
+    Drives the car for a specified duration in seconds.  
+    **Signature:** `drive(duration: integer)`  
+    **Parameters:** 
+    - `duration` (integer): The duration to drive the car.
+    **Returns:** None  
+    **Example:**  
+    ```php
+    $car->drive(10); // Outputs: "drve for 10 seconds"
+    ```
+
+    ### stop()
+    Stops the car.  
+    **Signature:** `stop()`  
+    **Parameters:** None  
+    **Returns:** None
+  }
+}
+
 app_spec {
   language: php
   type: "class"
-  name: "Car"
+  name: "Engine"
   methods: {
     start() {
-    }
-
-    drive(duration:integer) {
-      print "drve for {duration} seconds"
+      echo "engine starting..."
     }
 
     stop() {
+      echo "engine stopped"
     }
   }
 }

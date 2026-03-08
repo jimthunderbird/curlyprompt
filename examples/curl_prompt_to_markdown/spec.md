@@ -1,34 +1,26 @@
-# Car Class Specification
+# Engine Class Specification
 
 ## Overview
-
-This is a PHP class named `Car` with the following methods:
-
-- `start()`
-- `drive(integer $duration)`
-- `stop()`
+This class represents an engine with basic functionalities.
 
 ## Methods
 
 ### start()
-
+Starts the engine.  
+**Signature:** `start()`  
+**Parameters:** None  
+**Returns:** None  
+**Example:**  
 ```php
-public function start(): void {
-    // Method implementation goes here.
-}
-```
-
-### drive(integer $duration)
-
-```php
-public function drive(int $duration): void {
-    echo "Drive for {$duration} seconds";
-}
+$engine->start(); // Outputs: "engine starting..."
 ```
 
 ### stop()
-
+Stops the engine.  
+**Signature:** `stop()`  
+**Parameters:** None  
+**Returns:** None  
+**Example:**  
 ```php
-public function stop(): void {
-    // Method implementation goes here.
-}
+$engine->stop(); // Outputs: "engine stopped"
+```
