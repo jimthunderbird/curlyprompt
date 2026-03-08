@@ -1,17 +1,24 @@
 role: PHP 8 Expert
 
 objective: {
-  generate spec.php based on app_spec below, no extra words, no explanation
+  generate php codeblock based on app_spec below, no extra words, no explanation
+  output RAW text only, do not use markdown code blocks
   must pass all tests
 }
 
 tests {
-  it should use shuffle and array_slice
-  it should not have any functions
-  newline character should use PHP_EOL
-  it should start with "<?php"
-  it should not close with "?>"
-  it should use array_map
+  php_style {
+    newline character should use PHP_EOL
+    every single instruction in php should be on its own line
+    it should start with "<?php"
+    it should not close with "?>"
+    it must NOT output ```php or ```
+  }
+  logic {
+    it should use shuffle and array_slice
+    it should not have any functions
+    it should use array_map
+  }
 }
 
 app_spec {
