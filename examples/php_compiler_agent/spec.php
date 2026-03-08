@@ -1,12 +1,21 @@
 <?php
-$numbers = array_map(function() {
+
+$numbers = array_map(function($i) {
     return rand(1, 500);
 }, range(1, 100));
 
-shuffle($numbers);
-
-array_slice($numbers, 0, count($numbers), true);
+$unique_numbers = [];
+$hash_map = [];
 
 foreach ($numbers as $number) {
-    echo $number . PHP_EOL;
+    if (!isset($hash_map[$number])) {
+        $hash_map[$number] = true;
+        $unique_numbers[] = $number;
+    }
+}
+
+shuffle($unique_numbers);
+
+foreach ($unique_numbers as $unique_number) {
+    echo $unique_number . PHP_EOL;
 }

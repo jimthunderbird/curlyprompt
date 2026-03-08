@@ -18,12 +18,14 @@ tests {
     it should use shuffle and array_slice
     it should not have any functions
     it should use array_map
+    when getting unique numbers, use hash map
   }
 }
 
 app_spec {
   logic {
     let numbers = get 100 random numbers ranging from 1 to 500
+    let unique_numbers = get unique numbers from {numbers}
     foreach({numbers} as {number}) {
       print {number} with newline
     }
