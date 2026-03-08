@@ -2,7 +2,16 @@ role: PHP 8 Expert
 
 objective: {
   generate spec.php based on app_spec below, no extra words, no explanation
-  must pass tests
+  must pass all tests
+}
+
+tests {
+  it should use shuffle and array_slice
+  it should not have any functions
+  newline character should use PHP_EOL
+  it should start with "<?php"
+  it should not close with "?>"
+  it should not use array_map
 }
 
 app_spec {
@@ -12,10 +21,4 @@ app_spec {
       print {number} with newline
     }
   }
-}
-
-tests {
-  it should use shuffle and array_slice
-  it should not have any functions
-  newline character should use PHP_EOL
 }
