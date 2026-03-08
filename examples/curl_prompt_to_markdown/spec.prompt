@@ -1,0 +1,20 @@
+role: Markdown file generator
+
+objective: generate ./app_spec.md based on app_spec below
+
+app_spec {
+  language: php
+  type: "class"
+  name: "Car"
+  methods: {
+    start() {
+    }
+
+    drive(duration:integer) {
+      print "drve for {duration} seconds"
+    }
+
+    stop() {
+    }
+  }
+}
