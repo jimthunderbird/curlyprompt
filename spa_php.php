@@ -1,6 +1,6 @@
 <?php
 function read_book_url($url) {
-    // Get the file content
+    // Get the file content from the URL
     $content = file_get_contents($url);
     
     // Split by newlines and convert to HTML paragraphs
@@ -8,16 +8,17 @@ function read_book_url($url) {
     $paragraphs = [];
     
     foreach ($lines as $line) {
-        if (!empty(trim($line))) {
-            $paragraphs[] = "<p>" . htmlspecialchars($line) . "</p>";
+        // Skip empty lines
+        if (trim($line) !== '') {
+            $paragraphs[] = '<p>' . htmlspecialchars($line) . '</p>';
         }
     }
     
-    return implode("", $paragraphs);
+    return implode('', $paragraphs);
 }
 
-// Handle the load_book action
-if (isset($_GET['action']) && $_GET['action'] == "load_book") {
+// Check if we need to load a book
+if (isset($_GET['action']) && $_GET['action'] === 'load_book') {
     $url = $_GET['url'];
     $content = read_book_url($url);
     echo $content;
@@ -74,7 +75,7 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
                     // Configure the request
                     xhr.open('GET', '?action=load_book&url=' + encodeURIComponent(url), true);
                     
-                    // Handle the response
+                    // Set up a function to handle the response
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             document.getElementById('book-content').innerHTML = xhr.responseText;
