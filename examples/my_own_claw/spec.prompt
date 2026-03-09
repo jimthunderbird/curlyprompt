@@ -17,7 +17,7 @@ app_spec {
   - let question = "Please extract the hp of Pikachu based on the following:" + (get the content of ./PIKACHU.txt)
 
   - let result = send curl request to {config.llm_api_endpoint}, with {config.llm_model} and {config.llm_thinking_mode}, with prompt {question}
-  - print {result}
+  - print {result.response}
 }
 
 tests {
