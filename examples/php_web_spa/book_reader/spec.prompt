@@ -31,7 +31,7 @@ spec {
 
     javascript {
       load_book(url) {
-        send POST payload {
+        send POST request payload {
           action:"read_book_url"
           url:{url}
         } to php.read_book_url(url)
