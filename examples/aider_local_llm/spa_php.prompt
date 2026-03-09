@@ -25,7 +25,19 @@ spec {
 
     if (php get variable action is "load_book") {
       let url = php get variable url
-      read_book_url(url)
+      let content = file_get_contents(url)
+      if (content !== false) {
+        let lines = explode("\n", content)
+        let html = ""
+        foreach (lines as line) {
+          if (trim(line) !== "") {
+            html = html . "<p>" . htmlspecialchars(line) . "</p>"
+          }
+        }
+        echo html
+      } else {
+        echo "<p>Error loading book content</p>"
+      }
       exit
     }
   }
@@ -39,10 +51,14 @@ spec {
       div.id:"book-controls" {
         textbox.id:"book-url" {
           @key.enter  {
-            div.id:"book-content".html = send php get with {
-              action:"load_book"
-              url:self.value
+            let xhr = new XMLHttpRequest()
+            xhr.open("GET", "?action=load_book&url=" + encodeURIComponent(self.value), true)
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById("book-content").innerHTML = xhr.responseText
+              }
             }
+            xhr.send()
           }
         }
       }
