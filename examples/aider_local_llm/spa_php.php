@@ -1,4 +1,20 @@
 <?php
+function read_book_url($url) {
+    $content = file_get_contents($url);
+    if ($content !== false) {
+        $lines = explode("\n", $content);
+        $html = "";
+        foreach ($lines as $line) {
+            if (trim($line) !== "") {
+                $html .= "<p>" . htmlspecialchars($line) . "</p>";
+            }
+        }
+        return $html;
+    } else {
+        return "<p>Error loading book content</p>";
+    }
+}
+
 if (isset($_GET['action']) && $_GET['action'] == "load_book") {
     $url = $_GET['url'];
     $content = file_get_contents($url);
