@@ -1,12 +1,15 @@
 config {
   llm_api_endpoint = "http://127.0.0.1:11434/api/generate"
   llm_model = "gemma3:latest"
+  llm_model_options {
+    temperature: 0.3
+  }
   llm_thinking_mode = false
 }
 
 app_spec {
   run cli command: php pokeapi_helper.php, save result to PIKACHU.txt
   let question = "Please extract the hp of Pikachu based on the following:" + (get the content of ./PIKACHU.txt)
-  let result = send curl request to {config.llm_api_endpoint}, with {config.llm_model} and {config.llm_thinking_mode}, with prompt {question}
+  let result = send curl request to {config.llm_api_endpoint}, with {config.llm_model} and {config.llm_thinking_mode}, with {config.llm_model_options}, with prompt {question}
   print {result.response}
 }
