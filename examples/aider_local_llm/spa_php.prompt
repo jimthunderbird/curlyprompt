@@ -3,8 +3,6 @@ role: PHP8/HTML/CSS/Javascript Expert
 objective: create a single page web application based on spec and run all asks
 
 constraint {
-  everything should be in {spec.entrypoint}, including all the php code, html, css and javascript
-  no other files should be created
   all related php logic must be at the very top of the page, all html/css/javascript should be after, example {
     <?php
     ...
