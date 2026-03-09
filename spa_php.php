@@ -5,37 +5,26 @@ function read_book_url($url) {
         return "Invalid URL";
     }
     
-    // Use cURL to fetch content
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+    // Try to get the content from the URL
+    $context = stream_context_create([
+        'http' => [
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'timeout' => 10,
+            'follow_location' => true,
+            'max_redirects' => 5
+        ]
+    ]);
     
-    $content = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $content = @file_get_contents($url, false, $context);
     
-    // Check if request was successful
-    if ($httpCode !== 200) {
-        return "Error: HTTP " . $httpCode;
+    if ($content === false) {
+        return "Failed to load content from URL";
     }
     
-    // If content is HTML, extract just the body content
-    if (strpos($content, '<html') !== false) {
-        // Simple HTML parsing to extract body content
-        $dom = new DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML($content);
-        libxml_clear_errors();
-        
-        $body = $dom->getElementsByTagName('body');
-        if ($body->length > 0) {
-            $bodyContent = $body->item(0);
-            $content = $dom->saveHTML($bodyContent);
-        }
-    }
+    // Basic sanitization to prevent nested book readers
+    $content = str_replace(['<iframe', '<frame', '<object', '<embed'], 
+                           ['&lt;iframe', '&lt;frame', '&lt;object', '&lt;embed'], 
+                           $content);
     
     return $content;
 }
@@ -47,105 +36,74 @@ function read_book_url($url) {
     <title>Book Reader</title>
     <style>
         body {
+            background: wheat;
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-        #book-controls {
-            background-color: white;
+            margin: 0;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        #book-controls {
             margin-bottom: 20px;
         }
+        
         #book-url {
-            width: 70%;
+            width: 80%;
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
         }
+        
         #book-content {
-            background-color: white;
+            border: 1px solid #ccc;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white;
             min-height: 300px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .loading {
-            color: #666;
-            font-style: italic;
+            max-height: 600px;
+            overflow: auto;
         }
     </style>
 </head>
 <body>
     <div id="book-controls">
-        <h2>Book Reader</h2>
-        <input type="text" id="book-url" placeholder="Enter book URL (e.g., https://example.com/book.txt)">
-        <button onclick="loadBook()">Load Book</button>
+        <input type="text" id="book-url" placeholder="Enter book URL">
     </div>
     
-    <div id="book-content" class="loading">
-        Enter a URL above to load book content
-    </div>
+    <div id="book-content"></div>
 
     <script>
-        // Handle Enter key press in the URL textbox
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                loadBook();
+                const url = this.value;
+                if (url) {
+                    // Simple check to prevent nested book readers
+                    if (url.includes('book-reader') || url.includes('reader')) {
+                        document.getElementById('book-content').innerHTML = 
+                            '<p style="color: red;">Nested book readers are not allowed.</p>';
+                        return;
+                    }
+                    
+                    // Make an AJAX request to the PHP function
+                    fetch('spa_php.php?url=' + encodeURIComponent(url))
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('book-content').innerHTML = data;
+                        })
+                        .catch(error => {
+                            document.getElementById('book-content').innerHTML = 
+                                '<p style="color: red;">Error loading content: ' + error.message + '</p>';
+                        });
+                }
             }
         });
-
-        function loadBook() {
-            const url = document.getElementById('book-url').value;
-            const contentDiv = document.getElementById('book-content');
-            
-            if (!url) {
-                contentDiv.innerHTML = "Please enter a URL";
-                return;
-            }
-            
-            // Show loading message
-            contentDiv.innerHTML = "Loading book content...";
-            
-            // Create a form to submit the request
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '';
-            
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'book_url';
-            input.value = url;
-            
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
+        
+        // Also handle the case when the page loads with a URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = urlParams.get('url');
+        if (url) {
+            document.getElementById('book-url').value = url;
+            // Trigger the load
+            const event = new KeyboardEvent('keypress', {key: 'Enter'});
+            document.getElementById('book-url').dispatchEvent(event);
         }
     </script>
-    
-    <?php
-    // Handle form submission
-    if (isset($_POST['book_url'])) {
-        $url = $_POST['book_url'];
-        $content = read_book_url($url);
-        echo "<script>";
-        echo "document.getElementById('book-content').innerHTML = " . json_encode($content) . ";";
-        echo "</script>";
-    }
-    ?>
 </body>
 </html>
