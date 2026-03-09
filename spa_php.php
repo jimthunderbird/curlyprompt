@@ -2,17 +2,17 @@
 function read_book_url($url) {
     // Get the file content
     $content = file_get_contents($url);
-
+    
     // Split by newlines and convert to HTML paragraphs
     $lines = explode("\n", $content);
     $paragraphs = [];
-
+    
     foreach ($lines as $line) {
         if (!empty(trim($line))) {
             $paragraphs[] = "<p>" . htmlspecialchars($line) . "</p>";
         }
     }
-
+    
     return implode("", $paragraphs);
 }
 
@@ -35,24 +35,22 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-
+        
         #book-controls {
             margin-bottom: 20px;
         }
-
+        
         #book-url {
             width: 80%;
             padding: 10px;
             font-size: 16px;
         }
-
+        
         #book-content {
             background: white;
             padding: 20px;
             border-radius: 5px;
-            min-height: 200px;
-            max-height: 600px;
-            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -60,7 +58,7 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
     <div id="book-controls">
         <input type="text" id="book-url" placeholder="Enter book URL">
     </div>
-
+    
     <div id="book-content">
         <!-- Book content will be loaded here -->
     </div>
@@ -68,21 +66,21 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
     <script>
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const url = this.value;
+                var url = this.value;
                 if (url) {
                     // Create XMLHttpRequest object
-                    const xhr = new XMLHttpRequest();
-
+                    var xhr = new XMLHttpRequest();
+                    
                     // Configure the request
                     xhr.open('GET', '?action=load_book&url=' + encodeURIComponent(url), true);
-
+                    
                     // Handle the response
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             document.getElementById('book-content').innerHTML = xhr.responseText;
                         }
                     };
-
+                    
                     // Send the request
                     xhr.send();
                 }
