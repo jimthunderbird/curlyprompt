@@ -5,21 +5,39 @@ function read_book_url($url) {
         return "Invalid URL";
     }
     
-    // Attempt to get content from URL
-    $context = stream_context_create([
-        'http' => [
-            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'timeout' => 10,
-        ]
-    ]);
+    // Use cURL to fetch content
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
     
-    $content = @file_get_contents($url, false, $context);
+    $content = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
     
-    if ($content === false) {
-        return "Failed to read content from URL";
+    // Check if request was successful
+    if ($httpCode !== 200) {
+        return "Error: HTTP " . $httpCode;
     }
     
-    return htmlspecialchars($content);
+    // If content is HTML, extract just the body content
+    if (strpos($content, '<html') !== false) {
+        // Simple HTML parsing to extract body content
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($content);
+        libxml_clear_errors();
+        
+        $body = $dom->getElementsByTagName('body');
+        if ($body->length > 0) {
+            $bodyContent = $body->item(0);
+            $content = $dom->saveHTML($bodyContent);
+        }
+    }
+    
+    return $content;
 }
 ?>
 
@@ -30,41 +48,61 @@ function read_book_url($url) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 20px;
+            background-color: #f5f5f5;
         }
         #book-controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
         #book-url {
             width: 70%;
             padding: 10px;
             font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         #book-content {
-            border: 1px solid #ccc;
-            padding: 15px;
-            min-height: 200px;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 300px;
         }
-        .error {
-            color: red;
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <h1>Book Reader</h1>
-    
     <div id="book-controls">
-        <input type="text" id="book-url" placeholder="Enter book URL">
+        <h2>Book Reader</h2>
+        <input type="text" id="book-url" placeholder="Enter book URL (e.g., https://example.com/book.txt)">
         <button onclick="loadBook()">Load Book</button>
     </div>
     
-    <div id="book-content"></div>
+    <div id="book-content" class="loading">
+        Enter a URL above to load book content
+    </div>
 
     <script>
+        // Handle Enter key press in the URL textbox
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 loadBook();
@@ -76,31 +114,38 @@ function read_book_url($url) {
             const contentDiv = document.getElementById('book-content');
             
             if (!url) {
-                contentDiv.innerHTML = '<span class="error">Please enter a URL</span>';
+                contentDiv.innerHTML = "Please enter a URL";
                 return;
             }
             
-            // Simple AJAX request to PHP endpoint
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', window.location.href, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            // Show loading message
+            contentDiv.innerHTML = "Loading book content...";
             
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    contentDiv.innerHTML = xhr.responseText;
-                }
-            };
+            // Create a form to submit the request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '';
             
-            xhr.send('book_url=' + encodeURIComponent(url));
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'book_url';
+            input.value = url;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
-        
-        // Handle form submission via POST
-        <?php
-        if (isset($_POST['book_url'])) {
-            $content = read_book_url($_POST['book_url']);
-            echo "document.getElementById('book-content').innerHTML = '" . str_replace("'", "\\'", $content) . "';";
-        }
-        ?>
     </script>
+    
+    <?php
+    // Handle form submission
+    if (isset($_POST['book_url'])) {
+        $url = $_POST['book_url'];
+        $content = read_book_url($url);
+        echo "<script>";
+        echo "document.getElementById('book-content').innerHTML = " . json_encode($content) . ";";
+        echo "</script>";
+    }
+    ?>
 </body>
 </html>
