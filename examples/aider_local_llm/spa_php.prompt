@@ -20,24 +20,6 @@ spec {
       result = split {result} by newline and convert them to html paragraphs
       return result
     }
-
-    if (php get variable action is "load_book") {
-      let url = php get variable url
-      let content = file_get_contents(url)
-      if (content !== false) {
-        let lines = explode("\n", content)
-        let html = ""
-        foreach (lines as line) {
-          if (trim(line) !== "") {
-            html = html . "<p>" . htmlspecialchars(line) . "</p>"
-          }
-        }
-        echo html
-      } else {
-        echo "<p>Error loading book content</p>"
-      }
-      exit
-    }
   }
 
   html { # the html code
@@ -45,18 +27,20 @@ spec {
       background: wheat
     }
 
+    javascript {
+      load_book(url) {
+        send POST payload {
+          action:"read_book_url"
+          url:{url}
+        } to php.read_book_url(url)
+      }  
+    }
+
     layout { #the html layout
       div.id:"book-controls" {
         textbox.id:"book-url" {
           @key.enter  {
-            let xhr = new XMLHttpRequest()
-            xhr.open("GET", "?action=load_book&url=" + encodeURIComponent(self.value), true)
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById("book-content").innerHTML = xhr.responseText
-              }
-            }
-            xhr.send()
+            div.id:"book-content".html = load_book(textbox.id:"book-url".value)
           }
         }
       }
@@ -66,8 +50,4 @@ spec {
       }
     }
   }
-}
-
-task {
-  after book url is entered, the book content does not show, please fix it
 }
