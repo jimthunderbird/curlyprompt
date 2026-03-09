@@ -23,4 +23,8 @@ app_spec {
 tests {
   - when sending curl request, use php curl_init 
   - config should be a hash in php
+  - should not have ending ?> in php
+  - it should always print result.response subkey from the curl request to llm
+  - it should run cli command: php pokeapi_helper.php, save result to PIKACHU.txt
+  - it should get the content from PIKACHU.txt
 }
