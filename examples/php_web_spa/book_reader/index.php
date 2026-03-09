@@ -4,18 +4,8 @@ function read_book_url($url) {
     // Read the file content
     $content = file_get_contents($url);
     
-    // Split by newline and convert to HTML paragraphs
-    $lines = explode("\n", $content);
-    $paragraphs = array_filter($lines, function($line) {
-        return trim($line) !== '';
-    });
-    
-    $html = '';
-    foreach ($paragraphs as $paragraph) {
-        $html .= '<p>' . htmlspecialchars($paragraph) . '</p>';
-    }
-    
-    return $html;
+    // Return the content directly
+    return $content;
 }
 
 // Handle AJAX requests
@@ -93,7 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             // Handle response
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById('book-content').innerHTML = xhr.responseText;
+                    // Convert text to HTML paragraphs
+                    const lines = xhr.responseText.split('\n');
+                    const paragraphs = lines.filter(line => line.trim() !== '');
+                    let html = '';
+                    paragraphs.forEach(paragraph => {
+                        html += '<p>' + paragraph + '</p>';
+                    });
+                    document.getElementById('book-content').innerHTML = html;
                 }
             };
             
