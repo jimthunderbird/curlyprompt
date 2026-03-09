@@ -11,7 +11,6 @@ function read_book_url($url) {
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'timeout' => 10,
             'follow_location' => true,
-            'max_redirects' => 5
         ]
     ]);
     
@@ -20,10 +19,6 @@ function read_book_url($url) {
     if ($content === false) {
         return "Failed to load content from URL";
     }
-    
-    // Basic sanitization to prevent nested HTML issues
-    $content = strip_tags($content, '<p><br><h1><h2><h3><h4><h5><h6><ul><ol><li><strong><em><a><img>');
-    $content = str_replace(['<script', '</script>'], ['&lt;script', '&lt;/script&gt;'], $content);
     
     return $content;
 }
@@ -37,7 +32,6 @@ function read_book_url($url) {
         body {
             background: wheat;
             font-family: Arial, sans-serif;
-            margin: 0;
             padding: 20px;
         }
         
@@ -52,66 +46,60 @@ function read_book_url($url) {
         }
         
         #book-content {
+            border: 1px solid #ccc;
+            padding: 15px;
             background: white;
-            padding: 20px;
-            border-radius: 5px;
             min-height: 200px;
             max-height: 600px;
             overflow-y: auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        #book-content p {
-            line-height: 1.6;
-        }
-        
-        #book-content h1, #book-content h2, #book-content h3 {
-            color: #333;
-        }
-        
-        #book-content a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        
-        #book-content a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div id="book-controls">
-        <input type="text" id="book-url" placeholder="Enter book URL here...">
+        <input type="text" id="book-url" placeholder="Enter book URL">
+        <button onclick="loadBook()">Load Book</button>
     </div>
     
-    <div id="book-content">
-        <!-- Book content will be loaded here -->
-    </div>
+    <div id="book-content"></div>
 
     <script>
+        function loadBook() {
+            const url = document.getElementById('book-url').value;
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            // Create a PHP request to fetch the content
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', window.location.href, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('book-content').innerHTML = xhr.responseText;
+                }
+            };
+            
+            xhr.send('book_url=' + encodeURIComponent(url));
+        }
+        
+        // Handle Enter key press
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const url = this.value;
-                if (url.trim() !== '') {
-                    // Use fetch to get content from PHP endpoint
-                    fetch('spa_php.php?url=' + encodeURIComponent(url))
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('book-content').innerHTML = data;
-                        })
-                        .catch(error => {
-                            document.getElementById('book-content').innerHTML = 'Error loading content: ' + error.message;
-                        });
-                }
-            }
-        });
-        
-        // Also handle the case where someone clicks on the URL input
-        document.getElementById('book-url').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
+                loadBook();
             }
         });
     </script>
+    
+    <?php
+    // Handle the PHP request
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_url'])) {
+        $url = $_POST['book_url'];
+        $content = read_book_url($url);
+        echo htmlspecialchars($content);
+    }
+    ?>
 </body>
 </html>
