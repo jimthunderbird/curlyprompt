@@ -5,7 +5,7 @@ function read_book_url($url) {
         return "Invalid URL";
     }
     
-    // Try to get the content from the URL
+    // Attempt to get the content from the URL
     $context = stream_context_create([
         'http' => [
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -21,12 +21,7 @@ function read_book_url($url) {
         return "Failed to load content from URL";
     }
     
-    // Basic sanitization to prevent nested book readers
-    $content = str_replace(['<iframe', '<frame', '<object', '<embed'], 
-                           ['&lt;iframe', '&lt;frame', '&lt;object', '&lt;embed'], 
-                           $content);
-    
-    return $content;
+    return htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
 }
 ?>
 
@@ -53,12 +48,11 @@ function read_book_url($url) {
         }
         
         #book-content {
-            border: 1px solid #ccc;
-            padding: 20px;
             background: white;
-            min-height: 300px;
-            max-height: 600px;
-            overflow: auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            min-height: 200px;
         }
     </style>
 </head>
@@ -67,21 +61,24 @@ function read_book_url($url) {
         <input type="text" id="book-url" placeholder="Enter book URL">
     </div>
     
-    <div id="book-content"></div>
+    <div id="book-content">
+        <!-- Book content will be displayed here -->
+    </div>
 
     <script>
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const url = this.value;
-                if (url) {
+                if (url.trim() !== '') {
                     // Simple check to prevent nested book readers
                     if (url.includes('book-reader') || url.includes('reader')) {
                         document.getElementById('book-content').innerHTML = 
-                            '<p style="color: red;">Nested book readers are not allowed.</p>';
+                            'Nested Book Reader not allowed';
                         return;
                     }
                     
-                    // Make an AJAX request to the PHP function
+                    // In a real implementation, we would make an AJAX call to PHP
+                    // For this example, we'll simulate the behavior
                     fetch('spa_php.php?url=' + encodeURIComponent(url))
                         .then(response => response.text())
                         .then(data => {
@@ -89,21 +86,11 @@ function read_book_url($url) {
                         })
                         .catch(error => {
                             document.getElementById('book-content').innerHTML = 
-                                '<p style="color: red;">Error loading content: ' + error.message + '</p>';
+                                'Error loading content: ' + error.message;
                         });
                 }
             }
         });
-        
-        // Also handle the case when the page loads with a URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const url = urlParams.get('url');
-        if (url) {
-            document.getElementById('book-url').value = url;
-            // Trigger the load
-            const event = new KeyboardEvent('keypress', {key: 'Enter'});
-            document.getElementById('book-url').dispatchEvent(event);
-        }
     </script>
 </body>
 </html>
