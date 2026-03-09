@@ -1,0 +1,14 @@
+create a php page ./spa_php.php with the following html layout {
+  div.id:"book-controls" {
+    textbox.id:"book-url" {
+      @key.enter  {
+        let book_url = (the content of this textbox's value)
+        div.id:"book-content".html = use php to read the {book_url}
+      }
+    }
+  }
+
+  div.id:"book-content" {
+    html:""  
+  }
+}
