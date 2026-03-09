@@ -1,4 +1,7 @@
 <?php
+// Create empty temp.log file
+file_put_contents('temp.log', '');
+
 function read_book_url($url) {
     $content = file_get_contents($url);
     if ($content !== false) {
