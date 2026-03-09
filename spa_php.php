@@ -25,8 +25,10 @@ function read_book_url($url) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Reader</title>
     <style>
         body {
@@ -44,7 +46,7 @@ function read_book_url($url) {
             margin-bottom: 20px;
         }
         #book-url {
-            width: 70%;
+            width: 80%;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -61,6 +63,10 @@ function read_book_url($url) {
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -69,28 +75,33 @@ function read_book_url($url) {
     </div>
     
     <div id="book-content">
-        <!-- Book content will be displayed here -->
+        Enter a URL above to load book content
     </div>
 
     <script>
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const url = this.value;
-                if (url.trim() !== '') {
-                    // Create a PHP request to fetch the book content
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', window.location.href, true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            document.getElementById('book-content').innerHTML = xhr.responseText;
-                        }
-                    };
-                    
-                    // Send the URL to PHP
-                    xhr.send('book_url=' + encodeURIComponent(url));
-                }
+                const contentDiv = document.getElementById('book-content');
+                
+                // Show loading message
+                contentDiv.innerHTML = '<div class="loading">Loading content...</div>';
+                
+                // Create a new XMLHttpRequest to handle the PHP request
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', window.location.href, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        contentDiv.innerHTML = xhr.responseText;
+                    } else if (xhr.readyState === 4) {
+                        contentDiv.innerHTML = '<div style="color: red;">Error loading content</div>';
+                    }
+                };
+                
+                // Send the URL to PHP
+                xhr.send('book_url=' + encodeURIComponent(url));
             }
         });
     </script>
