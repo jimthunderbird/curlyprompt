@@ -16,15 +16,17 @@ constraint {
 spec {
   entrypoint: ./index.php
 
-  php { #the php code
-    read_book_url(url) { #a php function to read the book content from a given book url
-      let result = get the file content of {url}
-      result = split {result} by newline and convert them to html paragraphs
-      return result
+  /**
+  * the php code
+  */
+  php {
+    read_book_url(url) { 
+      let result = get the content of {url}
+      return {result}
     }
   }
 
-  html { # the html code
+  html { /* the html code */
     style {
       background: wheat
     }
@@ -38,7 +40,7 @@ spec {
       }  
     }
 
-    layout { #the html layout
+    layout { /* the html layout */
       div.id:"book-controls" {
         textbox.id:"book-url" {
           @key.enter  {
