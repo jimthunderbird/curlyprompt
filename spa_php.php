@@ -34,17 +34,14 @@ function read_book_url($url) {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-        
         #book-controls {
             margin-bottom: 20px;
         }
-        
         #book-url {
             width: 80%;
             padding: 10px;
             font-size: 16px;
         }
-        
         #book-content {
             border: 1px solid #ccc;
             padding: 15px;
@@ -58,48 +55,38 @@ function read_book_url($url) {
 <body>
     <div id="book-controls">
         <input type="text" id="book-url" placeholder="Enter book URL">
-        <button onclick="loadBook()">Load Book</button>
     </div>
     
-    <div id="book-content"></div>
+    <div id="book-content">
+        Enter a URL above to load book content
+    </div>
 
     <script>
-        function loadBook() {
-            const url = document.getElementById('book-url').value;
-            if (!url) {
-                alert('Please enter a URL');
-                return;
-            }
-            
-            // Create a PHP request to fetch the content
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', window.location.href, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById('book-content').innerHTML = xhr.responseText;
-                }
-            };
-            
-            xhr.send('book_url=' + encodeURIComponent(url));
-        }
-        
-        // Handle Enter key press
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                loadBook();
+                const url = this.value;
+                if (url) {
+                    // Create a simple AJAX request to get the content
+                    fetch('spa_php.php?url=' + encodeURIComponent(url))
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('book-content').innerHTML = data;
+                        })
+                        .catch(error => {
+                            document.getElementById('book-content').innerHTML = 'Error loading content: ' + error.message;
+                        });
+                }
             }
         });
     </script>
-    
-    <?php
-    // Handle the PHP request
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_url'])) {
-        $url = $_POST['book_url'];
-        $content = read_book_url($url);
-        echo htmlspecialchars($content);
-    }
-    ?>
 </body>
 </html>
+<?php
+// Handle AJAX request for book content
+if (isset($_GET['url'])) {
+    $url = $_GET['url'];
+    $content = read_book_url($url);
+    echo $content;
+    exit;
+}
+?>
