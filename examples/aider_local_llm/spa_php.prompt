@@ -16,8 +16,6 @@ constraint {
 }
 
 spec {
-  entrypoint: ./spa_php.php #the single page app's one and only one main file
-
   php { #the php code
     read_book_url(url) { #a php function to read the book content from a given book url
       let result = use php to get the file content of {url}
@@ -58,8 +56,4 @@ spec {
 
 task {
   after book url is entered, the book content does not show, please fix it
-}
-
-task {
-  make sure the file is at ./examples/aider_local_llm/spa_php.php
 }
