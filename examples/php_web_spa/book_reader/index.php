@@ -1,40 +1,39 @@
 <?php
 function read_book_url($url) {
-    // Get the file content from the URL
-    $content = file_get_contents($url);
+    $content = @file_get_contents($url);
+    if ($content === false) {
+        return "<p style='color: red;'>Error: Unable to read content from the provided URL.</p>";
+    }
     
-    // Split by newlines and convert to HTML paragraphs
     $lines = explode("\n", $content);
-    $paragraphs = [];
-    
+    $html = "";
     foreach ($lines as $line) {
-        if (!empty(trim($line))) {
-            $paragraphs[] = "<p>" . htmlspecialchars($line) . "</p>";
+        $trimmed = trim($line);
+        if (!empty($trimmed)) {
+            $html .= "<p>" . htmlspecialchars($trimmed) . "</p>";
         }
     }
     
-    return implode("", $paragraphs);
+    return $html;
 }
 
-// Handle AJAX requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'read_book_url' && isset($_POST['url'])) {
-        $url = $_POST['url'];
-        $content = read_book_url($url);
-        echo $content;
-        exit;
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'read_book_url') {
+    $url = $_POST['url'] ?? '';
+    echo read_book_url($url);
+    exit;
 }
 ?>
-
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Reader</title>
     <style>
         body {
             background: wheat;
             font-family: Arial, sans-serif;
             padding: 20px;
+            margin: 0;
         }
         
         #book-controls {
@@ -42,58 +41,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
         
         #book-url {
-            width: 80%;
+            width: 70%;
             padding: 10px;
             font-size: 16px;
+            border: 2px solid #8b7355;
+            border-radius: 4px;
         }
         
         #book-content {
-            background: white;
+            background: #fff;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 200px;
         }
         
         #book-content p {
-            margin: 10px 0;
             line-height: 1.6;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div id="book-controls">
-        <input type="text" id="book-url" placeholder="Enter book URL">
+        <input type="text" id="book-url" placeholder="Enter book URL and press Enter...">
     </div>
     
-    <div id="book-content">
-        <!-- Book content will be loaded here -->
-    </div>
-
+    <div id="book-content"></div>
+    
     <script>
+        function load_book(url) {
+            const formData = new FormData();
+            formData.append('action', 'read_book_url');
+            formData.append('url', url);
+            
+            fetch('index.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('book-content').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('book-content').innerHTML = 
+                    '<p style="color: red;">Error loading book: ' + error.message + '</p>';
+            });
+        }
+        
         document.getElementById('book-url').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
-                load_book(this.value);
+                const url = this.value.trim();
+                if (url) {
+                    load_book(url);
+                }
             }
         });
-
-        function load_book(url) {
-            // Create XMLHttpRequest object
-            var xhr = new XMLHttpRequest();
-            
-            // Configure the request
-            xhr.open('POST', '', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            // Handle response
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    document.getElementById('book-content').innerHTML = xhr.responseText;
-                }
-            };
-            
-            // Send the request
-            xhr.send('action=read_book_url&url=' + encodeURIComponent(url));
-        }
     </script>
 </body>
 </html>

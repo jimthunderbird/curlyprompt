@@ -14,6 +14,8 @@ constraint {
 }
 
 spec {
+  entrypoint: ./index.php
+
   php { #the php code
     read_book_url(url) { #a php function to read the book content from a given book url
       let result = use php to get the file content of {url}
