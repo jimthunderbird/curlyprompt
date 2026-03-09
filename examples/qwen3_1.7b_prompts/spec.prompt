@@ -1,8 +1,0 @@
-convert the following {spec} to php8 code
-
-spec {
-  let content = get the content from "https://www.gutenberg.org/cache/epub/1661/pg1661.txt"
-  let words = split {content} with single empty space
-  let num_of_words = count unique words in {words}
-  print {num_of_words}
-}

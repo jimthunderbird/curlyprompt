@@ -1,0 +1,65 @@
+role: PHP8/HTML/CSS/Javascript Expert
+
+objective: create a single page web application based on spec and run all asks
+
+constraint {
+  everything should be in {spec.entrypoint}, including all the php code, html, css and javascript
+  no other files should be created
+  all related php logic must be at the very top of the page, all html/css/javascript should be after, example {
+    <?php
+    ...
+    ?>
+    <html>
+    ...
+    </html>
+  }
+}
+
+spec {
+  entrypoint: ./spa_php.php #the single page app's one and only one main file
+
+  php { #the php code
+    read_book_url(url) { #a php function to read the book content from a given book url
+      let result = use php to get the file content of {url}
+      result = split {result} by newline and convert them to html paragraphs
+      return result
+    }
+
+    if (php get variable action is "load_book") {
+      let url = php get variable url
+      read_book_url(url)
+      exit
+    }
+  }
+
+  html { # the html code
+    style {
+      background: wheat
+    }
+
+    layout { #the html layout
+      div.id:"book-controls" {
+        textbox.id:"book-url" {
+          @key.enter  {
+            div.id:"book-content".html = send php get with {
+              action:"load_book"
+              url:self.value
+            }
+          }
+        }
+      }
+
+      div.id:"book-content" {
+        html:""  
+      }
+    }
+  }
+}
+
+task {
+  after book url is entered, the book content does not show, please fix it
+}
+
+task {
+  make sure the file is at ./examples/aider_local_llm/spa_php.php
+}
