@@ -1,20 +1,19 @@
 <?php
 function read_book_url($url) {
-    $result = file_get_contents($url);
-    if ($result === false) {
-        return "<p>Error: Could not load book content from URL.</p>";
-    }
+    // Get the file content
+    $content = file_get_contents($url);
     
-    // Split by 2 newlines and convert to HTML paragraphs
-    $paragraphs = explode("\n\n", $result);
-    $html = "";
-    foreach ($paragraphs as $paragraph) {
-        if (!empty(trim($paragraph))) {
-            $html .= "<p>" . htmlspecialchars($paragraph) . "</p>";
+    // Split by newlines and convert to HTML paragraphs
+    $lines = explode("\n", $content);
+    $paragraphs = [];
+    
+    foreach ($lines as $line) {
+        if (!empty(trim($line))) {
+            $paragraphs[] = "<p>" . htmlspecialchars($line) . "</p>";
         }
     }
     
-    return $html;
+    return implode("", $paragraphs);
 }
 
 // Handle the load_book action
@@ -51,7 +50,9 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
             background: white;
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 200px;
+            max-height: 600px;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -67,15 +68,15 @@ if (isset($_GET['action']) && $_GET['action'] == "load_book") {
     <script>
         document.getElementById('book-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                var url = this.value;
+                const url = this.value;
                 if (url) {
                     // Create XMLHttpRequest object
-                    var xhr = new XMLHttpRequest();
+                    const xhr = new XMLHttpRequest();
                     
                     // Configure the request
                     xhr.open('GET', '?action=load_book&url=' + encodeURIComponent(url), true);
                     
-                    // Set up a function to handle the response
+                    // Handle the response
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             document.getElementById('book-content').innerHTML = xhr.responseText;
