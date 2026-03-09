@@ -13,10 +13,10 @@ $data = [
     'stream' => false,
     'options' => [
         'temperature' => 0,
+        'top_p' => 0,
+        'top_k' => 0,
+        'repeat_penalty' => 1,
         'num_predict' => 100,
-        'top_k' => 40,
-        'top_p' => 0.9,
-        'repeat_penalty' => 1.1,
         'stop' => ['\n\n']
     ]
 ];
@@ -35,10 +35,6 @@ curl_close($ch);
 if ($httpCode !== 200) {
     die("HTTP request failed with code: $httpCode\n");
 }
-$responseData = json_decode($response, true);
-if (isset($responseData['response'])) {
-    echo $responseData['response'];
-} else {
-    echo "No response found in the API result.\n";
-}
+$decodedResponse = json_decode($response, true);
+echo $decodedResponse['response'];
 ?>

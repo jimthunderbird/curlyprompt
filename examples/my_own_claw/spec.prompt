@@ -1,11 +1,3 @@
-role: PHP 8 Expert
-
-objective: {
-  generate php codeblock based on app_spec below, no extra words, no explanation
-  output RAW text only, do not use markdown code blocks
-  must pass all tests
-}
-
 config {
   llm_api_endpoint = "http://127.0.0.1:11434/api/generate"
   llm_model = "gemma3:latest"
@@ -13,8 +5,8 @@ config {
 }
 
 app_spec {
-  - run cli command: php pokeapi_helper.php, save result to PIKACHU.txt
-  - let question = "Please extract the hp of Pikachu based on the following:" + (get the content of ./PIKACHU.txt)
-  - let result = send curl request to {config.llm_api_endpoint}, with {config.llm_model} and {config.llm_thinking_mode}, with prompt {question}
-  - print {result.response}
+  run cli command: php pokeapi_helper.php, save result to PIKACHU.txt
+  let question = "Please extract the hp of Pikachu based on the following:" + (get the content of ./PIKACHU.txt)
+  let result = send curl request to {config.llm_api_endpoint}, with {config.llm_model} and {config.llm_thinking_mode}, with prompt {question}
+  print {result.response}
 }
