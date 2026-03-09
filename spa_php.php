@@ -5,29 +5,19 @@ function read_book_url($url) {
         return "Invalid URL";
     }
     
-    // Attempt to get content from URL
-    $context = stream_context_create([
-        'http' => [
-            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'timeout' => 10,
-            'follow_location' => true,
-        ]
-    ]);
-    
-    $content = @file_get_contents($url, false, $context);
+    // Use file_get_contents to read the content
+    $content = @file_get_contents($url);
     
     if ($content === false) {
-        return "Failed to load content from URL";
+        return "Failed to read content from URL";
     }
     
     return $content;
 }
 ?>
 
-<!DOCTYPE html>
 <html>
 <head>
-    <title>Book Reader</title>
     <style>
         body {
             background: wheat;
@@ -38,17 +28,18 @@ function read_book_url($url) {
             margin-bottom: 20px;
         }
         #book-url {
-            width: 80%;
             padding: 10px;
+            width: 80%;
             font-size: 16px;
         }
         #book-content {
-            border: 1px solid #ccc;
-            padding: 15px;
             background: white;
+            padding: 20px;
+            border-radius: 5px;
             min-height: 200px;
-            max-height: 600px;
+            max-height: 500px;
             overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -57,9 +48,7 @@ function read_book_url($url) {
         <input type="text" id="book-url" placeholder="Enter book URL">
     </div>
     
-    <div id="book-content">
-        Enter a URL above to load book content
-    </div>
+    <div id="book-content"></div>
 
     <script>
         document.getElementById('book-url').addEventListener('keypress', function(e) {
@@ -81,12 +70,3 @@ function read_book_url($url) {
     </script>
 </body>
 </html>
-<?php
-// Handle AJAX request for book content
-if (isset($_GET['url'])) {
-    $url = $_GET['url'];
-    $content = read_book_url($url);
-    echo $content;
-    exit;
-}
-?>
