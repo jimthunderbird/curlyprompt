@@ -1,4 +1,4 @@
-[App.prompt]
+**File:** `App.prompt`
 
 ```prompt
 
@@ -36,9 +36,7 @@ class App
 
 ```
 
-
-
-[LLM.prompt]
+**File:** `LLM.prompt`
 
 ```prompt
 
