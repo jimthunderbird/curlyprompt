@@ -8,16 +8,16 @@ class LLM
         'thinking_mode' => false
     ];
 
-    public static function sendPrompt(string $prompt): string
+    public static function sendPrompt($prompt)
     {
+        $url = 'http://' . self::$config['api_endpoint'] . '/api/generate';
         $data = [
             'model' => self::$config['model'],
             'prompt' => $prompt,
             'stream' => false
         ];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://' . self::$config['api_endpoint'] . '/api/generate');
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -30,7 +30,7 @@ class LLM
         curl_close($ch);
 
         if ($httpCode !== 200) {
-            return '';
+            return false;
         }
 
         $result = json_decode($response, true);
@@ -40,37 +40,34 @@ class LLM
 
 class App
 {
-    public static function init(): void
+    public static function init()
     {
         $article = './docs/php.md';
-        
         if (!file_exists($article)) {
             echo "failed generated summary\n";
             return;
         }
-        
+
         $content = file_get_contents($article);
-        
         if ($content === false) {
             echo "failed generated summary\n";
             return;
         }
-        
+
         $prompt = "
-        summerize <content>" . $content . "</content> in 50 words
+        summerize <content>" . htmlspecialchars($content) . "</content> in 50 words
         list all the urls
         ";
-        
+
         $summary = LLM::sendPrompt($prompt);
-        
-        if (empty($summary)) {
+        if ($summary === false) {
             echo "failed generated summary\n";
             return;
         }
-        
-        $result = file_put_contents('./docs/php.summary.txt', $summary);
-        
-        if ($result !== false) {
+
+        $outputFile = './docs/php.summary.txt';
+        $writeResult = file_put_contents($outputFile, $summary);
+        if ($writeResult !== false) {
             echo "successfully generated summary\n";
         } else {
             echo "failed generated summary\n";

@@ -1,16 +1,16 @@
-Here’s a summary of the provided content:
+Here’s a summary of the content:
 
-PHP is a widely-used scripting language, particularly for web development. Resources include the official PHP website ([php.net](https://www.php.net)), source code on GitHub ([php/php-src](https://github.com/php/php-src)), extensive documentation ([Documentation](https://www.php.net/manual)), and community mailing lists.
+PHP is a widely-used scripting language for web development, supported by a vibrant community. Resources include php.net for information, GitHub for source code, extensive documentation, and active mailing lists for development discussions. 
 
-Here’s a list of all the URLs:
+Here are all the URLs:
 
-*   [php.net](https://www.php.net)
-*   [php/php-src](https://github.com/php/php-src)
-*   [Release Tarballs](https://www.php.net/downloads.php?source=Y)
-*   [Windows Binaries](https://www.php.net/downloads.php?os=windows&osvariant=windows-downloads)
-*   [Documentation](https://www.php.net/manual)
-*   [Docbook Source](https://github.com/php/doc-en)
-*   [Mailing Lists](https://www.php.net/mailing-lists.php)
-*   [Archives](https://news-web.php.net)
-*   [Externals.io](https://externals.io)
-*   [Get involved](https://www.php.net/get-involved)
+*   [https://www.php.net](https://www.php.net)
+*   [https://github.com/php/php-src](https://github.com/php/php-src)
+*   [https://www.php.net/downloads.php?source=Y](https://www.php.net/downloads.php?source=Y)
+*   [https://www.php.net/downloads.php?os=windows&amp;osvariant=windows-downloads](https://www.php.net/downloads.php?os=windows&amp;osvariant=windows-downloads)
+*   [https://www.php.net/manual](https://www.php.net/manual)
+*   [https://github.com/php/doc-en](https://github.com/php/doc-en)
+*   [https://www.php.net/mailing-lists.php](https://www.php.net/mailing-lists.php)
+*   [https://news-web.php.net](https://news-web.php.net)
+*   [https://externals.io](https://externals.io)
+*   [https://www.php.net/get-involved](https://www.php.net/get-involved)

@@ -4,7 +4,7 @@ class App
     let article = ./docs/php.md
     let content = get the content of {article}
     let prompt = "
-    summerize <content>{content}</content> in 50 words
+    summarize <content>{content}</content> in 50 words
     list all the urls
     "
     let summary = LLM.sendPrompt(prompt)

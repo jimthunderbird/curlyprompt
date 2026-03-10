@@ -7,7 +7,8 @@ class LLM
   }
 
   sendPrompt(prompt) {
-    let result = (send curl request based {config} and with prompt: {prompt})
+    //act as an Ollma Local API Expert
+    let result = (send curl request based on {config} and with prompt: {prompt})
     return result
   }
 }
