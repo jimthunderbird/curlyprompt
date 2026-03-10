@@ -1,4 +1,4 @@
-# **Directory:** `examples/document_summarizer`
+## **Directory:** `examples/document_summarizer`
 
 **File:** `App.prompt`
 
