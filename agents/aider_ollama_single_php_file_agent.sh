@@ -10,7 +10,6 @@ fi
 cd $1
 
 # Configuration
-PROMPT_FILE="spec.prompt"
 MAIN_FILE="main.php"
 # Get the absolute path of the current directory
 CUR_DIR=$(pwd)
@@ -20,28 +19,24 @@ ABS_MAIN_FILE="$CUR_DIR/$MAIN_FILE"
 # Clean up existing file
 rm -f "$ABS_MAIN_FILE"
 
-# Read the spec prompt if it exists (assuming $PROMPT should contain its content)
-if [ -f "$PROMPT_FILE" ]; then
-    SPEC_CONTENT=$(cat "$PROMPT_FILE")
-else
-    SPEC_CONTENT="No spec provided."
-fi
-
 INSTRUCTION=$(cat <<EOF
 role: PHP 8 Expert
 
 objective: generate a php file based on spec
 
 constraint {
-  when we see <CLASS_NAME>.<METHOD_NAME>(<param1>,<param2>...) {
+  if we see <CLASS_NAME>.<METHOD_NAME>(<param1>,<param2>...) {
     use the attached $CUR_DIR/<CLASS_NAME>.prompt file as the source of truth to implement the logic 
     create class <CLASS_NAME> and corresponding <METHOD_NAME>(<param1>,<param2>...) in PHP
   }
-  In the php file, invoke <CLASS_NAME>.<METHOD_NAME>(<param1>,<param2>...)
 }
 
-Spec:
-$SPEC_CONTENT
+invoke <CLASS_NAME>.<METHOD_NAME>(<param1>,<param2>...)
+
+spec {
+  App.init()
+}
+
 EOF
 )
 

@@ -1,0 +1,10 @@
+class App
+{
+  pokeman_info_url:"https://pokeapi.co/api/v2/pokemon/pikachu"
+
+  init() {
+    let content = read the content of url {this.pokeman_info_url}
+    let info = json decode and pretty print {content} as a string
+    print {info} with new line
+  }
+}
