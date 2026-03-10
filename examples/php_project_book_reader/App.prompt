@@ -1,0 +1,31 @@
+class App
+{
+  init() {
+    - act as HTML/CSS/Javascript Expert
+    - print this.view()    
+  }
+
+  getBookContent(book_url) {
+    //apply defensive coding
+    let book_content = get content from url {book_url}
+    print {book_content}
+    php exit
+  }
+
+  view() {
+    this.getBookContent(request.get.book_url)
+
+    html {
+      textbox.id:"book_url" {
+        when enter key is pressed {
+          let book_url = this.value
+          div.id:"book_content".html = this.getBookContent(book_url) //bridge javascript and php with get request variable book_url, be defensive
+        }
+      }  
+
+      div.id:"book_content" {
+        html:""
+      }
+    }
+  }
+}

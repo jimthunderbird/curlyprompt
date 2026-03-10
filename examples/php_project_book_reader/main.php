@@ -5,12 +5,12 @@ class App
     public function init()
     {
         // act as HTML/CSS/Javascript Expert
-        echo $this->view();
+        $this->view();
     }
 
     public function getBookContent($book_url)
     {
-        // apply defensive coding
+        // Apply defensive coding
         if (empty($book_url)) {
             return "Error: No book URL provided";
         }
@@ -21,10 +21,10 @@ class App
         }
 
         // Get content from URL
-        $book_content = file_get_contents($book_url);
+        $book_content = @file_get_contents($book_url);
         
         if ($book_content === false) {
-            return "Error: Could not fetch content from URL";
+            return "Error: Could not retrieve content from the provided URL";
         }
         
         return $book_content;
@@ -32,53 +32,40 @@ class App
 
     public function view()
     {
-        $html = '
+        // Check if book_url is provided via GET request
+        $book_url = isset($_GET['book_url']) ? $_GET['book_url'] : '';
+        
+        if (!empty($book_url)) {
+            $book_content = $this->getBookContent($book_url);
+        } else {
+            $book_content = '';
+        }
+        
+        // HTML output
+        echo '
+        <!DOCTYPE html>
         <html>
         <head>
             <title>Book Reader</title>
         </head>
         <body>
-            <div>
-                <input type="text" id="book_url" placeholder="Enter book URL">
-                <button onclick="loadBook()">Load Book</button>
+            <h1>Book Reader</h1>
+            <form method="GET">
+                <label for="book_url">Enter Book URL:</label><br>
+                <input type="text" id="book_url" name="book_url" value="' . htmlspecialchars($book_url) . '" style="width: 500px;"><br><br>
+                <input type="submit" value="Load Book">
+            </form>
+            
+            <div id="book_content">
+                ' . htmlspecialchars($book_content) . '
             </div>
-            <div id="book_content"></div>
-
-            <script>
-                function loadBook() {
-                    const bookUrl = document.getElementById("book_url").value;
-                    const xhr = new XMLHttpRequest();
-                    xhr.open("GET", "?book_url=" + encodeURIComponent(bookUrl), true);
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            document.getElementById("book_content").innerHTML = xhr.responseText;
-                        }
-                    };
-                    xhr.send();
-                }
-                
-                // Load book on Enter key press
-                document.getElementById("book_url").addEventListener("keypress", function(event) {
-                    if (event.key === "Enter") {
-                        loadBook();
-                    }
-                });
-            </script>
         </body>
         </html>';
-        
-        return $html;
     }
 }
 
 // Initialize the application
 $app = new App();
 $app->init();
-
-// Handle book content request
-if (isset($_GET['book_url'])) {
-    $app = new App();
-    echo $app->getBookContent($_GET['book_url']);
-}
 
 ?>
