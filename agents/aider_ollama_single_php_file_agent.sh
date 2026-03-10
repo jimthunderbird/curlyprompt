@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Check if at least one argument is provided
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <application_directory>"
+    echo "Example: $0 ./my-php-project"
+    exit 1
+fi
+
+cd $1
+
 # Configuration
 PROMPT_FILE="spec.prompt"
 MAIN_FILE="main.php"
