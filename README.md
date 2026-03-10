@@ -1,4 +1,4 @@
-## **Directory:** `examples/document_summarizer`
+### **Directory:** `examples/document_summarizer`
 
 **File:** `App.prompt`
 
@@ -40,6 +40,7 @@ class LLM
 }
 ```
 
+### 100% local php action agent powered by qwen3-coder:30b
 ```
 sh agents/local_php_action_agent.sh examples/document_summarizer
 ```
