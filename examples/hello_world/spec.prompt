@@ -3,7 +3,10 @@ role: PHP 8 Expert
 objective: generate a php file based on spec
 
 constraint {
-  when we see <CLASS_NAME>.<METHOD_NAME>(param1...), use the attached $CUR_DIR/<CLASS_NAME>.prompt file as the source of truth to implement the logic. 
+  when we see <CLASS_NAME>.<METHOD_NAME>(param1...) {
+    use the attached $CUR_DIR/<CLASS_NAME>.prompt file as the source of truth to implement the logic 
+    create class <CLASS_NAME> and corresponding <METHOD_NAME>(param1...) in PHP
+  }
   In {target_file}, invoke <CLASS_NAME>.<METHOD_NAME>(param1...)
 }
 
