@@ -35,11 +35,11 @@ class LLM
         curl_close($ch);
 
         if ($httpCode !== 200) {
-            return "Error: HTTP " . $httpCode;
+            return "";
         }
 
         $result = json_decode($response, true);
-        return $result['response'] ?? "No response";
+        return $result['response'] ?? "";
     }
 }
 
@@ -47,30 +47,31 @@ class App
 {
     public function init(): void
     {
-        $article = './docs/php.md';
-        if (!file_exists($article)) {
+        $articlePath = './docs/php.md';
+        $summaryPath = './docs/php.summary.txt';
+
+        if (!file_exists($articlePath)) {
             echo "failed generated summary\n";
             return;
         }
 
-        $content = file_get_contents($article);
+        $content = file_get_contents($articlePath);
         if ($content === false) {
             echo "failed generated summary\n";
             return;
         }
 
-        $prompt = "
-summarize <content>" . htmlspecialchars($content) . "</content> in 50 words
-list all the urls
-";
-
         $llm = new LLM();
+        $prompt = "Summarize the following content in 50 words and list all URLs:\n\n" . $content;
         $summary = $llm->sendPrompt($prompt);
 
-        $outputFile = './docs/php.summary.txt';
-        $result = file_put_contents($outputFile, $summary);
+        if (empty($summary)) {
+            echo "failed generated summary\n";
+            return;
+        }
 
-        if ($result !== false) {
+        $writeResult = file_put_contents($summaryPath, $summary);
+        if ($writeResult !== false) {
             echo "successfully generated summary\n";
         } else {
             echo "failed generated summary\n";
@@ -80,6 +81,4 @@ list all the urls
 
 $app = new App();
 $app->init();
-
-?>
 

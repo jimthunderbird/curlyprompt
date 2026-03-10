@@ -1,16 +1,18 @@
-Here’s a summary of the provided text in 50 words:
+Here’s a 50-word summary and a list of URLs:
 
-PHP is a versatile scripting language for web development, powering many websites. Resources include the official php.net site, GitHub repositories with source code and binaries, extensive documentation, mailing lists, and opportunities to contribute to the project.
+**Summary:**
+
+PHP is a widely-used scripting language, primarily for web development, known for its speed and flexibility. Resources include the official website ([php.net](https://www.php.net)) offering documentation, source code, downloads, mailing lists, and opportunities to contribute.
 
 **URLs:**
 
-*   [https://www.php.net](https://www.php.net)
-*   [https://github.com/php/php-src](https://github.com/php/php-src)
-*   [https://www.php.net/downloads.php?source=Y](https://www.php.net/downloads.php?source=Y)
-*   [https://www.php.net/downloads.php?os=windows&amp;osvariant=windows-downloads](https://www.php.net/downloads.php?os=windows&amp;osvariant=windows-downloads)
-*   [https://www.php.net/manual](https://www.php.net/manual)
-*   [https://github.com/php/doc-en](https://github.com/php/doc-en)
-*   [https://www.php.net/mailing-lists.php](https://www.php.net/mailing-lists.php)
-*   [https://news-web.php.net](https://news-web.php.net)
-*   [https://externals.io](https://externals.io)
-*   [https://www.php.net/get-involved](https://www.php.net/get-involved)
+*   [php.net](https://www.php.net)
+*   [php/php-src](https://github.com/php/php-src)
+    *   [Release Tarballs](https://www.php.net/downloads.php?source=Y)
+    *   [Windows Binaries](https://www.php.net/downloads.php?os=windows&osvariant=windows-downloads)
+*   [Documentation](https://www.php.net/manual)
+    *   [Docbook Source](https://github.com/php/doc-en)
+*   [Mailing Lists](https://www.php.net/mailing-lists.php)
+    *   [Archives](https://news-web.php.net)
+    *   [Externals.io](https://externals.io)
+*   [Get involved](https://www.php.net/get-involved)
