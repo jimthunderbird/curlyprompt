@@ -11,6 +11,7 @@ class App
     //apply defensive coding
     let book_content = get content from url {book_url}
     book_content = convert special characters in {book_content} to HTML entities 
+    book_content = nl2br({book_content})
     print {book_content}
     php exit
   }
@@ -32,6 +33,9 @@ class App
 
       div.id:"book_content" {
         html:""
+        style {
+          background:"wheat"
+        }
       }
     }
   }
