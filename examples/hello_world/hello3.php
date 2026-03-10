@@ -4,7 +4,7 @@ class Greeter
 {
     public function greet()
     {
-        echo "this is the very simple hello message from greeter\n";
+        echo "Hey there! This is a casual greeting from the greeter\n";
     }
 }
 
