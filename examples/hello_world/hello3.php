@@ -3,7 +3,7 @@
 class Greeter
 {
     public function greet() {
-        echo "Hey there! This is a casual hello message from greeter\n";
+        echo "this is the very simple hello message from greeter\n";
     }
 }
 
