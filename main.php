@@ -2,24 +2,22 @@
 
 class App
 {
-    public function init()
-    {
+    public function init() {
         // act as HTML/CSS/Javascript Expert
         // all php code should be on top, before html
         // this.getBookContent()
-        // print this.view()
+        // print this.view()    
         
         if (isset($_GET['book_url'])) {
             $this->getBookContent();
         } else {
-            $this->view();
+            echo $this->view();
         }
     }
 
-    public function getBookContent()
-    {
+    public function getBookContent() {
         // apply defensive coding
-        $book_url = $_GET['book_url'] ?? '';
+        $book_url = isset($_GET['book_url']) ? $_GET['book_url'] : '';
         
         // Validate URL
         if (!filter_var($book_url, FILTER_VALIDATE_URL)) {
@@ -39,10 +37,8 @@ class App
         exit;
     }
 
-    public function view()
-    {
-        ?>
-        <!DOCTYPE html>
+    public function view() {
+        $html = '
         <html>
         <head>
             <title>Book Reader</title>
@@ -52,19 +48,19 @@ class App
                 <input type="text" id="book_url" placeholder="Enter book URL">
                 <button onclick="loadBook()">Load Book</button>
             </div>
-            
-            <div id="book_content">
-                <!-- Book content will be loaded here -->
-            </div>
+            <div id="book_content"></div>
 
             <script>
                 function loadBook() {
-                    let book_url = document.getElementById("book_url").value;
-                    
-                    if (book_url) {
-                        // Send GET request to self with book_url parameter
-                        window.location.href = "?book_url=" + encodeURIComponent(book_url);
-                    }
+                    var bookUrl = document.getElementById("book_url").value;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", window.location.href.split("?")[0] + "?book_url=" + encodeURIComponent(bookUrl), true);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            document.getElementById("book_content").innerHTML = xhr.responseText;
+                        }
+                    };
+                    xhr.send();
                 }
                 
                 // Handle Enter key press
@@ -75,8 +71,9 @@ class App
                 });
             </script>
         </body>
-        </html>
-        <?php
+        </html>';
+        
+        return $html;
     }
 }
 
