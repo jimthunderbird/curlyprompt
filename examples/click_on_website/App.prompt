@@ -1,0 +1,7 @@
+class App
+{
+  static init() {
+    let url = "https://api-platform.com"
+    Browser.load(url)
+  }
+}
