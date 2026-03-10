@@ -3,7 +3,7 @@ CUR_DIR=$(dirname "$(realpath $PROMPT_FILE)")
 PROMPT=$(sed "s|\$CUR_DIR|$CUR_DIR|g" $PROMPT_FILE)
 
 aider --subtree-only --model ollama_chat/qwen3-coder:30b \
-      --file "$CUR_DIR/hello3.php" \
+      --file "$CUR_DIR/main.php" \
       --read *.prompt \
       --no-auto-test \
       --no-auto-lint \
