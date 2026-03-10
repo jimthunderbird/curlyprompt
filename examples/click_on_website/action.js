@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
 
 class Browser {
   static async load(url) {
@@ -16,12 +18,14 @@ class Browser {
 
 class App {
   static async init() {
-    let url = 'https://www.gutenberg.org/';
+    let url = "https://www.gutenberg.org/";
     let html = await Browser.load(url);
-    const slogan = html.match(/id="slogan".*?>(.*?)</s);
-    if (slogan && slogan[1]) {
-      console.log(slogan[1].trim());
-    }
+    let dom = new JSDOM(html);
+    let document = dom.window.document;
+    let links = document.querySelectorAll('div.lib.latest.no-select a');
+    links.forEach(link => {
+      console.log(link.href);
+    });
   }
 }
 
