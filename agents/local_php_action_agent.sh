@@ -2,6 +2,8 @@
 
 LOCAL_LLM_MODEL="qwen3-coder:30b"
 
+PHP_ACTION_FILE="action.php"
+
 # Check if at least one argument is provided
 if [ "$#" -lt 1 ]; then
     echo "Usage: $0 <application_directory>"
@@ -28,6 +30,12 @@ done
 
 PROMPT+="$PROMPT\nAPP.init()"
 
-ollama run $LOCAL_LLM_MODEL "$PROMPT" | grep --line-buffered -vE '```php|```' | tee main.php
+ollama run $LOCAL_LLM_MODEL "$PROMPT" | grep --line-buffered -vE '```php|```' | tee $PHP_ACTION_FILE
 
-echo "Generated main.php"
+echo "Generated $PHP_ACTION_FILE"
+
+# execute php action
+php $PHP_ACTION_FILE
+
+# back to original directory
+cd -

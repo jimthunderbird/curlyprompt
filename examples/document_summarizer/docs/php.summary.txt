@@ -1,0 +1,16 @@
+Here’s a summary of the provided content:
+
+PHP is a widely-used scripting language, particularly for web development. Resources include the official PHP website ([php.net](https://www.php.net)), source code on GitHub ([php/php-src](https://github.com/php/php-src)), extensive documentation ([Documentation](https://www.php.net/manual)), and community mailing lists.
+
+Here’s a list of all the URLs:
+
+*   [php.net](https://www.php.net)
+*   [php/php-src](https://github.com/php/php-src)
+*   [Release Tarballs](https://www.php.net/downloads.php?source=Y)
+*   [Windows Binaries](https://www.php.net/downloads.php?os=windows&osvariant=windows-downloads)
+*   [Documentation](https://www.php.net/manual)
+*   [Docbook Source](https://github.com/php/doc-en)
+*   [Mailing Lists](https://www.php.net/mailing-lists.php)
+*   [Archives](https://news-web.php.net)
+*   [Externals.io](https://externals.io)
+*   [Get involved](https://www.php.net/get-involved)

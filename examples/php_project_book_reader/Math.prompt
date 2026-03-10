@@ -1,6 +1,0 @@
-class Math
-{
-  getPI() {
-    return 3.14159
-  }
-}

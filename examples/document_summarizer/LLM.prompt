@@ -1,0 +1,13 @@
+class LLM
+{
+  config {
+    api_endpoint:"127.0.0.1:11434"
+    model:"gemma3:latest"
+    thinking_mode:false
+  }
+
+  sendPrompt(prompt) {
+    let result = (send curl request based {config} and with prompt: {prompt})
+    return result
+  }
+}
