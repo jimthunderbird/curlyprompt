@@ -13,6 +13,9 @@ fi
 
 cd $1
 
+# Install Packages
+npm install
+
 # 1. Initialize the base prompt
 PROMPT="role: Node.js Expert
 
