@@ -6,26 +6,28 @@ class App
     {
         // act as HTML/CSS/Javascript Expert
         // all php code should be on top, before html
+        // this.getBookContent()
         // print this.view()
         
-        echo $this->view();
+        if (isset($_GET['book_url'])) {
+            $this->getBookContent();
+        } else {
+            $this->view();
+        }
     }
 
     public function getBookContent()
     {
         // apply defensive coding
-        if (!isset($_GET['book_url']) || empty($_GET['book_url'])) {
-            echo "No book URL provided";
-            exit;
-        }
+        $book_url = $_GET['book_url'] ?? '';
         
-        $book_url = filter_var($_GET['book_url'], FILTER_SANITIZE_URL);
-        
+        // Validate URL
         if (!filter_var($book_url, FILTER_VALIDATE_URL)) {
-            echo "Invalid URL provided";
+            echo "Invalid URL";
             exit;
         }
         
+        // Fetch content from URL
         $book_content = file_get_contents($book_url);
         
         if ($book_content === false) {
@@ -39,34 +41,33 @@ class App
 
     public function view()
     {
-        $html = '
+        ?>
         <!DOCTYPE html>
         <html>
         <head>
             <title>Book Reader</title>
         </head>
         <body>
-            <h1>Book Reader</h1>
-            <input type="text" id="book_url" placeholder="Enter book URL">
-            <button onclick="loadBook()">Load Book</button>
+            <div>
+                <input type="text" id="book_url" placeholder="Enter book URL">
+                <button onclick="loadBook()">Load Book</button>
+            </div>
             
-            <div id="book_content"></div>
+            <div id="book_content">
+                <!-- Book content will be loaded here -->
+            </div>
 
             <script>
                 function loadBook() {
                     let book_url = document.getElementById("book_url").value;
+                    
                     if (book_url) {
-                        fetch("?book_url=" + encodeURIComponent(book_url))
-                            .then(response => response.text())
-                            .then(data => {
-                                document.getElementById("book_content").innerHTML = data;
-                            })
-                            .catch(error => {
-                                document.getElementById("book_content").innerHTML = "Error loading book: " + error;
-                            });
+                        // Send GET request to self with book_url parameter
+                        window.location.href = "?book_url=" + encodeURIComponent(book_url);
                     }
                 }
                 
+                // Handle Enter key press
                 document.getElementById("book_url").addEventListener("keypress", function(event) {
                     if (event.key === "Enter") {
                         loadBook();
@@ -74,9 +75,8 @@ class App
                 });
             </script>
         </body>
-        </html>';
-        
-        return $html;
+        </html>
+        <?php
     }
 }
 
