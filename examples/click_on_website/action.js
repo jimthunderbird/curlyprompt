@@ -1,12 +1,5 @@
 const puppeteer = require('puppeteer');
 
-class App {
-  static init() {
-    let url = "https://api-platform.com";
-    Browser.load(url);
-  }
-}
-
 class Browser {
   static async load(url) {
     const browser = await puppeteer.launch({
@@ -17,14 +10,29 @@ class Browser {
     await page.goto(url, { waitUntil: 'networkidle0' });
     const html = await page.content();
     await browser.close();
-    
-    // Extract text from p elements with class "text-text-secondary"
-    const extractedText = html.match(/<p[^>]*class="[^"]*text-text-secondary[^"]*"[^>]*>(.*?)<\/p>/gi);
-    if (extractedText && extractedText.length > 0) {
-      console.log(extractedText[0].replace(/<[^>]*>/g, ''));
-    }
+    return html;
   }
 }
 
-App.init();
+class App {
+  static async init() {
+    let url = "https://api-platform.com";
+    let html = await Browser.load(url);
+    
+    // Extract the value of {html}.p.class:"text-text-secondary"
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setContent(html);
+    
+    const extractedValue = await page.evaluate(() => {
+      const elements = document.querySelectorAll('p.text-text-secondary');
+      return Array.from(elements).map(el => el.textContent.trim());
+    });
+    
+    await browser.close();
+    return extractedValue;
+  }
+}
+
+App.init().then(result => console.log(result));
 

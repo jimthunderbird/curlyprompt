@@ -2,6 +2,7 @@ class App
 {
   static init() {
     let url = "https://api-platform.com"
-    Browser.load(url)
+    let html = Browser.load(url)
+    extract the value of {html}.p.class:"text-text-secondary"
   }
 }
