@@ -16,26 +16,14 @@ class Browser {
 
 class App {
   static async init() {
-    let url = "https://api-platform.com";
+    let url = 'https://www.gutenberg.org/';
     let html = await Browser.load(url);
-    
-    // Extract the value of p.class:"text-text-secondary"
-    const browser = await puppeteer.launch({
-      channel: 'chrome', 
-      headless: true
-    });
-    const page = await browser.newPage();
-    await page.setContent(html);
-    
-    const result = await page.evaluate(() => {
-      const elements = document.querySelectorAll('p.text-text-secondary');
-      return Array.from(elements, el => el.textContent.trim());
-    });
-    
-    await browser.close();
-    return result;
+    const slogan = html.match(/id="slogan".*?>(.*?)</s);
+    if (slogan && slogan[1]) {
+      console.log(slogan[1].trim());
+    }
   }
 }
 
-App.init().then(result => console.log(result));
+App.init();
 
