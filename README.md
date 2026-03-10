@@ -8,11 +8,7 @@ class App
   init() {
     let article = ./docs/php.md
     let content = get the content of {article}
-    let prompt = "
-    summarize <content>{content}</content> in 50 words
-    list all the urls
-    "
-    let summary = LLM.sendPrompt(prompt)
+    let summary = (ask LLM to summarize {content} in 50 words and list all the urls)
     write {summary} to ./docs/php.summary.txt {
       if successful: print "successfully generated summary"
       if failed: print "failed generated summary"
