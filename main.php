@@ -23,7 +23,8 @@ class Greeter
     }
 }
 
-// Execute the spec
+// Invoke the spec
 $greeter = new Greeter();
 $greeter->greet("Jim");
+
 ?>
