@@ -7,4 +7,7 @@ class Greeter
     }
 }
 
+$greeter = new Greeter();
+$greeter->greet();
+
 ?>
