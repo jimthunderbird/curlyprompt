@@ -1,5 +1,7 @@
 class App
 {
+  pi:Math.getPI()
+
   init() {
     - act as HTML/CSS/Javascript Expert
     - print this.view()    
@@ -8,6 +10,7 @@ class App
   getBookContent(book_url) {
     //apply defensive coding
     let book_content = get content from url {book_url}
+    book_content = convert special characters in {book_content} to HTML entities 
     print {book_content}
     php exit
   }
@@ -16,6 +19,10 @@ class App
     this.getBookContent(request.get.book_url)
 
     html {
+      h1 {
+        text: {this.pi}
+      }
+
       textbox.id:"book_url" {
         when enter key is pressed {
           let book_url = this.value

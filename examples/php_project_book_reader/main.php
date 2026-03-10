@@ -1,119 +1,122 @@
 <?php
+
+class Math
+{
+    public static function getPI()
+    {
+        return 3.14159;
+    }
+}
+
 class App
 {
+    private $pi;
+    
+    public function __construct()
+    {
+        $this->pi = Math::getPI();
+    }
+    
     public function init()
     {
-        // Act as HTML/CSS/Javascript Expert
-        // Print the view
         echo $this->view();
     }
-
+    
     public function getBookContent($book_url)
     {
-        // Apply defensive coding
+        // Defensive coding
         if (empty($book_url)) {
             return "Error: No URL provided";
         }
-
+        
         // Validate URL format
         if (!filter_var($book_url, FILTER_VALIDATE_URL)) {
             return "Error: Invalid URL format";
         }
-
-        // Set user agent to avoid being blocked by some servers
-        $context = stream_context_create([
-            'http' => [
-                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'timeout' => 10,
-                'header' => "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
-            ]
-        ]);
-
-        // Get content from URL
-        $book_content = @file_get_contents($book_url, false, $context);
-
-        if ($book_content === false) {
-            return "Error: Unable to fetch content from URL";
+        
+        // Prevent URL traversal attacks
+        if (strpos($book_url, '..') !== false) {
+            return "Error: Invalid URL";
         }
-
-        // Return content
+        
+        // Get content from URL
+        $book_content = @file_get_contents($book_url);
+        
+        if ($book_content === false) {
+            return "Error: Could not fetch content from URL";
+        }
+        
+        // Convert special characters to HTML entities
+        $book_content = htmlspecialchars($book_content, ENT_QUOTES, 'UTF-8');
+        
         return $book_content;
     }
-
+    
     public function view()
     {
-        // Get book_url from GET request if available
-        $book_url = $_GET['book_url'] ?? '';
+        $output = '';
         
-        // If we have a URL, fetch content
-        $book_content = '';
-        if (!empty($book_url)) {
-            $book_content = $this->getBookContent($book_url);
+        // Handle initial book content load if URL is provided
+        if (isset($_GET['book_url'])) {
+            $output .= $this->getBookContent($_GET['book_url']);
         }
-
+        
         // Generate HTML
-        $html = '
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Book Content Fetcher</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        #book_url {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        #book_content {
-            width: 100%;
-            min-height: 200px;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
-        }
-        .error {
-            color: red;
-            background-color: #ffe6e6;
-            padding: 10px;
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Book Content Fetcher</h1>
-    <input type="text" id="book_url" placeholder="Enter book URL" value="' . htmlspecialchars($book_url) . '">
-    <div id="book_content">' . htmlspecialchars($book_content) . '</div>
-
-    <script>
-        document.getElementById("book_url").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                let book_url = this.value;
-                if (book_url) {
-                    // Redirect to the same page with the URL as GET parameter
-                    window.location.href = window.location.pathname + "?book_url=" + encodeURIComponent(book_url);
+        $output .= '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Book Content Viewer</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                #book_url { width: 500px; padding: 10px; margin: 10px 0; }
+                #book_content { 
+                    border: 1px solid #ccc; 
+                    padding: 15px; 
+                    min-height: 200px; 
+                    background-color: #f9f9f9;
+                    white-space: pre-wrap;
                 }
-            }
-        });
-    </script>
-</body>
-</html>';
-
-        return $html;
+                h1 { color: #333; }
+            </style>
+        </head>
+        <body>
+            <h1>' . $this->pi . '</h1>
+            
+            <input type="text" id="book_url" placeholder="Enter book URL" onkeypress="handleKeyPress(event)">
+            
+            <div id="book_content"></div>
+            
+            <script>
+                function handleKeyPress(event) {
+                    if (event.key === "Enter") {
+                        const bookUrl = document.getElementById("book_url").value;
+                        if (bookUrl) {
+                            // Make AJAX request to PHP script with URL parameter
+                            fetch("?book_url=" + encodeURIComponent(bookUrl), {
+                                method: "GET"
+                            })
+                            .then(response => response.text())
+                            .then(data => {
+                                document.getElementById("book_content").innerHTML = data;
+                            })
+                            .catch(error => {
+                                document.getElementById("book_content").innerHTML = "Error loading content";
+                            });
+                        }
+                    }
+                }
+            </script>
+        </body>
+        </html>';
+        
+        return $output;
     }
 }
 
 // Initialize the application
 $app = new App();
 $app->init();
+
 ?>
 
