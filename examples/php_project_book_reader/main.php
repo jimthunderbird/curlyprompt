@@ -10,7 +10,7 @@ class Math
 
 class App
 {
-    private $pi;
+    public $pi;
 
     public function __construct()
     {
@@ -24,25 +24,20 @@ class App
 
     public function getBookContent($book_url)
     {
-        // Apply defensive coding
-        if (empty($book_url) || !filter_var($book_url, FILTER_VALIDATE_URL)) {
-            return "<p>Invalid URL provided.</p>";
+        if (!filter_var($book_url, FILTER_VALIDATE_URL)) {
+            return "Invalid URL";
         }
 
-        // Get content from URL
         $book_content = @file_get_contents($book_url);
-        
         if ($book_content === false) {
-            return "<p>Failed to retrieve content from the provided URL.</p>";
+            return "Failed to retrieve content";
         }
 
-        // Convert special characters to HTML entities
         $book_content = htmlspecialchars($book_content, ENT_QUOTES, 'UTF-8');
-        
-        // Convert newlines to <br> tags
         $book_content = nl2br($book_content);
-        
-        return $book_content;
+
+        echo $book_content;
+        exit;
     }
 
     public function view()
@@ -53,52 +48,25 @@ class App
         <html>
         <head>
             <title>Book Content Viewer</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
+            <script>
+                function loadContent() {
+                    const bookUrl = document.getElementById('book_url').value;
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            document.getElementById('book_content').innerHTML = xhr.responseText;
+                        }
+                    };
+                    xhr.send('book_url=' + encodeURIComponent(bookUrl));
                 }
-                #book_url {
-                    width: 500px;
-                    padding: 10px;
-                    margin-bottom: 20px;
-                }
-                #book_content {
-                    background: wheat;
-                    padding: 15px;
-                    border: 1px solid #ccc;
-                    min-height: 100px;
-                }
-                h1 {
-                    color: #333;
-                }
-            </style>
+            </script>
         </head>
         <body>
             <h1><?php echo $this->pi; ?></h1>
-            
-            <input type="text" id="book_url" placeholder="Enter book URL">
-            
-            <div id="book_content">
-                <?php 
-                if (isset($_GET['book_url'])) {
-                    echo $this->getBookContent($_GET['book_url']);
-                }
-                ?>
-            </div>
-
-            <script>
-                document.getElementById('book_url').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        var book_url = this.value;
-                        if (book_url) {
-                            // Create a new URL with the book_url parameter
-                            var newUrl = window.location.href.split('?')[0] + '?book_url=' + encodeURIComponent(book_url);
-                            window.location.href = newUrl;
-                        }
-                    }
-                });
-            </script>
+            <input type="text" id="book_url" onkeypress="if(event.keyCode==13) loadContent();" placeholder="Enter book URL">
+            <div id="book_content" style="background:wheat;"></div>
         </body>
         </html>
         <?php
@@ -106,9 +74,12 @@ class App
     }
 }
 
-// Initialize the application
-$APP = new App();
-$APP->init();
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $app = new App();
+    $app->getBookContent($_POST['book_url'] ?? '');
+} else {
+    $app = new App();
+    $app->init();
+}
 ?>
 

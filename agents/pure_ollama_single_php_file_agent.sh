@@ -14,7 +14,7 @@ cd $1
 # 1. Initialize the base prompt
 PROMPT="role: PHP 8 Expert
 
-objective: generate a php file based on spec
+objective: generate a php file based on spec, no explanation, no extra words
 "
 
 # 2. Loop through each .prompt file and append content

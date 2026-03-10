@@ -11,13 +11,13 @@ class App
     //apply defensive coding
     let book_content = get content from url {book_url}
     book_content = convert special characters in {book_content} to HTML entities 
-    book_content = nl2br({book_content})
+    book_content = insert HTML line breaks before all newlines in {book_content}
     print {book_content}
     php exit
   }
 
   view() {
-    this.getBookContent(request.get.book_url)
+    this.getBookContent(request.post.book_url)
 
     html {
       h1 {
@@ -27,7 +27,7 @@ class App
       textbox.id:"book_url" {
         when enter key is pressed {
           let book_url = this.value
-          div.id:"book_content".html = this.getBookContent(book_url) //bridge javascript and php with get request variable book_url, be defensive
+          div.id:"book_content".html = this.getBookContent(book_url) //bridge javascript and php with post request variable book_url, be defensive
         }
       }  
 
