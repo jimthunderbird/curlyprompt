@@ -1,6 +1,6 @@
 class Math
 {
   getPI() {
-    return 3.1415
+    return 3.14159265
   }
 }
