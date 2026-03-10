@@ -4,77 +4,116 @@ class App
 {
     public function init()
     {
-        // Check if book_url is provided via GET parameter
-        if (isset($_GET['book_url']) && !empty($_GET['book_url'])) {
-            $this->getBookContent();
-        } else {
-            $this->view();
-        }
+        // act as HTML/CSS/Javascript Expert
+        // all php code should be on top, before html
+        // print this.view()
+        
+        echo $this->view();
     }
 
-    public function getBookContent()
+    public function getBookContent($book_url)
     {
-        // Apply defensive coding - validate and sanitize the URL
-        $book_url = filter_var($_GET['book_url'], FILTER_SANITIZE_URL);
-        
-        // Check if URL is valid
+        // apply defensive coding
+        if (empty($book_url)) {
+            return "Error: No URL provided";
+        }
+
+        // Validate URL
         if (!filter_var($book_url, FILTER_VALIDATE_URL)) {
-            echo "Invalid URL provided";
-            exit;
+            return "Error: Invalid URL format";
+        }
+
+        // Use cURL to fetch content
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $book_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Book Reader Application');
+        
+        $book_content = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        if (curl_error($ch)) {
+            return "Error: " . curl_error($ch);
         }
         
-        // Fetch content from the URL
-        $book_content = @file_get_contents($book_url);
-        
-        // Check if content was fetched successfully
-        if ($book_content === false) {
-            echo "Failed to fetch content from the provided URL";
-            exit;
+        if ($http_code !== 200) {
+            return "Error: HTTP " . $http_code;
         }
         
-        // Output the content
-        echo $book_content;
-        exit;
+        curl_close($ch);
+        
+        return $book_content;
     }
 
     public function view()
     {
-        ?>
+        $html = '
         <!DOCTYPE html>
         <html>
         <head>
             <title>Book Reader</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                #book_url { width: 500px; padding: 10px; margin-bottom: 10px; }
+                #book_content { 
+                    border: 1px solid #ccc; 
+                    padding: 15px; 
+                    min-height: 200px; 
+                    background-color: #f9f9f9;
+                }
+                button { padding: 10px 15px; background-color: #007cba; color: white; border: none; cursor: pointer; }
+                button:hover { background-color: #005a87; }
+            </style>
         </head>
         <body>
             <h1>Book Reader</h1>
-            <input type="text" id="book_url" placeholder="Enter book URL" onkeypress="handleKeyPress(event)">
+            <input type="text" id="book_url" placeholder="Enter book URL">
+            <button onclick="loadBook()">Load Book</button>
             <div id="book_content"></div>
 
             <script>
-                function handleKeyPress(event) {
-                    if (event.key === 'Enter') {
-                        let book_url = document.getElementById('book_url').value;
-                        if (book_url) {
-                            fetch(window.location.href + '?book_url=' + encodeURIComponent(book_url))
-                                .then(response => response.text())
-                                .then(data => {
-                                    document.getElementById('book_content').innerHTML = data;
-                                })
-                                .catch(error => {
-                                    document.getElementById('book_content').innerHTML = 'Error loading content';
-                                });
-                        }
+                function loadBook() {
+                    const bookUrl = document.getElementById("book_url").value;
+                    if (!bookUrl) {
+                        alert("Please enter a URL");
+                        return;
                     }
+                    
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("GET", "?book_url=" + encodeURIComponent(bookUrl), true);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            document.getElementById("book_content").innerHTML = xhr.responseText;
+                        }
+                    };
+                    xhr.send();
                 }
+                
+                // Load book when Enter key is pressed
+                document.getElementById("book_url").addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        loadBook();
+                    }
+                });
             </script>
         </body>
-        </html>
-        <?php
+        </html>';
+        
+        return $html;
     }
 }
 
 // Initialize the application
 $app = new App();
 $app->init();
+
+// Handle book content request
+if (isset($_GET['book_url'])) {
+    $app = new App();
+    echo $app->getBookContent($_GET['book_url']);
+    exit;
+}
 
 ?>
