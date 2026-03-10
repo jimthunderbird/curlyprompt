@@ -9,10 +9,10 @@ class Math
 
 class Greeter
 {
-  public function greet() {
+  public function greet($name) {
     $new_year_message = $this->getNewYearMessage();
     $pi = (new Math())->getPI();
-    echo "Hey there, this is the very simple hello message from greeter, also here is the {$new_year_message}, pi day is around the corner, pi is {$pi}\n";
+    echo "hi {$name}, this is the very simple hello message from greeter, also here is the {$new_year_message}, pi day is around the corner, pi is {$pi}\n";
   }
 
   public function getNewYearMessage() {
@@ -21,5 +21,5 @@ class Greeter
 }
 
 $greeter = new Greeter();
-$greeter->greet();
+$greeter->greet("Jim");
 ?>
