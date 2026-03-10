@@ -2,10 +2,8 @@ class Browser
 {
   load(url) {
     import puppeteer from 'puppeteer';
-    // Or import puppeteer from 'puppeteer-core';
-    // Launch the browser and open a new blank page.
+    // Launch the browser and open a new blank page, must following the following code
     const browser = await puppeteer.launch({
-      // Use 'chrome' or 'msedge' (on Windows) to find your local install automatically
       channel: 'chrome', 
       headless: true
     });

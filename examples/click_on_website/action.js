@@ -19,18 +19,21 @@ class App {
     let url = "https://api-platform.com";
     let html = await Browser.load(url);
     
-    // Extract the value of {html}.p.class:"text-text-secondary"
-    const browser = await puppeteer.launch({ headless: true });
+    // Extract the value of p.class:"text-text-secondary"
+    const browser = await puppeteer.launch({
+      channel: 'chrome', 
+      headless: true
+    });
     const page = await browser.newPage();
     await page.setContent(html);
     
-    const extractedValue = await page.evaluate(() => {
+    const result = await page.evaluate(() => {
       const elements = document.querySelectorAll('p.text-text-secondary');
-      return Array.from(elements).map(el => el.textContent.trim());
+      return Array.from(elements, el => el.textContent.trim());
     });
     
     await browser.close();
-    return extractedValue;
+    return result;
   }
 }
 
