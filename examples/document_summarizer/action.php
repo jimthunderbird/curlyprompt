@@ -2,22 +2,27 @@
 
 class LLM
 {
-    private static $config = [
-        'api_endpoint' => '127.0.0.1:11434',
-        'model' => 'gemma3:latest',
-        'thinking_mode' => false
-    ];
+    private string $api_endpoint;
+    private string $model;
+    private bool $thinking_mode;
 
-    public static function sendPrompt($prompt)
+    public function __construct()
     {
-        $url = 'http://' . self::$config['api_endpoint'] . '/api/generate';
+        $this->api_endpoint = "127.0.0.1:11434";
+        $this->model = "gemma3:latest";
+        $this->thinking_mode = false;
+    }
+
+    public function sendPrompt(string $prompt): string
+    {
         $data = [
-            'model' => self::$config['model'],
+            'model' => $this->model,
             'prompt' => $prompt,
             'stream' => false
         ];
 
-        $ch = curl_init($url);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://" . $this->api_endpoint . "/api/generate");
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -30,17 +35,17 @@ class LLM
         curl_close($ch);
 
         if ($httpCode !== 200) {
-            return false;
+            return "Error: HTTP " . $httpCode;
         }
 
         $result = json_decode($response, true);
-        return $result['response'] ?? '';
+        return $result['response'] ?? "No response";
     }
 }
 
 class App
 {
-    public static function init()
+    public function init(): void
     {
         $article = './docs/php.md';
         if (!file_exists($article)) {
@@ -55,19 +60,17 @@ class App
         }
 
         $prompt = "
-        summerize <content>" . htmlspecialchars($content) . "</content> in 50 words
-        list all the urls
-        ";
+summarize <content>" . htmlspecialchars($content) . "</content> in 50 words
+list all the urls
+";
 
-        $summary = LLM::sendPrompt($prompt);
-        if ($summary === false) {
-            echo "failed generated summary\n";
-            return;
-        }
+        $llm = new LLM();
+        $summary = $llm->sendPrompt($prompt);
 
         $outputFile = './docs/php.summary.txt';
-        $writeResult = file_put_contents($outputFile, $summary);
-        if ($writeResult !== false) {
+        $result = file_put_contents($outputFile, $summary);
+
+        if ($result !== false) {
             echo "successfully generated summary\n";
         } else {
             echo "failed generated summary\n";
@@ -75,5 +78,8 @@ class App
     }
 }
 
-App::init();
+$app = new App();
+$app->init();
+
+?>
 

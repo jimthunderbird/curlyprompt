@@ -1,8 +1,8 @@
-Here’s a summary of the content:
+Here’s a summary of the provided text in 50 words:
 
-PHP is a widely-used scripting language for web development, supported by a vibrant community. Resources include php.net for information, GitHub for source code, extensive documentation, and active mailing lists for development discussions. 
+PHP is a versatile scripting language for web development, powering many websites. Resources include the official php.net site, GitHub repositories with source code and binaries, extensive documentation, mailing lists, and opportunities to contribute to the project.
 
-Here are all the URLs:
+**URLs:**
 
 *   [https://www.php.net](https://www.php.net)
 *   [https://github.com/php/php-src](https://github.com/php/php-src)
