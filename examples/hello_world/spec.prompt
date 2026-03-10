@@ -1,0 +1,7 @@
+role: PHP 8 Expert
+
+objective: generate $CUR_DIR/hello3.php based on spec
+
+spec {
+  print "hello"
+}
