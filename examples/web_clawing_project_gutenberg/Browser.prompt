@@ -2,7 +2,7 @@ class Browser
 {
   load(url) {
     import puppeteer from 'puppeteer';
-    // Launch the browser and open a new blank page, must following the following code
+    // Launch the browser and open a new blank page, must learn from the following code
     const browser = await puppeteer.launch({
       channel: 'chrome', 
       headless: true
