@@ -1,1 +1,1 @@
-show me the project gutenberg new releases information
+show me the project gutenberg new releases information, extract all URLs with pattern: pg{bookID} and odd {bookID}

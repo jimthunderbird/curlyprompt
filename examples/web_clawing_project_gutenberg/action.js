@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+const { JSDOM } = require('jsdom');
 
 class Browser {
   static async load(url) {
@@ -41,41 +40,42 @@ class LocalLLM {
 }
 
 class Tool {
-  static async getProjectGutenbergNewReleasesInfo() {
+  static getProjectGutenbergNewReleasesInfo() {
     const url = "https://www.gutenberg.org/";
-    const html = await Browser.load(url);
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
-    const links = document.querySelectorAll('div.lib.latest.no-select a');
-
-    for (const link of links) {
-      const href = link.href;
-      const match = href.match(/ebooks\/(\d+)/);
-      if (!match) continue;
-      const bookID = match[1];
-      const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-
-      const bookResponse = await fetch(book_url);
-      const bookContent = await bookResponse.text();
-      const words = bookContent.split(/\s+/).slice(0, 120).join(' ');
-      const prompt = `please extract the title and author of the book based on <content>${words}</content>, no explanation, no extra words`;
-      let result = await LocalLLM.sendPrompt(prompt);
-      result = result.replace(/\*/g, '');
-      const presentation = `
+    const html = Browser.load(url);
+    html.then(htmlContent => {
+      const dom = new JSDOM(htmlContent);
+      const document = dom.window.document;
+      const links = document.querySelectorAll('div.lib.latest.no-select a');
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        const match = href.match(/ebooks\/(\d+)/);
+        if (match) {
+          const bookID = match[1];
+          if (parseInt(bookID) % 2 === 1) {
+            const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+            fetch(book_url)
+              .then(response => response.text())
+              .then(bookContent => {
+                const firstChunk = bookContent.split(/\s+/).slice(0, 120).join(' ');
+                const prompt = `please extract the title and author of the book based on <content>${firstChunk}</content>, no explanation, no extra words`;
+                LocalLLM.sendPrompt(prompt).then(result => {
+                  result = result.replace(/\*/g, '');
+                  const presentation = `
 ---------------------------
 URL: ${book_url} 
 ${result}
----------------------------`;
-      console.log(presentation);
-    }
+---------------------------
+`;
+                  console.log(presentation);
+                });
+              });
+          }
+        }
+      });
+    });
   }
 }
 
-class App {
-  static async init() {
-    await Tool.getProjectGutenbergNewReleasesInfo();
-  }
-}
-
-App.init();
+Tool.getProjectGutenbergNewReleasesInfo();
 
