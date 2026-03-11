@@ -1,0 +1,22 @@
+class App
+{
+  init() {
+    user mermaid to generate a diagram ./chart.svg based on the following {
+      flowchart:"Top Down" {
+        A:"Specification" {
+          connect:B
+        }
+        B:"Code" {
+          connect:C
+        }
+        C:"Test" {
+          connect:D
+          connect:A
+        }
+        D:"Deploy" {
+          connect:none
+        }
+      }  
+    }    
+  }
+}

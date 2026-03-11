@@ -52,3 +52,7 @@ task (completed) {
     }
   }
 }
+
+task (completed) {
+  before running $ACTION_FILE, make sure it exists!
+}
