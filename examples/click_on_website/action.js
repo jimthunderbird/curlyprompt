@@ -11,7 +11,7 @@ class App {
 class Browser {
   static async load(url) {
     const browser = await puppeteer.launch({
-      channel: 'chrome',
+      channel: 'chrome', 
       headless: true
     });
     const page = await browser.newPage();
@@ -29,30 +29,32 @@ class Tool {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const links = document.querySelectorAll('div.lib.latest.no-select a');
-
-    for (let link of links) {
-      let href = link.href;
-      let bookIDMatch = href.match(/ebooks\/(\d+)/);
+    
+    for (const link of links) {
+      const href = link.href;
+      const bookIDMatch = href.match(/ebooks\/(\d+)/);
       if (!bookIDMatch) continue;
-      let bookID = bookIDMatch[1];
-      let book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-
+      
+      const bookID = bookIDMatch[1];
+      const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+      
       try {
         const response = await fetch(book_url);
-        let bookContent = await response.text();
-        let firstChunk = bookContent.split(/\s+/).slice(0, 120).join(' ');
-
+        const bookContent = await response.text();
+        
+        const firstChunk = bookContent.split(/\s+/).slice(0, 120).join(' ');
+        
         const titleMatch = bookContent.match(/Title:\s*(.+)/i);
         const authorMatch = bookContent.match(/Author:\s*(.+)/i);
-
-        let title = titleMatch ? titleMatch[1].trim() : 'Unknown Title';
-        let author = authorMatch ? authorMatch[1].trim() : 'Unknown Author';
-
+        
+        const title = titleMatch ? titleMatch[1].trim() : 'Unknown Title';
+        const author = authorMatch ? authorMatch[1].trim() : 'Unknown Author';
+        
         console.log(JSON.stringify({
           id: bookID,
           title: title,
           author: author
-        }));
+        }, null, 2));
       } catch (error) {
         console.error(`Failed to fetch book ${bookID}:`, error.message);
       }

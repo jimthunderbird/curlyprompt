@@ -1,6 +1,6 @@
 class App
 {
   static init() {
-    Tool.getProjectGutenbergNewReleasesInfo()  
+    show me the project gutenberg new releases information
   }
 }
