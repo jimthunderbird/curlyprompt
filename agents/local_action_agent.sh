@@ -7,11 +7,20 @@ ACTION_FILE="action.js"
 # Check if at least one argument is provided
 if [ "$#" -lt 1 ]; then
     echo "Usage: $0 <application_directory>"
-    echo "Example: $0 ./my-php-project"
+    echo "Example: $0 ./examples/web_clawing_project_gutenberg"
     exit 1
 fi
 
 cd $1
+
+# Check if git status shows no file changed
+if git status --short 2>/dev/null | grep -q .; then
+    :  # Files changed, continue normally
+else
+    # No files changed, run action and exit
+    node $ACTION_FILE
+    exit 1
+fi
 
 # Install Packages
 npm install

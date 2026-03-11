@@ -1,0 +1,17 @@
+objectivie: perform all tasks
+
+constraint {
+  after a task is completed {
+    mark task as completed
+  }
+  do not run completed tasks
+}
+
+task {
+  for ./local_action_agent.sh {
+    after cd $1, if git status shows no file changed {
+      run cli: node $ACTION_FILE
+      exit 1
+    }
+  }
+}
