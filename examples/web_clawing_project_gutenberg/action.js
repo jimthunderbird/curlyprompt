@@ -1,11 +1,10 @@
+const { JSDOM } = require('jsdom');
 const puppeteer = require('puppeteer');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
 
 class Browser {
   static async load(url) {
     const browser = await puppeteer.launch({
-      channel: 'chrome',
+      channel: 'chrome', 
       headless: true
     });
     const page = await browser.newPage();
@@ -49,10 +48,10 @@ class Tool {
     const links = document.querySelectorAll('div.lib.latest.no-select a');
     let urls = [];
 
-    for (let link of links) {
-      const href = link.href;
-      if (href.includes('/ebooks/')) {
-        const bookIDMatch = href.match(/\/ebooks\/(\d+)/);
+    for (const link of links) {
+      const href = link.getAttribute('href');
+      if (href) {
+        const bookIDMatch = href.match(/ebooks\/(\d+)/);
         if (bookIDMatch) {
           const bookID = parseInt(bookIDMatch[1]);
           const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
@@ -74,11 +73,5 @@ class Tool {
   }
 }
 
-class App {
-  static async init() {
-    await Tool.getProjectGutenbergNewReleasesInfo();
-  }
-}
-
-App.init();
+Tool.getProjectGutenbergNewReleasesInfo();
 
