@@ -32,13 +32,11 @@ objective: generate a Node.js file using CommonJS based on spec, no explanation,
 "
 
 # 2. Loop through each .prompt file and append content
-# We check if files exist to avoid errors in empty directories
-shopt -s nullglob
-for f in *.prompt; do
+while IFS= read -r f; do
     PROMPT+=$'\n'
     PROMPT+=$(cat "$f")
     PROMPT+=$'\n'
-done
+done <<< "$(find . -type f -name "*.prompt")"
 
 PROMPT+="$PROMPT\n\nif class App exists, call APP.init()"
 

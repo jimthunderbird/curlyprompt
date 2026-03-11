@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+const { JSDOM } = require('jsdom');
 
 class Browser {
   static async load(url) {
@@ -35,7 +34,6 @@ class LocalLLM {
         stream: false
       })
     });
-
     const data = await response.json();
     return data.response;
   }
@@ -48,36 +46,44 @@ class Tool {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const links = document.querySelectorAll('div.lib.latest.no-select a');
-
-    const evenUrls = [];
-
+    const urls = [];
+    
     for (const link of links) {
-      const href = link.href;
-      const match = href.match(/ebooks\/(\d+)/);
-      if (match) {
-        const bookID = parseInt(match[1]);
-        if (bookID % 2 === 0) {
-          const bookUrl = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-          evenUrls.push(bookUrl);
-
-          const bookContentResponse = await fetch(bookUrl);
+      const href = link.getAttribute('href');
+      if (href) {
+        const bookIDMatch = href.match(/ebooks\/(\d+)/);
+        if (bookIDMatch) {
+          const bookID = parseInt(bookIDMatch[1]);
+          const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+          urls.push(book_url);
+          
+          const bookContentResponse = await fetch(book_url);
           const bookContent = await bookContentResponse.text();
           const words = bookContent.split(/\s+/).slice(0, 120).join(' ');
           const prompt = `please extract the title and author of the book based on <content>${words}</content>, no explanation, no extra words`;
           let result = await LocalLLM.sendPrompt(prompt);
           result = result.replace(/\*/g, '');
           const presentation = `
----------------------------
-URL: ${bookUrl} 
+-------------------------
+URL: ${book_url} 
 ${result}
----------------------------
+-------------------------
 `;
           console.log(presentation);
         }
       }
     }
 
-    console.log('Even URLs:', evenUrls);
+    const even_urls = urls.filter(url => {
+      const match = url.match(/pg(\d+)\.txt/);
+      if (match) {
+        const bookID = parseInt(match[1]);
+        return bookID % 2 === 0;
+      }
+      return false;
+    });
+
+    console.log('Even URLs:', even_urls);
   }
 }
 

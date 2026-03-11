@@ -1,17 +1,32 @@
-objectivie: perform all tasks
+target_file: ./local_action_agent.sh
+
+objectivie: perform all tasks to modify {target_file}
 
 constraint {
-  after a task is completed {
-    mark task as completed
+  after a task {task} is completed, update ./tasks.prompt {
+    mark {task} as completed
   }
   do not run completed tasks
 }
 
-task {
-  for ./local_action_agent.sh {
-    after cd $1, if git status shows no file changed {
-      run cli: node $ACTION_FILE
-      exit 1
-    }
+task (completed) {
+  after cd $1, if git status shows no file changed {
+    run cli: node $ACTION_FILE
+    exit 1
   }
+}
+
+task (completed) {
+  we have: 
+    for f in *.prompt; do
+      PROMPT+=$'\n'
+      PROMPT+=$(cat "$f")
+      PROMPT+=$'\n'
+    done
+  we should change it to use: find . -type f -name "*.prompt"
+}
+
+task (completed) {
+  when running {target_file}, we have the following errors:
+  line 39: syntax error near unexpected token `<'
 }
