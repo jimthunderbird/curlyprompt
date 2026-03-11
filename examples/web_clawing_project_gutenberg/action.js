@@ -4,7 +4,7 @@ const { JSDOM } = require('jsdom');
 class Browser {
   static async load(url) {
     const browser = await puppeteer.launch({
-      channel: 'chrome',
+      channel: 'chrome', 
       headless: true
     });
     const page = await browser.newPage();
@@ -40,40 +40,27 @@ class LocalLLM {
 }
 
 class Tool {
-  static getProjectGutenbergNewReleasesInfo() {
+  static async getProjectGutenbergNewReleasesInfo() {
     const url = "https://www.gutenberg.org/";
-    const html = Browser.load(url);
-    html.then(htmlContent => {
-      const dom = new JSDOM(htmlContent);
-      const document = dom.window.document;
-      const links = document.querySelectorAll('div.lib.latest.no-select a');
-      links.forEach(link => {
-        const href = link.getAttribute('href');
-        const match = href.match(/ebooks\/(\d+)/);
-        if (match) {
-          const bookID = match[1];
-          if (parseInt(bookID) % 2 === 1) {
-            const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-            fetch(book_url)
-              .then(response => response.text())
-              .then(bookContent => {
-                const firstChunk = bookContent.split(/\s+/).slice(0, 120).join(' ');
-                const prompt = `please extract the title and author of the book based on <content>${firstChunk}</content>, no explanation, no extra words`;
-                LocalLLM.sendPrompt(prompt).then(result => {
-                  result = result.replace(/\*/g, '');
-                  const presentation = `
----------------------------
-URL: ${book_url} 
-${result}
----------------------------
-`;
-                  console.log(presentation);
-                });
-              });
-          }
+    const html = await Browser.load(url);
+    const dom = new JSDOM(html);
+    const document = dom.window.document;
+    const links = document.querySelectorAll('div.lib.latest.no-select a');
+    const evenUrls = [];
+
+    for (const link of links) {
+      const href = link.href;
+      const match = href.match(/ebooks\/(\d+)/);
+      if (match) {
+        const bookID = parseInt(match[1]);
+        if (bookID % 2 === 0) {
+          const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+          evenUrls.push(book_url);
         }
-      });
-    });
+      }
+    }
+
+    console.log(evenUrls);
   }
 }
 
