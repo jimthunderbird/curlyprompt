@@ -37,9 +37,18 @@ task (completed) {
   print a message "running action..." 
 }
 
-task (completed) {
+task.no_prompt_files_changed (completed) {
   after cd $1, if git status shows no .prompt file changed {
     run cli: node $ACTION_FILE
     exit 1
+  }
+}
+
+task (completed) {
+  in task.no_prompt_files_changed, change to the following logic {
+    after cd $1, if git status shows no non tasks.prompt .prompt file changed {
+      run cli: node $ACTION_FILE
+      exit 1
+    }
   }
 }

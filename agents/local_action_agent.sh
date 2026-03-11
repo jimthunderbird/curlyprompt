@@ -23,11 +23,11 @@ else
     exit 1
 fi
 
-# Check if git status shows no .prompt file changed
-if git status --short 2>/dev/null | grep -q '\.prompt$'; then
-    :  # .prompt files changed, continue normally
+# Check if git status shows no non tasks.prompt .prompt file changed
+if git status --short 2>/dev/null | grep '\.prompt$' | grep -qv 'tasks\.prompt'; then
+    :  # Non tasks.prompt .prompt files changed, continue normally
 else
-    # No .prompt files changed, run action and exit
+    # No non tasks.prompt .prompt files changed, run action and exit
     echo "running action..."
     node $ACTION_FILE
     exit 1
