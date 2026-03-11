@@ -1,4 +1,4 @@
-### **Directory:** `examples/web_clawing_project_gutenberg`
+### **Directory:** examples/web_clawing_project_gutenberg
 
 **File:** `App.prompt`
 ```prompt
