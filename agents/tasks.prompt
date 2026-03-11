@@ -30,3 +30,9 @@ task (completed) {
   when running {target_file}, we have the following errors:
   line 39: syntax error near unexpected token `<'
 }
+
+task (completed) {
+  before:
+    node $ACTION_FILE
+  print a message "running action..." 
+}
