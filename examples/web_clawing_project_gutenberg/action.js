@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
-const { JSDOM } = require('jsdom');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
 
 class Browser {
   static async load(url) {
@@ -46,33 +47,38 @@ class Tool {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const links = document.querySelectorAll('div.lib.latest.no-select a');
-    
-    for (const link of links) {
-      const href = link.getAttribute('href');
-      const match = href.match(/ebooks\/(\d+)/);
-      if (match) {
-        const bookID = match[1];
-        const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-        
-        const bookResponse = await fetch(book_url);
-        const bookContent = await bookResponse.text();
-        const words = bookContent.split(/\s+/).slice(0, 120).join(' ');
-        
-        const prompt = `please extract the title and author of the book based on <content>${words}</content>, no explanation, no extra words`;
-        let result = await LocalLLM.sendPrompt(prompt);
-        result = result.replace(/\*/g, '');
-        
-        const presentation = `
+    const bookLinks = Array.from(links).map(link => link.href);
+
+    for (const link of bookLinks) {
+      const match = link.match(/ebooks\/(\d+)/);
+      if (!match) continue;
+      const bookID = match[1];
+      const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+      
+      const bookResponse = await fetch(book_url);
+      const bookContent = await bookResponse.text();
+      const words = bookContent.split(/\s+/).slice(0, 120).join(' ');
+      
+      const prompt = `please extract the title and author of the book based on <content>${words}</content>, no explanation, no extra words`;
+      let result = await LocalLLM.sendPrompt(prompt);
+      result = result.replace(/\*/g, '');
+      
+      const presentation = `
 ---------------------------
 URL: ${book_url} 
 ${result}
 ---------------------------
 `;
-        console.log(presentation);
-      }
+      console.log(presentation);
     }
   }
 }
 
-Tool.getProjectGutenbergNewReleasesInfo();
+class App {
+  static async init() {
+    await Tool.getProjectGutenbergNewReleasesInfo();
+  }
+}
+
+App.init();
 
