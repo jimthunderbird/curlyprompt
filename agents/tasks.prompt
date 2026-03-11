@@ -36,3 +36,10 @@ task (completed) {
     node $ACTION_FILE
   print a message "running action..." 
 }
+
+task (completed) {
+  after cd $1, if git status shows no .prompt file changed {
+    run cli: node $ACTION_FILE
+    exit 1
+  }
+}
