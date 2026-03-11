@@ -1,0 +1,25 @@
+class Tool
+{
+  static getProjectGutenbergNewReleasesInfo() {
+    let url = "https://www.gutenberg.org/"
+    let html = Browser.load(url)
+    let links = for {html}, use jsdom to extract all html links in path html div."lib latest no-select"
+    for each {link} in {links} {
+      let bookID = extract {bookID} in pattern "ebooks/{bookID}" in {link}
+      let book_url = "https://www.gutenberg.org/cache/epub/{bookID}/pg{bookID}.txt"
+      let bookContent = get the content of {book_url}
+      let firstChunk = the first 120 words of {bookContent}
+      extract {title} and {author} following the following javascript example {
+        const titleMatch = text.match(/Title:\s*(.+)/i);
+        const authorMatch = text.match(/Author:\s*(.+)/i);
+        ...
+      }
+
+      print json {
+        id: {bookID}
+        title: {title}
+        author: {author}
+      }
+    }
+  }
+}

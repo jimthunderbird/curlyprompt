@@ -1,11 +1,6 @@
 class App
 {
   static init() {
-    let url = "https://www.gutenberg.org/"
-    let html = Browser.load(url)
-    let links = for {html}, use jsdom to extract all html links in path html div."lib latest no-select"
-    for each {link} in {links} {
-      print {link.href} with new line
-    }
+    Tool.getProjectGutenbergNewReleasesInfo()  
   }
 }
