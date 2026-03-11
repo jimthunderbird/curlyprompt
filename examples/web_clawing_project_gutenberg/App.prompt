@@ -1,4 +1,4 @@
 Based on the project gutenberg new releases information:
-urls:extract the urls only, not title and authors | 
+urls:extract the urls only, not title and authors
 even_urls:for all the {urls}, extract the urls with patter:pg{bookID} and even {bookID}
 show {even_urls}

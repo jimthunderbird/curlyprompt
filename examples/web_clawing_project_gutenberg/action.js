@@ -1,10 +1,11 @@
 const puppeteer = require('puppeteer');
-const { JSDOM } = require('jsdom');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
 
 class Browser {
   static async load(url) {
     const browser = await puppeteer.launch({
-      channel: 'chrome', 
+      channel: 'chrome',
       headless: true
     });
     const page = await browser.newPage();
@@ -34,6 +35,7 @@ class LocalLLM {
         stream: false
       })
     });
+
     const data = await response.json();
     return data.response;
   }
@@ -46,6 +48,7 @@ class Tool {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const links = document.querySelectorAll('div.lib.latest.no-select a');
+
     const evenUrls = [];
 
     for (const link of links) {
@@ -54,13 +57,27 @@ class Tool {
       if (match) {
         const bookID = parseInt(match[1]);
         if (bookID % 2 === 0) {
-          const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-          evenUrls.push(book_url);
+          const bookUrl = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+          evenUrls.push(bookUrl);
+
+          const bookContentResponse = await fetch(bookUrl);
+          const bookContent = await bookContentResponse.text();
+          const words = bookContent.split(/\s+/).slice(0, 120).join(' ');
+          const prompt = `please extract the title and author of the book based on <content>${words}</content>, no explanation, no extra words`;
+          let result = await LocalLLM.sendPrompt(prompt);
+          result = result.replace(/\*/g, '');
+          const presentation = `
+---------------------------
+URL: ${bookUrl} 
+${result}
+---------------------------
+`;
+          console.log(presentation);
         }
       }
     }
 
-    console.log(evenUrls);
+    console.log('Even URLs:', evenUrls);
   }
 }
 
