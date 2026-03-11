@@ -3,31 +3,24 @@ const { exec } = require('child_process');
 
 class App {
   init() {
-    const mermaidCode = `flowchart TD
+    const mermaidContent = `flowchart TD
     A["Specification"] --> B["Code"]
     B --> C["Test"]
     C --> D["Deploy"]
     C --> A["Specification"]`;
 
-    const mermaidConfig = {
-      theme: 'default',
-      width: 800,
-      height: 600
-    };
+    const mermaidFile = './chart.mmd';
+    const svgFile = './chart.svg';
 
-    const diagram = `<!-- prettier-ignore -->
-<div class="mermaid">
-${mermaidCode}
-</div>`;
+    fs.writeFileSync(mermaidFile, mermaidContent);
 
-    fs.writeFileSync('./chart.mmd', mermaidCode);
-
-    exec('mmdc -i ./chart.mmd -o ./chart.svg', (error, stdout, stderr) => {
+    exec(`npx mmdc -i ${mermaidFile} -o ${svgFile}`, (error, stdout, stderr) => {
       if (error) {
-        console.error(`Error generating diagram: ${error}`);
+        console.error('Error generating diagram:', error);
         return;
       }
-      console.log('Diagram generated successfully as chart.svg');
+      console.log('Diagram generated successfully at', svgFile);
+      fs.unlinkSync(mermaidFile);
     });
   }
 }

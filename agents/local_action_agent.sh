@@ -41,7 +41,7 @@ else
 fi
 
 # Install Packages
-npm install
+npm install --force
 
 # 1. Initialize the base prompt
 PROMPT="role: Node.js Expert

@@ -46,16 +46,18 @@ class Tool {
     const html = await Browser.load(url);
     const dom = new JSDOM(html);
     const document = dom.window.document;
-    const links = document.querySelectorAll('div.lib.latest.no-select a');
+    const links = document.querySelectorAll('div.lib_latest_no-select a');
     let urls = [];
 
-    for (const link of links) {
+    for (let link of links) {
       const href = link.href;
-      const bookIDMatch = href.match(/ebooks\/(\d+)/);
-      if (bookIDMatch) {
-        const bookID = parseInt(bookIDMatch[1]);
-        const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-        urls.push(book_url);
+      if (href.includes('/ebooks/')) {
+        const bookIDMatch = href.match(/\/ebooks\/(\d+)/);
+        if (bookIDMatch) {
+          const bookID = parseInt(bookIDMatch[1]);
+          const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
+          urls.push(book_url);
+        }
       }
     }
 
@@ -72,5 +74,11 @@ class Tool {
   }
 }
 
-Tool.getProjectGutenbergNewReleasesInfo();
+class App {
+  static async init() {
+    await Tool.getProjectGutenbergNewReleasesInfo();
+  }
+}
+
+App.init();
 
