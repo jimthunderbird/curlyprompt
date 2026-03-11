@@ -1,4 +1,4 @@
-### **Directory:** `examples/document_summarizer`
+### **Directory:** `examples/web_clawing_project_gutenberg`
 
 **File:** `App.prompt`
 ```prompt
