@@ -46,7 +46,7 @@ class Tool {
     const html = await Browser.load(url);
     const dom = new JSDOM(html);
     const document = dom.window.document;
-    const links = document.querySelectorAll('div.lib_latest_no-select a');
+    const links = document.querySelectorAll('div.lib.latest.no-select a');
     let urls = [];
 
     for (let link of links) {
