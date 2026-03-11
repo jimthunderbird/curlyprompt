@@ -2,12 +2,7 @@
 
 **File:** `App.prompt`
 ```prompt
-class App
-{
-  init() {
-    show me the project gutenberg new releases information
-  }
-}
+show me the project gutenberg new releases information
 ```
 
 Or **File:** `App.prompt`
