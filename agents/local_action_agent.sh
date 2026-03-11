@@ -19,7 +19,7 @@ npm install
 # 1. Initialize the base prompt
 PROMPT="role: Node.js Expert
 
-objective: generate a Node.js file based on spec, no explanation, no extra words
+objective: generate a Node.js file using CommonJS based on spec, no explanation, no extra words
 "
 
 # 2. Loop through each .prompt file and append content
@@ -31,7 +31,7 @@ for f in *.prompt; do
     PROMPT+=$'\n'
 done
 
-PROMPT+="$PROMPT\nAPP.init()"
+PROMPT+="$PROMPT\n\nif class App exists, call APP.init()"
 
 ollama run $LOCAL_LLM_MODEL "$PROMPT" | grep --line-buffered -vE '```javascript|```' | tee $ACTION_FILE
 

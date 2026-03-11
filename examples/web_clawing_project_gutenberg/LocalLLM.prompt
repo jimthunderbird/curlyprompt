@@ -1,0 +1,18 @@
+class LocalLLM
+{
+  config {
+    api_endpoint:"http://127.0.0.1:11434"
+    model:"gemma3:latest"
+    thinking_mode:false
+  }
+
+  sendPrompt(prompt) {
+    constraint {
+      -DO NOT USE node-fetch in node.js
+    }
+    //act as an Ollma Local API Expert
+    //example: const response = await fetch('https://api.example.com/data');
+    let result = (use built-in fetch api to send request based on {config} and with prompt: {prompt})
+    return result
+  }
+}

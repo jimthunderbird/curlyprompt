@@ -1,25 +1,28 @@
 class Tool
 {
   static getProjectGutenbergNewReleasesInfo() {
+    constraint {
+      -DO NOT USE node-fetch in node.js
+    }
+
     let url = "https://www.gutenberg.org/"
     let html = Browser.load(url)
     let links = for {html}, use jsdom to extract all html links in path html div."lib latest no-select"
     for each {link} in {links} {
       let bookID = extract {bookID} in pattern "ebooks/{bookID}" in {link}
       let book_url = "https://www.gutenberg.org/cache/epub/{bookID}/pg{bookID}.txt"
-      let bookContent = get the content of {book_url}
+      //example: const response = await fetch('https://api.example.com/data');
+      let bookContent = (use built-in fetch api to send request {book_url})
       let firstChunk = the first 120 words of {bookContent}
-      extract {title} and {author} following the following javascript example {
-        const titleMatch = text.match(/Title:\s*(.+)/i);
-        const authorMatch = text.match(/Author:\s*(.+)/i);
-        ...
-      }
-
-      print json {
-        id: {bookID}
-        title: {title}
-        author: {author}
-      }
+      let prompt = "please extract the title and author of the book based on <content>{firstChunk}</content>, no explanation, no extra words"
+      let result = LocalLLM.sendPrompt(prompt)
+      result = in {result}, replace all "*" with empty string
+      let presentation = "
+      ---------------------------
+      URL: {book_url} 
+      {result}
+      ---------------------------
+      print {presentation}
     }
   }
 }

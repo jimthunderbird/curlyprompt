@@ -1,6 +1,1 @@
-class App
-{
-  static init() {
-    show me the project gutenberg new releases information
-  }
-}
+show me the project gutenberg new releases information
