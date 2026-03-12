@@ -9,7 +9,9 @@ class App
       license: "MIT"
       version: "1.0"
       content {
-        h1.text: "Instruction"
+        h1:Instruction {
+          p:this is a very strong:important instruction
+        }
       }
     }
   } 

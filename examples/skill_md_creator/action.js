@@ -25,7 +25,8 @@ const frontmatter = [
   '---'
 ].join('\n');
 
-const content = `\n\n# ${skill.content.h1.text}`;
+const content = `\n\n# ${skill.content.h1.text}\n\nthis is a very **important** instruction`;
+
 const markdownContent = frontmatter.replaceAll('"','') + content.replaceAll('"', '') + "\n";
 
 fs.writeFileSync('./SKILL.md', markdownContent);

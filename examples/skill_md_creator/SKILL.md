@@ -8,3 +8,5 @@ allowed-tools: Bash(git:*) Bash(jq:*) Read
 ---
 
 # Instruction
+
+this is a very **important** instruction

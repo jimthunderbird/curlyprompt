@@ -1,4 +1,4 @@
-class SkillFormat {
+SkillFormat {
   context {
     example {
       input {
@@ -26,12 +26,22 @@ class SkillFormat {
     }
 
     example {
-      intput: h1.text:"Instruction"
+      intput: h1:"Instruction"
       output: "#Instruction"
-      intput: h2.text:"Instruction"
+      intput: h2:Instruction
+      output: "#Instruction"
+      intput: h2:"Instruction"
       output: "##Instruction"
-      intput: h3.text:"Instruction"
+      intput: h2:Instruction
+      output: "##Instruction"
+      intput: h3:"Instruction"
       output: "###Instruction"
+      intput: h3:Instruction
+      output: "###Instruction"
+      input: strong:keyword
+      output: "**keyword**"
+      input: strong:keyword
+      output: "**keyword**"
     }
 
     example {
