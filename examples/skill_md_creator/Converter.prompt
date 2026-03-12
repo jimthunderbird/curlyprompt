@@ -1,10 +1,69 @@
 class Converter
 {
-  static convertCurlyPromptToSKILL(promptContent) {
-    learn from the examples from SkillFormat.context, extract the logic to convert promptContent to markDownContent
+  static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
+    let source_prompt_content = get file content of source_prompt_file
+    learn from the examples from SkillFormat.context, extract the logic to convert source_prompt_content to target_md_content
+    save target_md_content to target_md_file
+
     constraint: {
       we want to have the logic only, no sample data should be presented
+
+      overall structure of input file {
+        skill {
+          name: ...
+          description: ...
+          license: ...
+          version: ...
+          content {
+            ...content elements...
+          }
+        }
+
+        the skill block has two parts:
+        1. frontmatter fields (name, description, license, version, etc.) - outside "content {"
+        2. content elements (headings, paragraphs, lists) - inside "content {"
+      }
+
+      frontmatter rules {
+        parse lines inside skill { } but OUTSIDE content { } as frontmatter key-value pairs
+        only include fields that actually exist in the input
+        do NOT add fields that are not in the input
+        strip all double quotes from frontmatter values using .replaceAll('"','')
+        use line.substring(line.indexOf(':') + 1) to extract value after first colon
+      }
+
+      content parsing rules {
+        step 1: collect content lines using braceDepth tracking {
+          when you see "content {" (trimmed), set braceDepth=1
+          for each subsequent line:
+            if line (trimmed) contains { then increment braceDepth for each {
+            if line (trimmed) contains } then decrement braceDepth for each }
+            if braceDepth reaches 0, stop (that closes the content block)
+            otherwise push line to contentLines array
+          this ensures inner } from ul { } or h1:Title { } do not end collection early
+        }
+
+        step 2: parse contentLines sequentially to generate markdown {
+          trim each line before checking
+          - if line matches /^h[123]:/ then it is a heading
+            strip any trailing " {" or "{" from heading text, then trim
+            output "#".repeat(level) + " " + text + "\n\n"
+          - if line starts with "p:" then output paragraph text + "\n\n"
+          - if line equals "ul {" then set inList=true and continue
+          - if inList and line starts with "li:" then output "- " + text + "\n"
+          - if line equals "}" then:
+            if inList: output "\n" and set inList=false
+            else: just skip (closes a header brace block)
+          - skip empty lines
+
+          CRITICAL: check "}" AFTER checking li: so list items are processed
+          CRITICAL: when line is "}", check inList FIRST before skipping
+        }
+
+        there can be multiple h1 sections, multiple h2 etc
+        strong:word becomes **word** everywhere
+        the output file must end with a trailing newline
+      }
     }
-    return markdownContent
   }
 }

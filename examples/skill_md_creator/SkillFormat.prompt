@@ -3,53 +3,42 @@ SkillFormat {
     example {
       input {
         skill {
-          name: "Simple Skill" //or name:Simple Skill
+          name: "Simple Skill"
           description: "A simple skill for AI Agent"
           license: "MIT"
           version: "1.0"
-          compatibility: "Yes"
-          allowed-tools: "Bash(git:*) Bash(jq:*) Read"
-        }   
+        }
       }
       output {
-        const frontmatter = [
-        '---',
-        `name: ${skill.name}`,
-        `description: ${skill.description}`,
-        `license: ${skill.license}`,
-        `version: ${skill.version}`,
-        `compatibility: ${skill.compatibility}`
-        `allowed-tools: ${skill.allowed-tools}`
-        '---'
-        ].join('\n');        
+        ---
+        name: Simple Skill
+        description: A simple skill for AI Agent
+        license: MIT
+        version: 1.0
+        ---
       }
+      note: only include fields that exist in input, strip all double quotes from values
     }
 
     example {
-      intput: h1:"Instruction"
-      output: "#Instruction"
-      intput: h2:Instruction
-      output: "#Instruction"
-      intput: h2:"Instruction"
-      output: "##Instruction"
-      intput: h2:Instruction
-      output: "##Instruction"
-      intput: h3:"Instruction"
-      output: "###Instruction"
-      intput: h3:Instruction
-      output: "###Instruction"
-      input: strong:keyword
-      output: "**keyword**"
+      input: h1:Instruction
+      output: "# Instruction"
+      input: h2:Instruction
+      output: "## Instruction"
+      input: h3:Instruction
+      output: "### Instruction"
+      input: h2: very strong:important steps to follow:
+      output: "## very **important** steps to follow:"
       input: strong:keyword
       output: "**keyword**"
       input: this is a very strong:important step
       output: this is a very **important** step
-      input: 
+      input:
       ul {
         li:this is item 1
         li:this is item 2
       }
-      output: 
+      output:
       - this is item 1
       - this is item 2
     }
@@ -59,40 +48,55 @@ SkillFormat {
         skill {
           name: "Simple Skill"
           description: "A simple skill for AI Agent"
+          license: "MIT"
+          version: "1.0"
           content {
-            h1:Instruction
-          }
-          allowed-tools: "Bash(git:*) Bash(jq:*) Read"
-        }   
-      }
-      output {
-        //remember allowed-tools has hyphen, so it must be presented as "allow-tools" in javascript 
-        const skill = {
-          name: "Simple Skill",
-          description: "A simple skill for AI Agent",
-          license: "MIT",
-          version: "1.0",
-          compatibility: "Yes",
-          "allowed-tools": "Bash(git:*) Bash(jq:*) Read",
-          content: {
-            h1: {
-              text: "Instruction"
+            h1:Instruction {
+              p:this is a very strong:important instruction
+              ul {
+                li:this is step 1
+                li:this is step 2
+              }
+            }
+            h2:some more paragraph
+            ul {
+              li:item A
+              li:item B
             }
           }
-        };
+        }
+      }
+      output {
+        ---
+        name: Simple Skill
+        description: A simple skill for AI Agent
+        license: MIT
+        version: 1.0
+        ---
 
-        const frontmatter = [
-        '---',
-        `name: ${skill.name}`,
-        `description: ${skill.description}`,
-        `license: ${skill.license}`,
-        `version: ${skill.version}`,
-        `compatibility: ${skill.compatibility}`,
-        `"allowed-tools": ${skill.allowed-tools}`,
-        '---'
-        ].join('\n');   
-        const content = `\n\n# ${skill.content.h1.text}`;
-        const markdownContent = frontmatter.replaceAll('"','') + content.replaceAll('"', '') + "\n";
+        # Instruction
+
+        this is a very **important** instruction
+
+        - this is step 1
+        - this is step 2
+
+        ## some more paragraph
+
+        - item A
+        - item B
+
+      }
+      note {
+        content is parsed sequentially as an ordered list of elements
+        there can be multiple h1 sections, multiple h2 sections etc
+        headers can have braces with nested content, or be standalone
+        all double quotes must be stripped from frontmatter values
+        only include frontmatter fields that exist in the input skill block
+        each heading is followed by a blank line
+        each paragraph is followed by a blank line
+        each list block is followed by a blank line
+        strong:word is replaced with **word** everywhere including in heading text
       }
     }
   }

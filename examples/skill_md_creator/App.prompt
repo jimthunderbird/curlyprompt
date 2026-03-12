@@ -1,8 +1,9 @@
 class App
 {
   init() {
-    let skillStr = read file content of ./skill.txt
-    print Converter.convertCurlyPromptToSKILL(skillStr);
+    let source_prompt_file = first cli argument
+    let target_md_file = second cli argument
+    Converter.convertCurlyPromptToSKILL(source_prompt_file, target_md_file);
 
     constraint {
       we do not need:

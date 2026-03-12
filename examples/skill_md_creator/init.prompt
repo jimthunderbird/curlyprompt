@@ -1,11 +1,5 @@
 perform a loop {
-  learn from "https://agentskills.io/specification"
-  write a node.js file ./action.js {
-    it will take the first cli argument as the source prompt file
-    it will take the second cli argument as the target markdown file
-    using CommonJS to create the target markdown file based on the content of the source prompt file
-  }
-  remember: apply defensive coding principles along the way
+  run cli command: sh ./local_llm_codegen.sh
   N = (number of .prompt files in ./tests directory)
   let num_of_passed_test = 0
   for (i=1; i<={N}; i++) {
