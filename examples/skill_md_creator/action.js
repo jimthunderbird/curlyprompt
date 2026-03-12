@@ -3,103 +3,128 @@ const fs = require('fs');
 class Converter {
   static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
     const source_prompt_content = fs.readFileSync(source_prompt_file, 'utf8');
-    let lines = source_prompt_content.split('\n');
     
     let frontmatter = {};
     let contentLines = [];
     let braceDepth = 0;
     let inContentBlock = false;
     
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i].trim();
+    const lines = source_prompt_content.split('\n');
+    let i = 0;
+    
+    while (i < lines.length) {
+      const line = lines[i].trim();
       
-      if (line.startsWith('skill {')) {
-        continue;
-      }
-      
-      if (line === 'content {') {
+      if (!inContentBlock && line.startsWith('skill {')) {
         inContentBlock = true;
-        braceDepth = 1;
+        i++;
         continue;
       }
       
-      if (inContentBlock) {
-        if (line.includes('{')) {
-          braceDepth += (line.match(/{/g) || []).length;
-        }
-        
-        if (line.includes('}')) {
-          braceDepth -= (line.match(/}/g) || []).length;
-        }
+      if (inContentBlock && line === 'content {') {
+        braceDepth = 1;
+        i++;
+        continue;
+      }
+      
+      if (inContentBlock && braceDepth > 0) {
+        if (line.includes('{')) braceDepth += (line.match(/{/g) || []).length;
+        if (line.includes('}')) braceDepth -= (line.match(/}/g) || []).length;
         
         if (braceDepth === 0) {
+          i++;
           break;
         }
         
         contentLines.push(line);
-      } else {
-        if (line.includes(':') && !line.startsWith('content {')) {
-          let key = line.substring(0, line.indexOf(':')).trim();
-          let value = line.substring(line.indexOf(':') + 1).trim().replaceAll('"', '');
+        i++;
+        continue;
+      }
+      
+      if (inContentBlock && !line.startsWith('content {') && !line.startsWith('skill {')) {
+        const colonIndex = line.indexOf(':');
+        if (colonIndex !== -1) {
+          const key = line.substring(0, colonIndex).trim();
+          let value = line.substring(colonIndex + 1).trim();
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1);
+          }
           frontmatter[key] = value;
         }
       }
+      
+      i++;
     }
     
-    let markdownOutput = '';
-    
-    if (Object.keys(frontmatter).length > 0) {
-      markdownOutput += '---\n';
-      for (let key in frontmatter) {
-        markdownOutput += `${key}: ${frontmatter[key]}\n`;
-      }
-      markdownOutput += '---\n\n';
+    let markdown = '';
+    markdown += '---\n';
+    for (const [key, value] of Object.entries(frontmatter)) {
+      markdown += `${key}: ${value}\n`;
     }
+    markdown += '---\n\n';
     
     let inList = false;
-    let currentHeadingLevel = 0;
-    let headingText = '';
+    let listItems = [];
     
-    for (let i = 0; i < contentLines.length; i++) {
-      let line = contentLines[i].trim();
+    for (let j = 0; j < contentLines.length; j++) {
+      let line = contentLines[j].trim();
       
-      if (line.startsWith('h1:') || line.startsWith('h2:') || line.startsWith('h3:')) {
-        let level = parseInt(line.charAt(1));
-        headingText = line.substring(3).trim();
-        
-        if (headingText.endsWith('{')) {
-          headingText = headingText.slice(0, -1).trim();
-        }
-        
-        markdownOutput += '#'.repeat(level) + ' ' + headingText.replace(/strong:/g, '**') + '\n\n';
-      } else if (line === 'ul {') {
-        inList = true;
-      } else if (inList && line.startsWith('li:')) {
-        let itemText = line.substring(3).trim();
-        markdownOutput += '- ' + itemText.replace(/strong:/g, '**') + '\n';
-      } else if (line === '}') {
+      if (line === '}') {
         if (inList) {
-          markdownOutput += '\n';
+          markdown += '\n';
           inList = false;
         }
-      } else if (line.startsWith('p:')) {
-        let paragraphText = line.substring(2).trim();
-        markdownOutput += paragraphText.replace(/strong:/g, '**') + '\n\n';
+        continue;
+      }
+      
+      if (line === 'ul {') {
+        inList = true;
+        continue;
+      }
+      
+      if (inList && line.startsWith('li:')) {
+        let text = line.substring(3).trim();
+        text = text.replace(/strong:(\w+)/g, '**$1**');
+        markdown += `- ${text}\n`;
+        continue;
+      }
+      
+      if (/^h[123]:/.test(line)) {
+        const level = parseInt(line.charAt(1));
+        let text = line.substring(3).trim();
+        if (text.endsWith('{')) text = text.slice(0, -1).trim();
+        text = text.replace(/strong:(\w+)/g, '**$1**');
+        markdown += '#'.repeat(level) + ' ' + text + '\n\n';
+        continue;
+      }
+      
+      if (line.startsWith('p:')) {
+        let text = line.substring(2).trim();
+        text = text.replace(/strong:(\w+)/g, '**$1**');
+        markdown += text + '\n\n';
+        continue;
       }
     }
     
-    if (markdownOutput && !markdownOutput.endsWith('\n')) {
-      markdownOutput += '\n';
+    if (markdown && !markdown.endsWith('\n')) {
+      markdown += '\n';
     }
     
-    fs.writeFileSync(target_md_file, markdownOutput);
+    fs.writeFileSync(target_md_file, markdown);
   }
 }
 
 class App {
   init() {
-    let source_prompt_file = process.argv[2];
-    let target_md_file = process.argv[3];
+    const args = process.argv.slice(2);
+    if (args.length < 2) {
+      console.error('Usage: node action.js <source_prompt_file> <target_md_file>');
+      process.exit(1);
+    }
+    
+    const source_prompt_file = args[0];
+    const target_md_file = args[1];
+    
     Converter.convertCurlyPromptToSKILL(source_prompt_file, target_md_file);
   }
 }
