@@ -1,6 +1,6 @@
 ---
-name: Simple Skill
-description: A simple skill for AI Agent
+name: A web application skill
+description: A web application skill
 license: MIT
 version: 1.0
 ---
@@ -22,4 +22,6 @@ this is a very **important** instruction
 - testing step 1
 - testing step 2
 - testing step 3
+- testing step 4
+- testing step 5
 

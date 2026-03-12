@@ -6,11 +6,16 @@ perform a loop {
     using CommonJS to create the target markdown file based on the content of the source prompt file
   }
   remember: apply defensive coding principles along the way
-  N = 2
+  N = (number of .prompt files in ./tests directory)
+  let num_of_passed_test = 0
   for (i=1; i<={N}; i++) {
     run cli command: node action.js ./tests/test_markdown_{i}.prompt ./tests/test{i}_tmpoutput.md
     if (the content of ./tests/test{i}_tmpoutput.md is identical to ./tests/test_markdown_{i}.md) {
-      break
+      num_of_passed_test ++  
     } 
+  }
+
+  if ({num_of_passed_test} equals to {N}) {
+    break
   }
 }

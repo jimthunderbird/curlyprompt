@@ -1,16 +1,15 @@
 skill {
   name: A web application skill
   description: A web application skill 
-  license: Apache 2.0
+  license: MIT
   version: 1.0
   content {
-    h1:Inital Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:this is step 1
-        li:this is step 2
-        li:this is step 3
-      }
+    h1:Inital Instruction 
+    p:this is a very strong:important instruction
+    ul {
+      li:this is step 1
+      li:this is step 2
+      li:this is step 3
     }
 
     h1:Testing Steps 

@@ -12,5 +12,13 @@ skill {
         li:this is step 3
       }
     }
+
+    h2:some more paragraph
+    h3:smaller strong:header
+    ul {
+      li:this is step 1
+      li:this is step 2
+      li:this is step 3
+    }
   }
 }

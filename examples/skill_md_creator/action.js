@@ -15,7 +15,9 @@ function parsePrompt(promptText) {
 
   const skill = {
     metadata: {},
-    sections: []
+    sections: [],
+    standaloneHeaders: [],
+    standaloneItems: []
   };
 
   const lines = promptText.trim().split('\n');
@@ -79,6 +81,16 @@ function parsePrompt(promptText) {
 
     // Handle h1 sections
     if (trimmed.startsWith('h1:')) {
+      // If there's a current section, push it before starting a new one
+      if (currentSection) {
+        skill.sections.push(currentSection);
+        // Remove h1 from braceStack if it exists
+        const h1Index = braceStack.lastIndexOf('h1');
+        if (h1Index !== -1) {
+          braceStack.splice(h1Index, 1);
+        }
+      }
+      
       const titleMatch = trimmed.match(/^h1:(.+?)(?:\s*\{)?$/);
       if (titleMatch) {
         currentSection = {
@@ -90,12 +102,38 @@ function parsePrompt(promptText) {
       continue;
     }
 
-    // Handle h2 headers
+    // Handle h2 headers (inside or outside h1)
     if (trimmed.startsWith('h2:')) {
-      const content = trimmed.substring(3).trim();
+      let content = trimmed.substring(3).trim();
+      content = content.replace(/strong:(\w+)/g, '**$1**');
       if (currentSection) {
         currentSection.items.push({
           type: 'h2',
+          text: content
+        });
+      } else if (inContentBlock) {
+        // Standalone h2 outside h1 block
+        skill.standaloneHeaders.push({
+          type: 'h2',
+          text: content
+        });
+      }
+      continue;
+    }
+
+    // Handle h3 headers (inside or outside h1)
+    if (trimmed.startsWith('h3:')) {
+      let content = trimmed.substring(3).trim();
+      content = content.replace(/strong:(\w+)/g, '**$1**');
+      if (currentSection) {
+        currentSection.items.push({
+          type: 'h3',
+          text: content
+        });
+      } else if (inContentBlock) {
+        // Standalone h3 outside h1 block
+        skill.standaloneHeaders.push({
+          type: 'h3',
           text: content
         });
       }
@@ -123,9 +161,16 @@ function parsePrompt(promptText) {
 
     // Handle list items
     if (trimmed.startsWith('li:')) {
-      const content = trimmed.substring(3).trim();
+      let content = trimmed.substring(3).trim();
+      content = content.replace(/strong:(\w+)/g, '**$1**');
       if (currentSection) {
         currentSection.items.push({
+          type: 'li',
+          text: content
+        });
+      } else if (inContentBlock) {
+        // Standalone li outside h1 block
+        skill.standaloneItems.push({
           type: 'li',
           text: content
         });
@@ -178,13 +223,26 @@ function convertToMarkdown(skill) {
     output += `# ${section.title}\n`;
     
     let prevItemType = null;
-    for (const item of section.items) {
+    for (let idx = 0; idx < section.items.length; idx++) {
+      const item = section.items[idx];
+      const nextItem = idx + 1 < section.items.length ? section.items[idx + 1] : null;
+      
       if (item.type === 'h2') {
-        output += `## ${item.text}\n`;
+        output += `\n## ${item.text}\n`;
         prevItemType = 'h2';
+      } else if (item.type === 'h3') {
+        output += `\n### ${item.text}\n`;
+        // Add blank line after h3 if next item is a list item
+        if (nextItem && nextItem.type === 'li') {
+          output += '\n';
+        }
+        prevItemType = 'h3';
       } else if (item.type === 'p') {
-        // Add blank line before p only if it's the first item after h1
-        if (prevItemType === null) {
+        // Add blank line before p if after h2/h3
+        if (prevItemType === 'h2' || prevItemType === 'h3') {
+          output += '\n';
+        } else if (prevItemType === null) {
+          // First item after h1
           output += '\n';
         }
         // Handle paragraph with inline formatting
@@ -203,6 +261,25 @@ function convertToMarkdown(skill) {
     if (prevItemType !== 'p') {
       output += '\n';
     }
+  }
+
+  // Handle standalone headers and items (h2/h3/li outside h1 blocks)
+  for (const header of skill.standaloneHeaders) {
+    if (header.type === 'h2') {
+      output += `## ${header.text}\n\n`;
+    } else if (header.type === 'h3') {
+      output += `### ${header.text}\n\n`;
+    }
+  }
+
+  for (const item of skill.standaloneItems) {
+    if (item.type === 'li') {
+      output += `- ${item.text}\n`;
+    }
+  }
+
+  if (skill.standaloneItems.length > 0) {
+    output += '\n';
   }
 
   return output;
