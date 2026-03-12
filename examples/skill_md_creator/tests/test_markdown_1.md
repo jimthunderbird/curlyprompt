@@ -9,7 +9,7 @@ compatibility: Yes
 
 # Instruction
 
-this is a very strong:important instruction
+this is a very **important** instruction
 
 - this is step 1
 - this is step 2

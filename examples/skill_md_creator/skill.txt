@@ -1,0 +1,4 @@
+skill {
+  name: "A simple skill"
+  description: "A simple skill for testing"
+}

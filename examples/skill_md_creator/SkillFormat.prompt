@@ -3,7 +3,7 @@ SkillFormat {
     example {
       input {
         skill {
-          name: "Simple Skill"
+          name: "Simple Skill" //or name:Simple Skill
           description: "A simple skill for AI Agent"
           license: "MIT"
           version: "1.0"
@@ -42,6 +42,16 @@ SkillFormat {
       output: "**keyword**"
       input: strong:keyword
       output: "**keyword**"
+      input: this is a very strong:important step
+      output: this is a very **important** step
+      input: 
+      ul {
+        li:this is item 1
+        li:this is item 2
+      }
+      output: 
+      - this is item 1
+      - this is item 2
     }
 
     example {
@@ -50,7 +60,7 @@ SkillFormat {
           name: "Simple Skill"
           description: "A simple skill for AI Agent"
           content {
-            h1.text: "Instruction"
+            h1:Instruction
           }
           allowed-tools: "Bash(git:*) Bash(jq:*) Read"
         }   

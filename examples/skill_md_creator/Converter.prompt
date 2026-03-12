@@ -1,0 +1,10 @@
+class Converter
+{
+  convertCurlyPromptToSKILL(promptContent) {
+    extract the logic to convert promptContent to markDownContent
+    constraint: {
+      we want to have the logic only, no sample data should be presented
+    }
+    return markdownContent
+  }
+}

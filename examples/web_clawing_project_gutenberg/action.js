@@ -1,5 +1,5 @@
-const { JSDOM } = require('jsdom');
 const puppeteer = require('puppeteer');
+const { JSDOM } = require('jsdom');
 
 class Browser {
   static async load(url) {
@@ -46,32 +46,17 @@ class Tool {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const links = document.querySelectorAll('div.lib.latest.no-select a');
-    let urls = [];
-
-    for (const link of links) {
+    const urls = [];
+    
+    links.forEach(link => {
       const href = link.getAttribute('href');
       if (href) {
-        const bookIDMatch = href.match(/ebooks\/(\d+)/);
-        if (bookIDMatch) {
-          const bookID = parseInt(bookIDMatch[1]);
-          const book_url = `https://www.gutenberg.org/cache/epub/${bookID}/pg${bookID}.txt`;
-          urls.push(book_url);
-        }
+        urls.push(href);
       }
-    }
-
-    let even_urls = urls.filter(url => {
-      const match = url.match(/pg(\d+)\.txt/);
-      if (match) {
-        const bookID = parseInt(match[1]);
-        return bookID % 2 === 0;
-      }
-      return false;
     });
 
-    console.log(even_urls);
-  }
-}
-
-Tool.getProjectGutenbergNewReleasesInfo();
-
+    const evenUrls = urls
+      .map(url => {
+        const match = url.match(/ebooks\/(\d+)/);
+        return match ? { bookID: parseInt(match[1]), url } : null;
+      })
