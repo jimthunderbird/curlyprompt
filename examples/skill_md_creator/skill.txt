@@ -1,4 +1,14 @@
 skill {
   name: "A simple skill"
   description: "A simple skill for testing"
+
+  content {
+    h1 {
+      text: "Instruction"
+    }
+    ul {
+      li:step 1: perform action A
+      li:step 2: perform action B
+    }
+  }
 }

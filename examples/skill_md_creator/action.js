@@ -8,78 +8,56 @@ class Converter {
     let currentSection = null;
     let currentContent = null;
 
-    lines.forEach(line => {
+    for (let line of lines) {
       line = line.trim();
-      if (!line) return;
+      if (!line) continue;
 
       if (line.startsWith('skill {')) {
-        return;
-      }
-
-      if (line.startsWith('}')) {
+        continue;
+      } else if (line.startsWith('}')) {
         if (contentStack.length > 0) {
           contentStack.pop();
         }
-        return;
-      }
-
-      if (line.startsWith('name:')) {
-        skill.name = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.startsWith('description:')) {
-        skill.description = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.startsWith('license:')) {
-        skill.license = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.startsWith('version:')) {
-        skill.version = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.startsWith('compatibility:')) {
-        skill.compatibility = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.startsWith('allowed-tools:')) {
-        skill['allowed-tools'] = line.split(':').slice(1).join(':').trim();
-        return;
-      }
-
-      if (line.includes(':')) {
+        continue;
+      } else if (line.includes(':')) {
         const [key, value] = line.split(':', 2);
-        const trimmedKey = key.trim();
-        const trimmedValue = value.trim();
+        const k = key.trim();
+        const v = value.trim().replace(/^{/, '').replace(/}$/, '').trim();
 
-        if (trimmedKey === 'content') {
-          if (trimmedValue.includes('{')) {
-            const sectionName = trimmedValue.split('{')[0].trim();
-            contentStack.push(sectionName);
-            if (!skill.content) skill.content = {};
-            currentSection = skill.content;
-            for (let i = 0; i < contentStack.length - 1; i++) {
-              if (!currentSection[contentStack[i]]) {
-                currentSection[contentStack[i]] = {};
-              }
-              currentSection = currentSection[contentStack[i]];
-            }
-            currentSection[sectionName] = {};
-            currentContent = currentSection[sectionName];
+        if (k === 'content') {
+          currentSection = 'content';
+          skill[k] = {};
+          contentStack.push(skill[k]);
+        } else if (k === 'h1' || k === 'h2' || k === 'h3') {
+          const section = contentStack[contentStack.length - 1];
+          if (section) {
+            section[k] = { text: v };
+            currentContent = section[k];
+          }
+        } else if (k === 'p') {
+          if (currentContent) {
+            currentContent.p = v;
+          }
+        } else if (k === 'ul') {
+          if (currentContent) {
+            currentContent.ul = [];
+          }
+        } else if (k === 'li') {
+          if (currentContent && currentContent.ul) {
+            currentContent.ul.push(v);
           }
         } else {
-          if (currentContent) {
-            currentContent[trimmedKey] = trimmedValue;
+          skill[k] = v;
+        }
+      } else {
+        if (currentContent && line.startsWith('- ')) {
+          const item = line.substring(2).trim();
+          if (currentContent.ul) {
+            currentContent.ul.push(item);
           }
         }
       }
-    });
+    }
 
     const frontmatter = [
       '---',
@@ -88,57 +66,25 @@ class Converter {
       `license: ${skill.license}`,
       `version: ${skill.version}`,
       `compatibility: ${skill.compatibility}`,
-      `"allowed-tools": ${skill['allowed-tools']}`,
+      `"allowed-tools": ${skill["allowed-tools"]}`,
       '---'
     ].join('\n');
 
-    const processContent = (content, level = 0) => {
-      let md = '';
-      for (const key in content) {
-        if (key === 'p') {
-          const text = content[key];
-          const strongRegex = /strong:(\w+)/g;
-          const processedText = text.replace(strongRegex, '**$1**');
-          md += `${processedText}\n\n`;
-        } else if (key === 'ul') {
-          const listItems = content[key];
-          md += listItems.map(item => `- ${item}`).join('\n') + '\n\n';
-        } else if (key === 'li') {
-          md += `- ${content[key]}\n`;
-        } else {
-          const tag = '#'.repeat(level + 1);
-          md += `${tag} ${content[key]}\n\n`;
+    let content = '';
+    if (skill.content && skill.content.h1) {
+      content += `\n\n# ${skill.content.h1.text}`;
+      if (skill.content.h1.p) {
+        content += `\n\n${skill.content.h1.p}`;
+      }
+      if (skill.content.h1.ul && skill.content.h1.ul.length > 0) {
+        content += `\n`;
+        for (let item of skill.content.h1.ul) {
+          content += `- ${item}\n`;
         }
       }
-      return md;
-    };
+    }
 
-    const buildMarkdownContent = (obj, prefix = '') => {
-      let md = '';
-      for (const key in obj) {
-        if (key === 'content') {
-          md += buildMarkdownContent(obj[key], prefix);
-        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-          const tag = prefix ? prefix : key;
-          const tagLevel = tag === 'h1' ? 1 : tag === 'h2' ? 2 : tag === 'h3' ? 3 : 0;
-          const tagSymbol = '#'.repeat(tagLevel);
-          if (obj[key].text) {
-            md += `${tagSymbol} ${obj[key].text}\n\n`;
-          } else {
-            md += buildMarkdownContent(obj[key], tag);
-          }
-        } else {
-          const tag = prefix ? prefix : key;
-          const tagLevel = tag === 'h1' ? 1 : tag === 'h2' ? 2 : tag === 'h3' ? 3 : 0;
-          const tagSymbol = '#'.repeat(tagLevel);
-          md += `${tagSymbol} ${obj[key]}\n\n`;
-        }
-      }
-      return md;
-    };
-
-    const content = buildMarkdownContent(skill);
-    const markdownContent = frontmatter + content;
+    const markdownContent = frontmatter.replaceAll('"', '') + content.replaceAll('"', '') + "\n";
     return markdownContent;
   }
 }
