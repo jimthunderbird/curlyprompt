@@ -4,38 +4,51 @@ LOCAL_LLM_MODEL="qwen3-coder:30b"
 
 ACTION_FILE="action.js"
 
-# Check if at least one argument is provided
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <application_directory>"
-    echo "Example: $0 ./examples/web_clawing_project_gutenberg"
+# Parse arguments
+FORCE=false
+APP_DIR=""
+for arg in "$@"; do
+    case "$arg" in
+        --force) FORCE=true ;;
+        *) APP_DIR="$arg" ;;
+    esac
+done
+
+if [ -z "$APP_DIR" ]; then
+    echo "Usage: $0 <application_directory> [--force]"
+    echo "Example: $0 ./examples/web_clawing_project_gutenberg --force"
     exit 1
 fi
 
-cd $1
+cd "$APP_DIR"
 
-# Check if git status shows no file changed
-if git status --short 2>/dev/null | grep -q .; then
-    :  # Files changed, continue normally
-else
-    # No files changed, run action and exit
-    if [ -f "$ACTION_FILE" ]; then
-        echo "No files changed. Skipping code generation."
-        exit 0
+if [ "$FORCE" = false ]; then
+    # Check if git status shows no file changed
+    if git status --short 2>/dev/null | grep -q .; then
+        :  # Files changed, continue normally
+    else
+        # No files changed, run action and exit
+        if [ -f "$ACTION_FILE" ]; then
+            echo "No files changed. Skipping code generation."
+            exit 0
+        fi
+        # If ACTION_FILE doesn't exist, continue to regenerate it
     fi
-    # If ACTION_FILE doesn't exist, continue to regenerate it
-fi
 
-# Check if git status shows no non tasks.prompt .prompt file changed
-if git status --short 2>/dev/null | grep '\.prompt$' | grep -qv 'tasks\.prompt'; then
-    :  # Non tasks.prompt .prompt files changed, continue normally
-else
-    # No non tasks.prompt .prompt files changed
-    # Check if ACTION_FILE exists
-    if [ -f "$ACTION_FILE" ]; then
-        echo "No prompt files changed. Skipping code generation."
-        exit 0
+    # Check if git status shows no non tasks.prompt .prompt file changed
+    if git status --short 2>/dev/null | grep '\.prompt$' | grep -qv 'tasks\.prompt'; then
+        :  # Non tasks.prompt .prompt files changed, continue normally
+    else
+        # No non tasks.prompt .prompt files changed
+        # Check if ACTION_FILE exists
+        if [ -f "$ACTION_FILE" ]; then
+            echo "No prompt files changed. Skipping code generation."
+            exit 0
+        fi
+        # If ACTION_FILE doesn't exist, continue to regenerate it
     fi
-    # If ACTION_FILE doesn't exist, continue to regenerate it
+else
+    echo "Force mode: skipping change detection checks."
 fi
 
 # Install Packages

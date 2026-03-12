@@ -5,7 +5,7 @@ while true; do
 
     # 1. Run the local LLM code generation script
     echo "Running local_llm_codegen.sh..."
-    sh ./local_llm_codegen.sh
+    sh ./local_llm_codegen.sh --force
 
     # 2. Count .prompt files in the tests directory
     # Using 'ls -1' and 'wc -l' to get the total count
