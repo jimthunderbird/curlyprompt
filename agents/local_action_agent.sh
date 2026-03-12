@@ -19,9 +19,8 @@ if git status --short 2>/dev/null | grep -q .; then
 else
     # No files changed, run action and exit
     if [ -f "$ACTION_FILE" ]; then
-        echo "running action..."
-        node $ACTION_FILE
-        exit 1
+        echo "No files changed. Skipping code generation."
+        exit 0
     fi
     # If ACTION_FILE doesn't exist, continue to regenerate it
 fi
@@ -33,9 +32,8 @@ else
     # No non tasks.prompt .prompt files changed
     # Check if ACTION_FILE exists
     if [ -f "$ACTION_FILE" ]; then
-        echo "running action..."
-        node $ACTION_FILE
-        exit 1
+        echo "No prompt files changed. Skipping code generation."
+        exit 0
     fi
     # If ACTION_FILE doesn't exist, continue to regenerate it
 fi

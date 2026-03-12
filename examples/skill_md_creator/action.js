@@ -100,6 +100,10 @@ class App {
   init() {
     const source_prompt_file = process.argv[2];
     const target_md_file = process.argv[3];
+    if (!source_prompt_file || !target_md_file) {
+      console.error('Usage: node action.js <source_prompt_file> <target_md_file>');
+      process.exit(1);
+    }
     Converter.convertCurlyPromptToSKILL(source_prompt_file, target_md_file);
   }
 }
