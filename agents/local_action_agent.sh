@@ -73,7 +73,7 @@ ollama run $LOCAL_LLM_MODEL "$PROMPT" | grep --line-buffered -vE '```javascript|
 
 echo "Generated $ACTION_FILE"
 
-# execute php action
+# execute node action
 echo "running action..."
 node $ACTION_FILE
 
