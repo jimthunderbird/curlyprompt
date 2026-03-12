@@ -2,60 +2,50 @@ const fs = require('fs');
 
 class Converter {
   static convertCurlyPromptToSKILL(promptContent) {
-    const lines = promptContent.split('\n');
+    const lines = promptContent.trim().split('\n');
     const skill = {};
-    let contentStack = [];
     let currentSection = null;
     let currentContent = null;
 
-    for (let line of lines) {
-      line = line.trim();
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
       if (!line) continue;
 
       if (line.startsWith('skill {')) {
         continue;
-      } else if (line.startsWith('}')) {
-        if (contentStack.length > 0) {
-          contentStack.pop();
-        }
+      } else if (line === '}') {
         continue;
-      } else if (line.includes(':')) {
-        const [key, value] = line.split(':', 2);
-        const k = key.trim();
-        const v = value.trim().replace(/^{/, '').replace(/}$/, '').trim();
-
-        if (k === 'content') {
-          currentSection = 'content';
-          skill[k] = {};
-          contentStack.push(skill[k]);
-        } else if (k === 'h1' || k === 'h2' || k === 'h3') {
-          const section = contentStack[contentStack.length - 1];
-          if (section) {
-            section[k] = { text: v };
-            currentContent = section[k];
-          }
-        } else if (k === 'p') {
-          if (currentContent) {
-            currentContent.p = v;
-          }
-        } else if (k === 'ul') {
-          if (currentContent) {
-            currentContent.ul = [];
-          }
-        } else if (k === 'li') {
-          if (currentContent && currentContent.ul) {
-            currentContent.ul.push(v);
-          }
-        } else {
-          skill[k] = v;
+      } else if (line.startsWith('name:')) {
+        skill.name = line.substring(5).trim();
+      } else if (line.startsWith('description:')) {
+        skill.description = line.substring(12).trim();
+      } else if (line.startsWith('license:')) {
+        skill.license = line.substring(8).trim();
+      } else if (line.startsWith('version:')) {
+        skill.version = line.substring(8).trim();
+      } else if (line.startsWith('content {')) {
+        continue;
+      } else if (line.startsWith('h1:')) {
+        const text = line.substring(3).trim();
+        if (!skill.content) skill.content = {};
+        skill.content.h1 = { text };
+        currentSection = 'h1';
+        currentContent = skill.content.h1;
+      } else if (line.startsWith('p:')) {
+        const text = line.substring(2).trim();
+        if (!currentContent) continue;
+        if (!currentContent.p) currentContent.p = [];
+        currentContent.p.push(text);
+      } else if (line.startsWith('ul {')) {
+        if (!currentContent) continue;
+        if (!currentContent.ul) currentContent.ul = [];
+      } else if (line.startsWith('li:')) {
+        const text = line.substring(3).trim();
+        if (currentContent && currentContent.ul) {
+          currentContent.ul.push(text);
         }
-      } else {
-        if (currentContent && line.startsWith('- ')) {
-          const item = line.substring(2).trim();
-          if (currentContent.ul) {
-            currentContent.ul.push(item);
-          }
-        }
+      } else if (line.startsWith('allowed-tools:')) {
+        skill["allowed-tools"] = line.substring(14).trim();
       }
     }
 
@@ -65,27 +55,26 @@ class Converter {
       `description: ${skill.description}`,
       `license: ${skill.license}`,
       `version: ${skill.version}`,
-      `compatibility: ${skill.compatibility}`,
+      `compatibility: Yes`,
       `"allowed-tools": ${skill["allowed-tools"]}`,
       '---'
     ].join('\n');
 
-    let content = '';
+    let content = '\n\n';
+
     if (skill.content && skill.content.h1) {
-      content += `\n\n# ${skill.content.h1.text}`;
+      content += `# ${skill.content.h1.text}\n\n`;
+
       if (skill.content.h1.p) {
-        content += `\n\n${skill.content.h1.p}`;
+        content += skill.content.h1.p.map(p => p.replace(/strong:(\w+)/g, '**$1**')).join('\n') + '\n\n';
       }
-      if (skill.content.h1.ul && skill.content.h1.ul.length > 0) {
-        content += `\n`;
-        for (let item of skill.content.h1.ul) {
-          content += `- ${item}\n`;
-        }
+
+      if (skill.content.h1.ul) {
+        content += skill.content.h1.ul.map(li => `- ${li}`).join('\n') + '\n';
       }
     }
 
-    const markdownContent = frontmatter.replaceAll('"', '') + content.replaceAll('"', '') + "\n";
-    return markdownContent;
+    return frontmatter + content;
   }
 }
 
@@ -96,7 +85,5 @@ class App {
   }
 }
 
-if (typeof App !== 'undefined') {
-  new App().init();
-}
+new App().init();
 
