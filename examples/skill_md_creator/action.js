@@ -3,15 +3,15 @@ const fs = require('fs');
 class Converter {
   static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
     const source_prompt_content = fs.readFileSync(source_prompt_file, 'utf8');
-    let lines = source_prompt_content.split('\n');
     
     let frontmatter = {};
     let contentLines = [];
     let braceDepth = 0;
     let inContentBlock = false;
-    
+    let lines = source_prompt_content.split('\n');
+
     for (let i = 0; i < lines.length; i++) {
-      let line = lines[i].trim();
+      const line = lines[i].trim();
       
       if (!inContentBlock && line.startsWith('skill {')) {
         inContentBlock = true;
@@ -25,12 +25,8 @@ class Converter {
         }
         
         if (braceDepth > 0) {
-          if (line.includes('{')) {
-            braceDepth += (line.match(/{/g) || []).length;
-          }
-          if (line.includes('}')) {
-            braceDepth -= (line.match(/}/g) || []).length;
-          }
+          if (line.includes('{')) braceDepth += (line.match(/{/g) || []).length;
+          if (line.includes('}')) braceDepth -= (line.match(/}/g) || []).length;
           
           if (braceDepth === 0) {
             break;
@@ -38,72 +34,72 @@ class Converter {
           
           contentLines.push(line);
         } else {
-          if (line.startsWith('name:') || line.startsWith('description:') || 
-              line.startsWith('license:') || line.startsWith('version:')) {
-            let key = line.split(':')[0].trim();
-            let value = line.substring(line.indexOf(':') + 1).trim().replaceAll('"', '');
-            frontmatter[key] = value;
+          if (!line.startsWith('content {') && !line.startsWith('skill {')) {
+            const colonIndex = line.indexOf(':');
+            if (colonIndex !== -1) {
+              const key = line.substring(0, colonIndex).trim();
+              let value = line.substring(colonIndex + 1).trim();
+              if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.slice(1, -1);
+              }
+              frontmatter[key] = value;
+            }
           }
         }
       }
     }
+
+    let markdown = '';
     
-    let markdownContent = '';
-    if (Object.keys(frontmatter).length > 0) {
-      markdownContent += '---\n';
-      for (let key in frontmatter) {
-        markdownContent += `${key}: ${frontmatter[key]}\n`;
-      }
-      markdownContent += '---\n\n';
+    markdown += '---\n';
+    for (const [key, value] of Object.entries(frontmatter)) {
+      markdown += `${key}: ${value}\n`;
     }
-    
+    markdown += '---\n\n';
+
     let inList = false;
+    let currentHeadingLevel = 0;
+    let headingText = '';
+    
     for (let i = 0; i < contentLines.length; i++) {
       let line = contentLines[i].trim();
       
-      if (line.match(/^h[123]:/)) {
-        let level = parseInt(line.charAt(1));
-        let text = line.substring(3).trim();
-        text = text.replace(/strong:(\w+)/g, '**$1**');
+      if (line === '') continue;
+      
+      if (line.startsWith('h1:') || line.startsWith('h2:') || line.startsWith('h3:')) {
+        const level = parseInt(line.charAt(1));
+        headingText = line.substring(3).trim();
+        if (headingText.endsWith('{')) headingText = headingText.slice(0, -1).trim();
         
-        if (text.endsWith('{')) {
-          text = text.slice(0, -1).trim();
-        }
-        if (text.endsWith(' {')) {
-          text = text.slice(0, -2).trim();
-        }
-        
-        markdownContent += '#'.repeat(level) + ' ' + text + '\n\n';
+        markdown += '#'.repeat(level) + ' ' + headingText.replace(/strong:(\w+)/g, '**$1**') + '\n\n';
       } else if (line.startsWith('p:')) {
-        let text = line.substring(2).trim();
-        text = text.replace(/strong:(\w+)/g, '**$1**');
-        markdownContent += text + '\n\n';
+        const text = line.substring(2).trim();
+        markdown += text.replace(/strong:(\w+)/g, '**$1**') + '\n\n';
       } else if (line === 'ul {') {
         inList = true;
       } else if (inList && line.startsWith('li:')) {
-        let text = line.substring(3).trim();
-        text = text.replace(/strong:(\w+)/g, '**$1**');
-        markdownContent += '- ' + text + '\n';
+        const text = line.substring(3).trim();
+        markdown += '- ' + text.replace(/strong:(\w+)/g, '**$1**') + '\n';
       } else if (line === '}') {
         if (inList) {
-          markdownContent += '\n';
+          markdown += '\n';
           inList = false;
         }
       }
     }
-    
-    if (markdownContent && !markdownContent.endsWith('\n\n')) {
-      markdownContent += '\n';
+
+    if (markdown.endsWith('\n')) {
+      markdown = markdown.slice(0, -1);
     }
     
-    fs.writeFileSync(target_md_file, markdownContent);
+    fs.writeFileSync(target_md_file, markdown + '\n');
   }
 }
 
 class App {
   init() {
-    let source_prompt_file = process.argv[2];
-    let target_md_file = process.argv[3];
+    const source_prompt_file = process.argv[2];
+    const target_md_file = process.argv[3];
     Converter.convertCurlyPromptToSKILL(source_prompt_file, target_md_file);
   }
 }
