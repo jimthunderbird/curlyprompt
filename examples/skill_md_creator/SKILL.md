@@ -12,6 +12,7 @@ this is a very **important** instruction
 - this is step 1
 - this is step 2
 - this is step 3
+- this is step 4
 
 # Testing Steps
 
@@ -24,4 +25,14 @@ this is a very **important** instruction
 - testing step 3
 - testing step 4
 - testing step 5
+
+# Deployment Steps
+
+## very **important** steps to follow:
+
+### also **important**:
+
+- deploy to server 1
+- deploy to server 2
+- deploy to server 3
 

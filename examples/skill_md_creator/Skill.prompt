@@ -10,18 +10,30 @@ skill {
         li:this is step 1
         li:this is step 2
         li:this is step 3
+        li:this is step 4
       }
     }
 
-    h1:Testing Steps 
-    h2: very strong:important steps to follow:
-    h3: also strong:important:
-    ul {
-      li: testing step 1
-      li: testing step 2
-      li: testing step 3
-      li: testing step 4
-      li: testing step 5
+    h1:Testing Steps {
+      h2: very strong:important steps to follow:
+      h3: also strong:important:
+      ul {
+        li: testing step 1
+        li: testing step 2
+        li: testing step 3
+        li: testing step 4
+        li: testing step 5
+      }
+    }
+
+    h1:Deployment Steps {
+      h2: very strong:important steps to follow:
+      h3: also strong:important:
+      ul {
+        li: deploy to server 1
+        li: deploy to server 2
+        li: deploy to server 3 
+      }
     }
   }
 }
