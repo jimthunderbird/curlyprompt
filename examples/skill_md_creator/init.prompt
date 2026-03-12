@@ -1,0 +1,16 @@
+perform a loop {
+  learn from "https://agentskills.io/specification"
+  write a node.js file ./action.js {
+    it will take the first cli argument as the source prompt file
+    it will take the second cli argument as the target markdown file
+    using CommonJS to create the target markdown file based on the content of the source prompt file
+  }
+  remember: apply defensive coding principles along the way
+  N = 2
+  for (i=1; i<={N}; i++) {
+    run cli command: node action.js ./tests/test_markdown_{i}.prompt ./tests/test{i}_tmpoutput.md
+    if (the content of ./tests/test{i}_tmpoutput.md is identical to ./tests/test_markdown_{i}.md) {
+      break
+    } 
+  }
+}

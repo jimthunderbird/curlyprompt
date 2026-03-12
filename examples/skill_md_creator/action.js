@@ -1,89 +1,258 @@
+#!/usr/bin/env node
+
+/**
+ * AgentSkills SKILL.md Generator
+ * Converts a custom prompt format into AgentSkills.io compliant SKILL.md
+ */
+
 const fs = require('fs');
+const path = require('path');
 
-class Converter {
-  static convertCurlyPromptToSKILL(promptContent) {
-    const lines = promptContent.trim().split('\n');
-    const skill = {};
-    let currentSection = null;
-    let currentContent = null;
+function parsePrompt(promptText) {
+  if (!promptText || typeof promptText !== 'string') {
+    throw new Error('Invalid input: promptText must be a non-empty string');
+  }
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
+  const skill = {
+    metadata: {},
+    sections: []
+  };
 
-      if (line.startsWith('skill {')) {
-        continue;
-      } else if (line === '}') {
-        continue;
-      } else if (line.startsWith('name:')) {
-        skill.name = line.substring(5).trim();
-      } else if (line.startsWith('description:')) {
-        skill.description = line.substring(12).trim();
-      } else if (line.startsWith('license:')) {
-        skill.license = line.substring(8).trim();
-      } else if (line.startsWith('version:')) {
-        skill.version = line.substring(8).trim();
-      } else if (line.startsWith('content {')) {
-        continue;
-      } else if (line.startsWith('h1:')) {
-        const text = line.substring(3).trim();
-        if (!skill.content) skill.content = {};
-        skill.content.h1 = { text };
-        currentSection = 'h1';
-        currentContent = skill.content.h1;
-      } else if (line.startsWith('p:')) {
-        const text = line.substring(2).trim();
-        if (!currentContent) continue;
-        if (!currentContent.p) currentContent.p = [];
-        currentContent.p.push(text);
-      } else if (line.startsWith('ul {')) {
-        if (!currentContent) continue;
-        if (!currentContent.ul) currentContent.ul = [];
-      } else if (line.startsWith('li:')) {
-        const text = line.substring(3).trim();
-        if (currentContent && currentContent.ul) {
-          currentContent.ul.push(text);
+  const lines = promptText.trim().split('\n');
+  let inSkillBlock = false;
+  let inContentBlock = false;
+  let currentSection = null;
+  let currentElement = null;
+  let braceStack = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) continue;
+
+    // Handle skill block start
+    if (trimmed.startsWith('skill {')) {
+      inSkillBlock = true;
+      braceStack.push('skill');
+      continue;
+    }
+
+    // Handle content block start
+    if (trimmed.startsWith('content {')) {
+      inContentBlock = true;
+      braceStack.push('content');
+      continue;
+    }
+
+    // Handle closing braces
+    if (trimmed === '}') {
+      const popped = braceStack.pop();
+
+      if (popped === 'ul' && currentSection) {
+        // Closing ul block
+        currentElement = null;
+      } else if (popped === 'h1' && currentSection) {
+        // Closing h1 block
+        skill.sections.push(currentSection);
+        currentSection = null;
+      } else if (popped === 'content') {
+        inContentBlock = false;
+      } else if (popped === 'skill') {
+        inSkillBlock = false;
+      }
+      continue;
+    }
+
+    // Parse metadata (key: value)
+    if (inSkillBlock && !inContentBlock && trimmed.includes(':')) {
+      const colonIndex = trimmed.indexOf(':');
+      const key = trimmed.substring(0, colonIndex).trim();
+      let value = trimmed.substring(colonIndex + 1).trim();
+
+      // Remove quotes
+      value = value.replace(/^["']|["']$/g, '');
+
+      skill.metadata[key] = value;
+      continue;
+    }
+
+    // Handle h1 sections
+    if (trimmed.startsWith('h1:')) {
+      const titleMatch = trimmed.match(/^h1:(.+?)(?:\s*\{)?$/);
+      if (titleMatch) {
+        currentSection = {
+          title: titleMatch[1].trim(),
+          items: []
+        };
+        braceStack.push('h1');
+      }
+      continue;
+    }
+
+    // Handle h2 headers
+    if (trimmed.startsWith('h2:')) {
+      const content = trimmed.substring(3).trim();
+      if (currentSection) {
+        currentSection.items.push({
+          type: 'h2',
+          text: content
+        });
+      }
+      continue;
+    }
+
+    // Handle ul block start
+    if (trimmed === 'ul {') {
+      braceStack.push('ul');
+      currentElement = 'ul';
+      continue;
+    }
+
+    // Handle paragraph with formatting (p:text with strong:word)
+    if (trimmed.startsWith('p:')) {
+      const content = trimmed.substring(2).trim();
+      if (currentSection) {
+        currentSection.items.push({
+          type: 'p',
+          text: content
+        });
+      }
+      continue;
+    }
+
+    // Handle list items
+    if (trimmed.startsWith('li:')) {
+      const content = trimmed.substring(3).trim();
+      if (currentSection) {
+        currentSection.items.push({
+          type: 'li',
+          text: content
+        });
+      }
+      continue;
+    }
+  }
+
+  // Push any remaining section
+  if (currentSection) {
+    skill.sections.push(currentSection);
+  }
+
+  return skill;
+}
+
+function convertToMarkdown(skill) {
+  if (!skill || typeof skill !== 'object') {
+    throw new Error('Invalid skill object');
+  }
+
+  let output = '';
+
+  // Generate YAML frontmatter
+  output += '---\n';
+  output += `name: ${skill.metadata.name || 'unnamed-skill'}\n`;
+  output += `description: ${skill.metadata.description || 'No description provided'}\n`;
+
+  if (skill.metadata.license) {
+    output += `license: ${skill.metadata.license}\n`;
+  }
+
+  if (skill.metadata.version) {
+    output += `version: ${skill.metadata.version}\n`;
+  }
+
+  // Add optional fields only if present in source
+  if (skill.metadata.compatibility) {
+    output += `compatibility: ${skill.metadata.compatibility}\n`;
+  }
+
+  if (skill.metadata['allowed-tools']) {
+    output += `allowed-tools: ${skill.metadata['allowed-tools']}\n`;
+  }
+
+  output += '---\n\n';
+
+  // Generate content sections
+  for (const section of skill.sections) {
+    output += `# ${section.title}\n`;
+    
+    let prevItemType = null;
+    for (const item of section.items) {
+      if (item.type === 'h2') {
+        output += `## ${item.text}\n`;
+        prevItemType = 'h2';
+      } else if (item.type === 'p') {
+        // Add blank line before p only if it's the first item after h1
+        if (prevItemType === null) {
+          output += '\n';
         }
-      } else if (line.startsWith('allowed-tools:')) {
-        skill["allowed-tools"] = line.substring(14).trim();
+        // Handle paragraph with inline formatting
+        let text = item.text;
+        // Convert strong:word to **word**
+        text = text.replace(/strong:(\w+)/g, '**$1**');
+        output += `${text}\n\n`;
+        prevItemType = 'p';
+      } else if (item.type === 'li') {
+        output += `- ${item.text}\n`;
+        prevItemType = 'li';
       }
     }
 
-    const frontmatter = [
-      '---',
-      `name: ${skill.name}`,
-      `description: ${skill.description}`,
-      `license: ${skill.license}`,
-      `version: ${skill.version}`,
-      `compatibility: Yes`,
-      `"allowed-tools": ${skill["allowed-tools"]}`,
-      '---'
-    ].join('\n');
+    // Add blank line after section only if last item wasn't a paragraph
+    if (prevItemType !== 'p') {
+      output += '\n';
+    }
+  }
 
-    let content = '\n\n';
+  return output;
+}
 
-    if (skill.content && skill.content.h1) {
-      content += `# ${skill.content.h1.text}\n\n`;
+// Main execution
+function main() {
+  const sourceFile = process.argv[2];
+  const targetFile = process.argv[3];
 
-      if (skill.content.h1.p) {
-        content += skill.content.h1.p.map(p => p.replace(/strong:(\w+)/g, '**$1**')).join('\n') + '\n\n';
-      }
+  // Defensive coding: validate arguments
+  if (!sourceFile || !targetFile) {
+    console.error('Usage: node action.js <source.prompt> <target.md>');
+    process.exit(1);
+  }
 
-      if (skill.content.h1.ul) {
-        content += skill.content.h1.ul.map(li => `- ${li}`).join('\n') + '\n';
-      }
+  try {
+    // Defensive coding: check if source file exists
+    if (!fs.existsSync(sourceFile)) {
+      console.error(`Error: Source file '${sourceFile}' not found`);
+      process.exit(1);
     }
 
-    return frontmatter + content;
+    // Read source file
+    const promptText = fs.readFileSync(sourceFile, 'utf-8');
+
+    // Parse prompt
+    const skill = parsePrompt(promptText);
+
+    // Generate markdown
+    const markdown = convertToMarkdown(skill);
+
+    // Ensure target directory exists
+    const targetDir = path.dirname(targetFile);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    // Write to target file
+    fs.writeFileSync(targetFile, markdown, 'utf-8');
+
+    console.log(`✓ Generated ${targetFile} successfully!`);
+  } catch (error) {
+    console.error('Error:', error.message);
+    process.exit(1);
   }
 }
 
-class App {
-  init() {
-    let skillStr = fs.readFileSync('./skill.txt', 'utf8');
-    console.log(Converter.convertCurlyPromptToSKILL(skillStr));
-  }
+if (require.main === module) {
+  main();
 }
 
-new App().init();
-
+module.exports = { parsePrompt, convertToMarkdown };
