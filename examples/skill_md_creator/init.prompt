@@ -1,15 +1,7 @@
 logic.run_tests {
   perform a loop {
-    N = (number of .prompt files in ./tests directory)
-    let num_of_passed_test = 0
-    for (i=1; i<={N}; i++) {
-      run cli command: node action.js ./tests/test_markdown_{i}.prompt ./tests/test{i}_tmpoutput.md
-      if (the content of ./tests/test{i}_tmpoutput.md is identical to ./tests/test_markdown_{i}.md) {
-        num_of_passed_test ++  
-      } 
-    }
-
-    if ({num_of_passed_test} equals to {N}) {
+    let result = sh run_tests.sh
+    if (result shows all tests passed) {
       update ./Spec.md
       break
     } else {
@@ -58,9 +50,9 @@ tasks {
     ---
     name: "Simple Skill"
     meta:
-      attr1: "attriute 1"
-      attr2: "attriute 2"
-      ...
+    attr1: "attriute 1"
+    attr2: "attriute 2"
+    ...
     ---
     </output>
     the meta can contain N attributes, like attr3, attr4...
@@ -107,7 +99,7 @@ tasks {
     }
   }
 
-  task {
+  task (completed) {
     for the image one liner, we the spaces between img and the starting { irrelevant
     <input>
     img {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
@@ -115,5 +107,6 @@ tasks {
     img   {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
     </input>
     create 1 new test covering all possible senarios in this task
+    }
   }
 }
