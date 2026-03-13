@@ -11,5 +11,7 @@ perform a loop {
 
   if ({num_of_passed_test} equals to {N}) {
     break
+  } else {
+    update ./Converter.prompt only, add more details there to fix the possible issues
   }
 }

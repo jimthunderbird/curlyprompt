@@ -1,107 +1,117 @@
 const fs = require('fs');
-const path = require('path');
 
 class Converter {
   static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
-    const source_prompt_content = fs.readFileSync(source_prompt_file, 'utf8');
-    
-    let frontmatter = {};
-    let contentLines = [];
-    let inContentBlock = false;
-    let braceDepth = 0;
+    let source_prompt_content = fs.readFileSync(source_prompt_file, 'utf8');
     let lines = source_prompt_content.split('\n');
-    
+    let output_lines = [];
+    let frontmatter = {};
+    let content_lines = [];
+    let in_skill = false;
+    let in_content = false;
+
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      
-      if (!inContentBlock && line.startsWith('skill {')) {
-        inContentBlock = true;
+      let line = lines[i].trim();
+
+      if (!in_skill && (line.startsWith('skill {') || line === 'skill {')) {
+        in_skill = true;
         continue;
       }
-      
-      if (inContentBlock) {
-        if (line === 'content {') {
-          braceDepth = 1;
+
+      if (!in_skill) continue;
+
+      if (!in_content) {
+        if (line.startsWith('name:')) frontmatter.name = line.substring(5).trim().replace(/"/g, '');
+        else if (line.startsWith('description:')) frontmatter.description = line.substring(12).trim().replace(/"/g, '');
+        else if (line.startsWith('license:')) frontmatter.license = line.substring(8).trim().replace(/"/g, '');
+        else if (line.startsWith('version:')) frontmatter.version = line.substring(8).trim().replace(/"/g, '');
+
+        if (line.startsWith('content {') || line === 'content {') {
+          in_content = true;
           continue;
         }
-        
-        if (braceDepth > 0) {
-          if (line.includes('{')) {
-            braceDepth += (line.match(/{/g) || []).length;
-          }
-          
-          if (line.includes('}')) {
-            braceDepth -= (line.match(/}/g) || []).length;
-          }
-          
-          if (braceDepth === 0) {
-            break;
-          }
-          
-          contentLines.push(line);
-        } else {
-          if (line.startsWith('name:') || line.startsWith('description:') || 
-              line.startsWith('license:') || line.startsWith('version:')) {
-            const key = line.split(':')[0].trim();
-            const value = line.substring(line.indexOf(':') + 1).trim().replaceAll('"', '');
-            frontmatter[key] = value;
-          }
+      } else {
+        let brace_depth = 1;
+        content_lines.push(line);
+        i++;
+        while (i < lines.length) {
+          let nextLine = lines[i].trim();
+          let openBraces = (nextLine.match(/{/g) || []).length;
+          let closeBraces = (nextLine.match(/}/g) || []).length;
+          brace_depth += openBraces - closeBraces;
+          if (brace_depth === 0) break;
+          content_lines.push(nextLine);
+          i++;
         }
       }
     }
-    
-    let output = '';
-    output += '---\n';
-    for (const [key, value] of Object.entries(frontmatter)) {
-      output += `${key}: ${value}\n`;
+
+    output_lines.push('---');
+    for (let key in frontmatter) {
+      output_lines.push(`${key}: ${frontmatter[key]}`);
     }
-    output += '---\n\n';
-    
-    let inList = false;
-    let level = 0;
-    let currentHeading = '';
-    
-    for (let i = 0; i < contentLines.length; i++) {
-      let line = contentLines[i].trim();
-      
-      if (line === '') continue;
-      
-      if (line.startsWith('h1:') || line.startsWith('h2:') || line.startsWith('h3:')) {
-        const match = line.match(/^(h[123]):(.*)/);
-        if (match) {
-          level = parseInt(match[1][1]);
-          let text = match[2].trim();
-          
-          if (text.endsWith('{')) {
-            text = text.slice(0, -1).trim();
-          }
-          
-          text = text.replace(/strong:(\w+)/g, '**$1**');
-          output += '#'.repeat(level) + ' ' + text + '\n\n';
+    output_lines.push('---');
+    output_lines.push('');
+
+    this.processContentLines(content_lines, output_lines);
+
+    let target_md_content = output_lines.join('\n') + '\n';
+    fs.writeFileSync(target_md_file, target_md_content);
+  }
+
+  static processStrong(text) {
+    return text.replace(/strong:(\w+)/g, '**$1**');
+  }
+
+  static processContentLines(lines, output) {
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+      if (!line || line === '}') continue;
+
+      let headerMatch = line.match(/^(h[1-3]):(.*)/);
+      if (headerMatch) {
+        let level = parseInt(headerMatch[1][1]);
+        let text = headerMatch[2].trim();
+        if (text.endsWith('{')) {
+          text = text.slice(0, -1).trim();
         }
-      } else if (line.startsWith('p:')) {
+        let prefix = '#'.repeat(level);
+        let formattedText = this.processStrong(text);
+        output.push(`${prefix} ${formattedText}`);
+        output.push('');
+        continue;
+      }
+
+      if (line.startsWith('p:')) {
         let text = line.substring(2).trim();
-        text = text.replace(/strong:(\w+)/g, '**$1**');
-        output += text + '\n\n';
-      } else if (line === 'ul {') {
-        inList = true;
-      } else if (inList && line.startsWith('li:')) {
-        let text = line.substring(3).trim();
-        text = text.replace(/strong:(\w+)/g, '**$1**');
-        output += '- ' + text + '\n';
-      } else if (line === '}') {
-        if (inList) {
-          output += '\n';
-          inList = false;
+        let formattedText = this.processStrong(text);
+        output.push(formattedText);
+        output.push('');
+        continue;
+      }
+
+      if (line === 'ul {' || line.startsWith('ul {')) {
+        i++;
+        while (i < lines.length) {
+          let nextLine = lines[i].trim();
+          if (nextLine === '}') break;
+          if (nextLine.startsWith('li:')) {
+            let text = nextLine.substring(3).trim();
+            let formattedText = this.processStrong(text);
+            output.push(`- ${formattedText}`);
+          }
+          i++;
         }
+        output.push('');
+        continue;
+      }
+
+      if (line.startsWith('li:')) {
+        let text = line.substring(3).trim();
+        let formattedText = this.processStrong(text);
+        output.push(`- ${formattedText}`);
       }
     }
-    
-    if (output.endsWith('\n')) {
-      output = output.slice(0, -1);
-    }
-    
-    fs.writeFileSync(target_md_file, output + '\n');
   }
 }
 
@@ -112,15 +122,17 @@ class App {
       console.error('Usage: node action.js <source_prompt_file> <target_md_file>');
       process.exit(1);
     }
-    
+
     const source_prompt_file = args[0];
     const target_md_file = args[1];
-    
-    if (!fs.existsSync(source_prompt_file)) {
-      console.error(`Source file does not exist: ${source_prompt_file}`);
+
+    try {
+      fs.accessSync(source_prompt_file, fs.constants.F_OK);
+    } catch (err) {
+      console.error(`Error: Source file ${source_prompt_file} does not exist`);
       process.exit(1);
     }
-    
+
     Converter.convertCurlyPromptToSKILL(source_prompt_file, target_md_file);
   }
 }

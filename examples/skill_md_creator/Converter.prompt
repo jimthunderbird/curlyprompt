@@ -1,69 +1,113 @@
 class Converter
 {
   static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
-    let source_prompt_content = get file content of source_prompt_file
-    learn from the examples from SkillFormat.context, extract the logic to convert source_prompt_content to target_md_content
-    save target_md_content to target_md_file
+    let source_prompt_content = read file content of source_prompt_file using fs.readFileSync(source_prompt_file, 'utf8')
+    let lines = source_prompt_content.split('\n')
+    let output_lines = []
+    let frontmatter = {}
+    let content_lines = []
+    let in_skill = false
+    let in_content = false
 
-    constraint: {
-      we want to have the logic only, no sample data should be presented
+    Step 1: Parse the source file line by line
+    for each line in lines {
+      trim the line
 
-      overall structure of input file {
-        skill {
-          name: ...
-          description: ...
-          license: ...
-          version: ...
-          content {
-            ...content elements...
-          }
-        }
-
-        the skill block has two parts:
-        1. frontmatter fields (name, description, license, version, etc.) - outside "content {"
-        2. content elements (headings, paragraphs, lists) - inside "content {"
+      if not in_skill and line starts with 'skill {' or line equals 'skill {' {
+        set in_skill = true
+        continue
       }
 
-      frontmatter rules {
-        parse lines inside skill { } but OUTSIDE content { } as frontmatter key-value pairs
-        only include fields that actually exist in the input
-        do NOT add fields that are not in the input
-        strip all double quotes from frontmatter values using .replaceAll('"','')
-        use line.substring(line.indexOf(':') + 1) to extract value after first colon
-      }
+      if not in_skill then continue
 
-      content parsing rules {
-        step 1: collect content lines using braceDepth tracking {
-          when you see "content {" (trimmed), set braceDepth=1
-          for each subsequent line:
-            if line (trimmed) contains { then increment braceDepth for each {
-            if line (trimmed) contains } then decrement braceDepth for each }
-            if braceDepth reaches 0, stop (that closes the content block)
-            otherwise push line to contentLines array
-          this ensures inner } from ul { } or h1:Title { } do not end collection early
+      if not in_content {
+        parse frontmatter key-value pairs:
+        if line starts with 'name:' then frontmatter.name = rest of line after 'name:' trimmed, with all double quotes removed
+        if line starts with 'description:' then frontmatter.description = rest of line after 'description:' trimmed, with all double quotes removed
+        if line starts with 'license:' then frontmatter.license = rest of line after 'license:' trimmed, with all double quotes removed
+        if line starts with 'version:' then frontmatter.version = rest of line after 'version:' trimmed, with all double quotes removed
+
+        if line starts with 'content {' or line equals 'content {' {
+          set in_content = true
+          continue
         }
-
-        step 2: parse contentLines sequentially to generate markdown {
-          trim each line before checking
-          - if line matches /^h[123]:/ then it is a heading
-            strip any trailing " {" or "{" from heading text, then trim
-            output "#".repeat(level) + " " + text + "\n\n"
-          - if line starts with "p:" then output paragraph text + "\n\n"
-          - if line equals "ul {" then set inList=true and continue
-          - if inList and line starts with "li:" then output "- " + text + "\n"
-          - if line equals "}" then:
-            if inList: output "\n" and set inList=false
-            else: just skip (closes a header brace block)
-          - skip empty lines
-
-          CRITICAL: check "}" AFTER checking li: so list items are processed
-          CRITICAL: when line is "}", check inList FIRST before skipping
-        }
-
-        there can be multiple h1 sections, multiple h2 etc
-        strong:word becomes **word** everywhere
-        the output file must end with a trailing newline
+      } else {
+        collect all lines inside the content block into content_lines array
+        use a separate variable brace_depth initialized to 1 (for the content block's opening brace)
+        IMPORTANT: brace_depth must persist across ALL lines inside content, do NOT re-initialize it per line
+        for each subsequent line (starting from the current line, continuing through the file):
+        - count ALL '{' characters on the line and add to brace_depth
+        - count ALL '}' characters on the line and subtract from brace_depth
+        - if brace_depth reaches 0, the content block has ended, stop collecting, do NOT push this line
+        - if brace_depth is still > 0, push the line to content_lines (including lines that are just '}')
+        IMPORTANT: lines that are just '}' must still be pushed to content_lines when brace_depth > 0 because processContentLines needs them to detect end of ul blocks
       }
+    }
+
+    Step 2: Build the frontmatter section
+    push '---' to output_lines
+    for each key in frontmatter, push 'key: value' to output_lines
+    push '---' to output_lines
+    push empty string to output_lines
+
+    Step 3: Process content_lines to generate markdown
+    call this.processContentLines(content_lines, output_lines)
+
+    Step 4: Join output_lines with newline and add trailing newline
+    let target_md_content = output_lines.join('\n') + '\n'
+    write target_md_content to target_md_file using fs.writeFileSync
+  }
+
+  static processStrong(text) {
+    replace all occurrences of pattern strong:WORD with **WORD**
+    use regex: text.replace(/strong:(\w+)/g, '**$1**')
+    return the result
+  }
+
+  static processContentLines(lines, output) {
+    iterate through lines with index i
+    for each line, trim it
+
+    skip empty lines and lines that are just '}'
+
+    Handle headers: if line matches regex /^(h[1-3]):(.*)/ (note: this matches ANY line starting with h1: or h2: or h3:) {
+      extract the header level number from the match
+      extract the text after the colon and trim it
+      if text ends with '{', strip the trailing '{' and trim again
+      convert h1 to '#', h2 to '##', h3 to '###' using '#'.repeat(level_number)
+      apply processStrong to the text
+      push 'PREFIX TEXT' to output (e.g. '# Instruction')
+      push empty string to output (blank line after heading)
+      continue
+    }
+
+    Handle paragraphs: if line starts with 'p:' {
+      extract text after 'p:' and trim
+      apply processStrong to the text
+      push the text to output
+      push empty string to output (blank line after paragraph)
+      continue
+    }
+
+    Handle unordered lists: if line equals 'ul {' or starts with 'ul {' {
+      advance to next line
+      loop until we find a line that is just '}' {
+        if line starts with 'li:' {
+          extract text after 'li:' and trim
+          apply processStrong to the text
+          push '- TEXT' to output
+        }
+        advance to next line
+      }
+      push empty string to output (blank line after list)
+      continue
+    }
+
+    Handle standalone list items: if line starts with 'li:' {
+      extract text after 'li:' and trim
+      apply processStrong to the text
+      push '- TEXT' to output
+      continue
     }
   }
 }
