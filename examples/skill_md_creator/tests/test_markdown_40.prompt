@@ -1,0 +1,12 @@
+skill {
+  name: Inline Italic Test
+  description: Test same-line italic formatting
+  content {
+    h1:Style Guide
+    p:the italic{key concept} is explained below
+    p {
+      use italic{emphasis} when you want to highlight a term
+      and strong{bold} for critical warnings
+    }
+  }
+}

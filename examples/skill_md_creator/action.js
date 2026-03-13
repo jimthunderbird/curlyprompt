@@ -120,6 +120,10 @@ class Converter {
     // Process links: link:display text:url
     text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
 
+    // Process same-line open/close: strong{...}, italic{...}
+    text = text.replace(/strong\{([^}]+)\}/g, '**$1**');
+    text = text.replace(/italic\{([^}]+)\}/g, '*$1*');
+
     // Process strong: word captures until stop word
     // Word pattern: [\w.]+ with optional hyphenated parts, excluding standalone -
     const sw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|instruction|token|supported|setup|requests|mock|approach|function|word|text|specification|element|steps|style|content|authentication|inside|guide|mode|scripts|paragraph)';
@@ -152,6 +156,15 @@ class Converter {
         }
         text = this.processFormatting(text);
         output.push('#'.repeat(level) + ' ' + text);
+        output.push('');
+        continue;
+      }
+
+      // Handle paragraphs (same-line form: p{...})
+      let pInlineMatch = line.match(/^p\{(.+)\}$/);
+      if (pInlineMatch) {
+        let text = this.processFormatting(pInlineMatch[1]);
+        output.push(text);
         output.push('');
         continue;
       }
