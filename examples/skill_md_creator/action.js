@@ -22,9 +22,9 @@ class Converter {
 
       if (!in_content) {
         if (line.startsWith('name:')) frontmatter.name = line.substring(5).trim().replace(/"/g, '');
-        if (line.startsWith('description:')) frontmatter.description = line.substring(12).trim().replace(/"/g, '');
-        if (line.startsWith('license:')) frontmatter.license = line.substring(8).trim().replace(/"/g, '');
-        if (line.startsWith('version:')) frontmatter.version = line.substring(8).trim().replace(/"/g, '');
+        else if (line.startsWith('description:')) frontmatter.description = line.substring(12).trim().replace(/"/g, '');
+        else if (line.startsWith('license:')) frontmatter.license = line.substring(8).trim().replace(/"/g, '');
+        else if (line.startsWith('version:')) frontmatter.version = line.substring(8).trim().replace(/"/g, '');
 
         if (line.startsWith('content {') || line === 'content {') {
           in_content = true;
@@ -35,14 +35,11 @@ class Converter {
         let brace_depth = 1;
         i++;
         while (i < lines.length) {
-          let next_line = lines[i].trim();
-          if (next_line.includes('{')) {
-            brace_depth += (next_line.match(/{/g) || []).length;
-          }
-          if (next_line.includes('}')) {
-            brace_depth -= (next_line.match(/}/g) || []).length;
-          }
-          content_lines.push(next_line);
+          let inner_line = lines[i];
+          let count_open = (inner_line.match(/{/g) || []).length;
+          let count_close = (inner_line.match(/}/g) || []).length;
+          brace_depth += count_open - count_close;
+          content_lines.push(inner_line);
           if (brace_depth === 0) break;
           i++;
         }
@@ -69,7 +66,8 @@ class Converter {
   static processContentLines(lines, output) {
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
-      if (line === '' || line === '}') continue;
+      
+      if (!line || line === '}') continue;
 
       let header_match = line.match(/^(h[1-3]):(.*)/);
       if (header_match) {
@@ -93,11 +91,10 @@ class Converter {
 
       if (line === 'ul {' || line.startsWith('ul {')) {
         i++;
-        while (i < lines.length) {
-          let next_line = lines[i].trim();
-          if (next_line === '}') break;
-          if (next_line.startsWith('li:')) {
-            let text = next_line.substring(3).trim();
+        while (i < lines.length && lines[i].trim() !== '}') {
+          let inner_line = lines[i].trim();
+          if (inner_line.startsWith('li:')) {
+            let text = inner_line.substring(3).trim();
             output.push(`- ${this.processStrong(text)}`);
           }
           i++;
