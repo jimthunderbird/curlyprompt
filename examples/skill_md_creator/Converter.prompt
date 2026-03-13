@@ -71,7 +71,7 @@ class Converter
        - Captures consecutive words until hitting a stop word
        - Stop words: to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an,
          instruction, token, supported, setup, requests, mock, approach, function, word, text,
-         specification, element, steps, style, content, authentication, inside, guide, mode, scripts
+         specification, element, steps, style, content, authentication, inside, guide, mode, scripts, paragraph
        - Also stops at non-word characters like ':' or '-' (standalone dash, not hyphenated words)
 
     3. Italic: replace italic:WORDS with *WORDS*
@@ -104,7 +104,20 @@ class Converter
       continue
     }
 
-    Handle paragraphs: if line starts with 'p:' {
+    Handle paragraphs (block form): if line equals 'p {' or starts with 'p {' {
+      advance to next line
+      loop until we find a trimmed line that is just '}' {
+        if trimmed line is not empty {
+          apply processFormatting to the trimmed line
+          push the formatted text to output
+        }
+        advance to next line
+      }
+      push empty string to output (blank line after paragraph)
+      continue
+    }
+
+    Handle paragraphs (inline form): if line starts with 'p:' {
       extract text after 'p:' and trim
       apply processFormatting to the text
       push the text to output

@@ -81,7 +81,7 @@ class Converter {
 
     // Process strong: word captures until stop word
     // Word pattern: [\w.]+ with optional hyphenated parts, excluding standalone -
-    const sw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|instruction|token|supported|setup|requests|mock|approach|function|word|text|specification|element|steps|style|content|authentication|inside|guide|mode|scripts)';
+    const sw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|instruction|token|supported|setup|requests|mock|approach|function|word|text|specification|element|steps|style|content|authentication|inside|guide|mode|scripts|paragraph)';
     text = text.replace(new RegExp(`strong:([\\w.]+(?:-[\\w.]+)*(?:\\s+(?!${sw}\\b)[\\w.]+(?:-[\\w.]+)*)*)`, 'g'), '**$1**');
 
     // Process italic: word captures until stop word
@@ -115,7 +115,23 @@ class Converter {
         continue;
       }
 
-      // Handle paragraphs
+      // Handle paragraphs (block form: p { ... })
+      if (line === 'p {' || line.startsWith('p {')) {
+        i++;
+        while (i < lines.length) {
+          let inner = lines[i].trim();
+          if (inner === '}') break;
+          if (inner !== '') {
+            let text = this.processFormatting(inner);
+            output.push(text);
+          }
+          i++;
+        }
+        output.push('');
+        continue;
+      }
+
+      // Handle paragraphs (inline form: p:TEXT)
       if (line.startsWith('p:')) {
         let text = line.substring(2).trim();
         text = this.processFormatting(text);

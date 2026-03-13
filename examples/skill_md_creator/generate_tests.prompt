@@ -44,8 +44,14 @@ learn from {
   - https://github.com/deanthecoder/G33kBoy/blob/9e0a83bb5376db3b5490f73e4aac3f8ded33021d/agents.md?plain=1
 }
 
-create 20 more tests in ./tests directory
-
-learn from https://www.markdownguide.org/cheat-sheet/, use the following map:
-
-
+create 2 new tests to for this request:
+<input>
+p {
+  this is a simple paragraph
+  this is a second line of the paragraph
+}
+</input>
+<output>
+this is a simple paragraph
+this is a second line of the paragraph
+</output>

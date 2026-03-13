@@ -1,0 +1,18 @@
+skill {
+  name: "Paragraph With Formatting"
+  description: "Test multi-line paragraph with inline formatting"
+  license: "MIT"
+  version: "1.0"
+  content {
+    h1:Getting Started
+    p {
+      this is a strong:bold paragraph
+      this line has italic:emphasized text
+      this is a normal line
+    }
+    h2:Next Section
+    p {
+      another paragraph block here
+    }
+  }
+}
