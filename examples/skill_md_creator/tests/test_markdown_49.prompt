@@ -1,0 +1,20 @@
+skill {
+  name: Link Brace Syntax
+  description: Test link brace syntax with flexible spacing
+
+  content {
+    h1:Link Brace Format Tests
+
+    p:Visit link{display:"Google" url:"https://www.google.com"} for searching.
+
+    p:Check link {display:"GitHub" url:"https://github.com"} for code.
+
+    p:See link  {display:"Example" url:"https://example.com"} for demos.
+
+    p:Go to link   { display:"Docs"   url:"https://docs.example.com" } for help.
+
+    p:Try link{ display:"Stack Overflow" , url:"https://stackoverflow.com"} for answers.
+
+    p:Also link  {  display:"MDN"  url:"https://developer.mozilla.org"  } for reference.
+  }
+}

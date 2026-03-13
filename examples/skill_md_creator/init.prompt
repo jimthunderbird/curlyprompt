@@ -99,7 +99,7 @@ tasks {
     }
   }
 
-  task (completed) {
+  task.image_tag_format (completed) {
     for the image one liner, we the spaces between img and the starting { irrelevant
     <input>
     img {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
@@ -108,5 +108,9 @@ tasks {
     </input>
     create 1 new test covering all possible senarios in this task
     }
+  }
+
+  task (completed) {
+    for links, also mimic task.image_tag_format
   }
 }

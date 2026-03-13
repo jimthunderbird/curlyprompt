@@ -118,6 +118,17 @@ class Converter {
   }
 
   static processFormatting(text) {
+    // Process links: link{display:"..." url:"..."} (brace syntax with flexible spacing)
+    text = text.replace(/link\s*\{([^}]+)\}/g, (match, inner) => {
+      let display = '';
+      let url = '';
+      let displayMatch = inner.match(/display:"([^"]+)"/);
+      let urlMatch = inner.match(/url:"([^"]+)"/);
+      if (displayMatch) display = displayMatch[1];
+      if (urlMatch) url = urlMatch[1];
+      return '[' + display + '](' + url + ')';
+    });
+
     // Process links: link:display text:url
     text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
 
