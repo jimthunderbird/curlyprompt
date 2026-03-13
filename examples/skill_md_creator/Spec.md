@@ -379,6 +379,28 @@ Output:
 - The first `:` after `img:` separates alt text from path.
 - A trailing blank line is appended.
 
+**Brace syntax (one-line):**
+
+```
+img{src:"http://www.dummyimage.com/dummy.jpg",alt:"dummy image"}
+img{ src:"http://www.dummyimage.com/dummy.jpg" , alt:"dummy image"}
+img{ src:"http://www.dummyimage.com/dummy.jpg" alt:"dummy image"}
+img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+```
+
+Output (all produce the same):
+
+```markdown
+![dummy image](http://www.dummyimage.com/dummy.jpg)
+
+```
+
+- Format: `img{src:"<url>" alt:"<alt_text>"}` or `img{alt:"<alt_text>" src:"<url>"}`
+- Key-value pairs can be separated by commas, spaces, or both — spacing is flexible.
+- Values are quoted with double quotes.
+- Key order does not matter (`src` and `alt` can appear in any order).
+- A trailing blank line is appended.
+
 ### 4.11 Links — `link:DISPLAY:URL`
 
 Links are an **inline formatting** construct (not a standalone element):
@@ -642,6 +664,8 @@ The test runner:
 | Same-line strong/italic | 39–40 | `strong{...}`, `italic{...}` |
 | Same-line paragraph | 41 | `p{...}` form |
 | Head alias | 42–43 | `head { }` as alias for `header { }` |
+| Image brace variants | 44–45 | Existing image brace tests |
+| Image flexible spacing | 46–47 | `img{...}` with commas, spaces, varied spacing |
 
 ---
 

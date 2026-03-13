@@ -284,7 +284,19 @@ class Converter {
         continue;
       }
 
-      // Handle images
+      // Handle images (brace syntax)
+      if (line.startsWith('img{') && line.endsWith('}')) {
+        let inner = line.substring(4, line.length - 1);
+        let src = '';
+        let alt = '';
+        let srcMatch = inner.match(/src:"([^"]+)"/);
+        let altMatch = inner.match(/alt:"([^"]+)"/);
+        if (srcMatch) src = srcMatch[1];
+        if (altMatch) alt = altMatch[1];
+        output.push('![' + alt + '](' + src + ')');
+        output.push('');
+        continue;
+      }
       if (line.startsWith('img:')) {
         let rest = line.substring(4);
         let colonIdx = rest.indexOf(':');

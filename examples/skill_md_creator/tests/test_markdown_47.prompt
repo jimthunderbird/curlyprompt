@@ -1,0 +1,10 @@
+skill {
+  name: Image Brace Space Variants
+  description: Test img brace syntax without commas using space separation
+  content {
+    h1:Image Tests without Commas
+    img{ src:"http://www.dummyimage.com/dummy.jpg" alt:"dummy image"}
+    img{  src:"https://images.test.com/logo.svg"   alt:"company logo"}
+    img{alt:"reverse order" src:"http://www.example.com/reverse.png"}
+  }
+}

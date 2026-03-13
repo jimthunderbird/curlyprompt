@@ -1,0 +1,11 @@
+skill {
+  name: "Image Brace Syntax Test"
+  description: "Testing image with brace syntax"
+  content {
+    h1:Gallery
+    p:Here is an example image:
+    img{src:"http://www.dummyimage.com/dummy.jpg",alt:"dummy image"}
+    h2:Another Section
+    img{src:"photos/landscape.png",alt:"beautiful landscape"}
+  }
+}

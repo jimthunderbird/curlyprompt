@@ -119,4 +119,17 @@ run the following tasks, skip the task that is marked as completed {
       update ./Spec.md
     }
   }
+
+  task (reopen) {
+    feature request {
+      for image, we can specify the following in one line, remember, spacing inside does not matter, comma does not matter, if comma does not exist, as long as there is at least one space in between, it should be ok:
+      <input>
+      img{src:"http://www.dummyimage.com/dummy.jpg",alt:"dummy image"}
+      img{ src:"http://www.dummyimage.com/dummy.jpg" , alt:"dummy image"}
+      img{ src:"http://www.dummyimage.com/dummy.jpg" alt:"dummy image"}
+      img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+      </input>
+      creat 2 new tests for this request
+    }
+  }
 }
