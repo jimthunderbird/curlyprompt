@@ -1,3 +1,0 @@
-role: you are a senior software architect with deep knowledge on node.js
-
-objective: generate a very detailed Spec.md based on ./action.js, the goal is to make Spec.md as the single source of truth for Spec Driven Development with AI Agent 

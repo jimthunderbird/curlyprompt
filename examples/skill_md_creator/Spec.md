@@ -396,6 +396,7 @@ Output (all produce the same):
 ```
 
 - Format: `img{src:"<url>" alt:"<alt_text>"}` or `img{alt:"<alt_text>" src:"<url>"}`
+- Spacing between `img` and the opening `{` is irrelevant — `img{`, `img {`, and `img   {` are all equivalent.
 - Key-value pairs can be separated by commas, spaces, or both — spacing is flexible.
 - Values are quoted with double quotes.
 - Key order does not matter (`src` and `alt` can appear in any order).
@@ -666,6 +667,7 @@ The test runner:
 | Head alias | 42–43 | `head { }` as alias for `header { }` |
 | Image brace variants | 44–45 | Existing image brace tests |
 | Image flexible spacing | 46–47 | `img{...}` with commas, spaces, varied spacing |
+| Image pre-brace spacing | 48 | `img {`, `img   {` — flexible spacing before `{` |
 
 ---
 

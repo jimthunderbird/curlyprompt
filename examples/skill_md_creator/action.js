@@ -285,8 +285,9 @@ class Converter {
       }
 
       // Handle images (brace syntax)
-      if (line.startsWith('img{') && line.endsWith('}')) {
-        let inner = line.substring(4, line.length - 1);
+      let imgBraceMatch = line.match(/^img\s*\{(.+)\}$/);
+      if (imgBraceMatch) {
+        let inner = imgBraceMatch[1];
         let src = '';
         let alt = '';
         let srcMatch = inner.match(/src:"([^"]+)"/);

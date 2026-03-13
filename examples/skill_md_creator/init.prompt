@@ -1,16 +1,119 @@
-perform a loop {
-  N = (number of .prompt files in ./tests directory)
-  let num_of_passed_test = 0
-  for (i=1; i<={N}; i++) {
-    run cli command: node action.js ./tests/test_markdown_{i}.prompt ./tests/test{i}_tmpoutput.md
-    if (the content of ./tests/test{i}_tmpoutput.md is identical to ./tests/test_markdown_{i}.md) {
-      num_of_passed_test ++  
-    } 
+logic.run_tests {
+  perform a loop {
+    N = (number of .prompt files in ./tests directory)
+    let num_of_passed_test = 0
+    for (i=1; i<={N}; i++) {
+      run cli command: node action.js ./tests/test_markdown_{i}.prompt ./tests/test{i}_tmpoutput.md
+      if (the content of ./tests/test{i}_tmpoutput.md is identical to ./tests/test_markdown_{i}.md) {
+        num_of_passed_test ++  
+      } 
+    }
+
+    if ({num_of_passed_test} equals to {N}) {
+      update ./Spec.md
+      break
+    } else {
+      update ./action.js and try to fix the issues
+    }
+  }
+}
+
+run the following tasks, skip the task that is marked as completed, after the task is run {
+  start logic.run_test 
+}
+
+tasks {
+  task (completed) {
+    create 2 new tests for this request:
+    <input>
+    p {
+      this is a simple paragraph
+      this is a second line of the paragraph
+    }
+    </input>
+    <output>
+    this is a simple paragraph
+    this is a second line of the paragraph
+    </output>
   }
 
-  if ({num_of_passed_test} equals to {N}) {
-    break
-  } else {
-    update ./Converter.prompt and ./action.js, add more details there to fix the possible issues
+  task (completed) {
+    create 2 new tests for this request:
+    in addition to keywords like "name","description"..., add support for "include" 
+  }
+
+  task (completed) {
+    add support to keywords "meta"
+    <input>
+    skill {
+      name: Simple Skill
+      meta {
+        attr1: attribute 1
+        attr2: attribute 2
+        ...
+      }
+    } 
+    </input>
+    <output>
+    ---
+    name: "Simple Skill"
+    meta:
+      attr1: "attriute 1"
+      attr2: "attriute 2"
+      ...
+    ---
+    </output>
+    the meta can contain N attributes, like attr3, attr4...
+  }
+
+  task (completed) {
+    feature request {
+      support header and content section, example:
+      ./tests/test_markdown_35.prompt and ./tests/test_markdown_35.md
+      header can contain any nested attributes
+      body is basically an alias of content
+    }
+  }
+
+  task (completed) {
+    feature request {
+      for p, strong, italic, support "same line open and close" , example:
+      <input>
+      strong{this is very important}, rest of them are ok
+      </input>
+      <output>
+      **this is very important**, rest of them are ok
+      </output>
+      create 3 new tests for this feature request
+    }
+  }
+
+  task (completed) {
+    feature request {
+      make head an alias of header
+      create 2 tests for this request
+    }
+  }
+
+  task (completed) {
+    feature request {
+      for image, we can specify the following in one line, remember, spacing inside does not matter, comma does not matter, if comma does not exist, as long as there is at least one space in between, it should be ok:
+      <input>
+      img{src:"http://www.dummyimage.com/dummy.jpg",alt:"dummy image"}
+      img{ src:"http://www.dummyimage.com/dummy.jpg" , alt:"dummy image"}
+      img{ src:"http://www.dummyimage.com/dummy.jpg" alt:"dummy image"}
+      img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+      </input>
+    }
+  }
+
+  task {
+    for the image one liner, we the spaces between img and the starting { irrelevant
+    <input>
+    img {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+    img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+    img   {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+    </input>
+    create 1 new test covering all possible senarios in this task
   }
 }
