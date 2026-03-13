@@ -1,0 +1,39 @@
+skill {
+  name: "Database Migration Guide"
+  description: "Guidelines for database schema migrations"
+  license: "MIT"
+  version: "1.0"
+  content {
+    h1:Database Migrations
+    p:All schema changes must go through the migration system.
+
+    h2:Creating a Migration
+    p:Run the following command:
+    code: npx knex migrate:make migration_name
+
+    h2:Migration Structure
+    code {
+      exports.up = function(knex) {
+        return knex.schema.createTable('users', (table) => {
+          table.increments('id');
+          table.string('name');
+        });
+      };
+    }
+
+    h2:Running Migrations
+    ol {
+      li:Run code:npx knex migrate:latest to apply
+      li:Run code:npx knex migrate:rollback to undo
+    }
+
+    blockquote:Always test migrations on a staging database first.
+    hr
+    h2:Best Practices
+    ul {
+      li:Never modify an existing migration
+      li:Always provide a strong:rollback function
+      li:Keep migrations italic:small and focused
+    }
+  }
+}

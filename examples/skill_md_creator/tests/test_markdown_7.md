@@ -1,35 +1,48 @@
 ---
-name: Deployment Pipeline
-description: Guides an agent through deployment procedures
+name: G33kBoy Emulator Guide
+description: Agent guidance for the Game Boy emulator written in C#
 license: MIT
-version: 3.0
+version: 1.0
 ---
 
-# Deployment Checklist
+# Agents Guidance for AI-assisted Development
 
-**Important**: Always follow this checklist before deploying to production.
+An overview of the current repository and its related projects.
 
-## Pre-deployment
+## Summary for Agents
 
-- Ensure all tests pass
-- Check for **security** vulnerabilities
-- Review database migrations
-- Verify environment variables are set
-- Confirm rollback plan is documented
+Use this overview as factual context when generating or editing code.
 
-## Deployment Steps
+- Read this report top-to-bottom to understand the repository structure
+- Keep context usage lean and prefer summaries over full source files
+- Match the **American English** style as reported below
+- Prefer existing frameworks, tests, and naming conventions
+- Use the ripgrep tool for efficient code searching
 
-- Tag the release in git
-- Build the Docker image
-- Push to container registry
-- Deploy to staging first
-- Run smoke tests on staging
-- Deploy to production
-- Monitor dashboards for 30 minutes
+## Project Stats
 
-## Post-deployment
+- Files: 919
+- Languages: C# at 99 percent
+- English: American English
 
-- Verify health checks are green
-- Check error rates in monitoring
-- Notify the team in Slack
+## Preferences
+
+Align with nullable settings, test framework, and UI patterns already used.
+
+- **Nullable**: disabled
+- **Tests**: NUnit
+- **Mocking**: Unknown
+- **UI**: Avalonia
+
+## Projects
+
+### Top-level
+
+- G33kBoy.csproj targeting net9.0
+- UnitTests.csproj targeting net9.0
+
+### Internal
+
+- DTC.Core.csproj targeting net8.0
+- DTC.SM83.csproj targeting net9.0
 

@@ -1,5 +1,4 @@
 perform a loop {
-  run cli command: sh ./local_llm_codegen.sh
   N = (number of .prompt files in ./tests directory)
   let num_of_passed_test = 0
   for (i=1; i<={N}; i++) {
@@ -12,6 +11,6 @@ perform a loop {
   if ({num_of_passed_test} equals to {N}) {
     break
   } else {
-    update ./Converter.prompt only, add more details there to fix the possible issues
+    update ./Converter.prompt and ./action.js, add more details there to fix the possible issues
   }
 }

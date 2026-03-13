@@ -1,42 +1,16 @@
 skill {
-  name: "Database Migration Agent"
-  description: "Safely handles database schema migrations"
+  name: "Horizontal Rule Test"
+  description: "Testing horizontal rule rendering"
   license: "MIT"
   version: "1.0"
   content {
-    h1:Migration Rules {
-      p:strong:Never run migrations directly on production without approval.
-
-      h2:Creating Migrations {
-        p:Every schema change must have a corresponding migration file.
-        ul {
-          li:One migration per logical change
-          li:Always include a rollback step
-          li:Name migrations with a timestamp prefix
-          li:Test migrations against a copy of production data
-        }
-      }
-
-      h2:Migration Safety {
-        p:These rules are strong:mandatory for all database changes.
-        ul {
-          li:Never drop columns in the same release that stops using them
-          li:Add new columns as nullable first
-          li:Use online DDL for large tables
-          li:Set a lock timeout to avoid blocking
-        }
-      }
-    }
-
-    h1:Rollback Procedures {
-      p:If a migration fails you must follow these steps:
-      ul {
-        li:Stop the deployment immediately
-        li:Run the rollback migration
-        li:Verify data integrity
-        li:Notify the on-call engineer
-        li:File an incident report
-      }
-    }
+    h1:Section One
+    p:Content in section one.
+    hr
+    h1:Section Two
+    p:Content in section two.
+    hr
+    h1:Section Three
+    p:Content in section three.
   }
 }

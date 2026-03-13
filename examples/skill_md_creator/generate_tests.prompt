@@ -1,6 +1,51 @@
+learn from the markdown to html tag mapping, we need to support those {
+  - # => h1
+  - ## => h2
+  - ### => h3
+  - **bold text** => strong:bold text
+  - *italicized text* => italic:italicized text
+  - > blockquote => blockquote
+  - 1. First item
+    2. Second Item
+    3. Third Item
+    =>
+    ol {
+      li:First Item
+      li:Second Item
+      li:Third Item
+    }
+  - - First item
+    - Second item
+    - Third item
+    =>
+    ul {
+      li:First Item
+      li:Second Item
+      li:Third Item
+    }
+  - `code` => code { code }
+    or code {
+      code
+    }
+    or code: code
+  - --- => hr
+  - [google](https://www.google.com) => link:google:https://www.google.com
+  - ![alt text](image.jpg) => img:text:img.jpg
+}
+
 for (i = 1; i<=3; i++) {
   learn from the source prompt ./tests/test_markdown_{i}.prompt
   learn from the target generated markdown that are generated from the source prompt, ./tests/test_markdown_{i}.md
 }
-learn from "https://github.com/search?q=path%3AAGENTS.md+NOT+is%3Afork+NOT+is%3Aarchived&type=code"
-create 10 more tests in ./tests
+learn from {
+  - https://github.com/scopewu/qrcode.vue/blob/f6929f8047e67d1399d6e65030bd73c2184c0c16/AGENTS.md?plain=1
+  - https://github.com/derrickburns/generalized-kmeans-clustering/blob/master/AGENTS.md?plain=1
+  - https://github.com/kmifka/hass_lmair/blob/480b1d24d06586ff36f42726749c46487f3fbfd8/Agents.md?plain=1
+  - https://github.com/deanthecoder/G33kBoy/blob/9e0a83bb5376db3b5490f73e4aac3f8ded33021d/agents.md?plain=1
+}
+
+create 20 more tests in ./tests directory
+
+learn from https://www.markdownguide.org/cheat-sheet/, use the following map:
+
+

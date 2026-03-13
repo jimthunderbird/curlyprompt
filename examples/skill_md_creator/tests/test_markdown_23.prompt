@@ -1,0 +1,10 @@
+skill {
+  name: "Minimal Skill"
+  description: "A minimal skill with few elements"
+  license: "MIT"
+  version: "0.1"
+  content {
+    h1:Hello World
+    p:This is a minimal skill.
+  }
+}

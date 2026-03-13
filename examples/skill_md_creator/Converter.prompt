@@ -33,14 +33,15 @@ class Converter
         }
       } else {
         collect all lines inside the content block into content_lines array
+        IMPORTANT: store RAW (untrimmed) lines for code block indentation preservation
         use a separate variable brace_depth initialized to 1 (for the content block's opening brace)
         IMPORTANT: brace_depth must persist across ALL lines inside content, do NOT re-initialize it per line
         for each subsequent line (starting from the current line, continuing through the file):
-        - count ALL '{' characters on the line and add to brace_depth
-        - count ALL '}' characters on the line and subtract from brace_depth
-        - if brace_depth reaches 0, the content block has ended, stop collecting, do NOT push this line
-        - if brace_depth is still > 0, push the line to content_lines (including lines that are just '}')
-        IMPORTANT: lines that are just '}' must still be pushed to content_lines when brace_depth > 0 because processContentLines needs them to detect end of ul blocks
+        - use trimmed version for brace counting but store the raw (untrimmed) line
+        - if trimmed line is just '}': decrement brace_depth; if 0 stop collecting; otherwise push the raw line
+        - otherwise: count ALL '{' characters on the trimmed line and add to brace_depth, count ALL '}' and subtract
+        - push the raw line to content_lines
+        IMPORTANT: lines that are just '}' must still be pushed to content_lines when brace_depth > 0 because processContentLines needs them to detect end of ul/ol/code blocks
       }
     }
 
@@ -58,11 +59,32 @@ class Converter
     write target_md_content to target_md_file using fs.writeFileSync
   }
 
-  static processStrong(text) {
-    replace all occurrences of pattern strong:WORD with **WORD**
-    WORD can contain hyphens, so use regex that matches word characters AND hyphens: text.replace(/strong:([\w-]+)/g, '**$1**')
-    IMPORTANT: use [\w-]+ not \w+ because words like "pip-tools" contain hyphens
-    return the result
+  static processFormatting(text) {
+    Process inline formatting in the following order:
+
+    1. Links: replace link:DISPLAY:URL with [DISPLAY](URL)
+       - DISPLAY can contain spaces, URL starts with http:// or https://
+       - regex: link:(.+?):(https?:\/\/\S+) → [$1]($2)
+
+    2. Strong/Bold: replace strong:WORDS with **WORDS**
+       - Word pattern: [\w.]+ with optional hyphenated parts (e.g. package.json, two-factor)
+       - Captures consecutive words until hitting a stop word
+       - Stop words: to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an,
+         instruction, token, supported, setup, requests, mock, approach, function, word, text,
+         specification, element, steps, style, content, authentication, inside, guide, mode, scripts
+       - Also stops at non-word characters like ':' or '-' (standalone dash, not hyphenated words)
+
+    3. Italic: replace italic:WORDS with *WORDS*
+       - Same word pattern as strong
+       - Stop words: to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an,
+         text, information, reviewers
+
+    4. Inline code: replace code:CONTENT with `CONTENT`
+       - Captures any non-whitespace tokens (\S+) separated by spaces
+       - Stops at stop words: to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are,
+         a, an, parameters, branch, prefix
+
+    return the processed text
   }
 
   static processContentLines(lines, output) {
@@ -71,12 +93,12 @@ class Converter
 
     skip empty lines and lines that are just '}'
 
-    Handle headers: if line matches regex /^(h[1-3]):(.*)/ (note: this matches ANY line starting with h1: or h2: or h3:) {
+    Handle headers: if line matches regex /^(h[1-3]):(.*)/ {
       extract the header level number from the match
       extract the text after the colon and trim it
       if text ends with '{', strip the trailing '{' and trim again
       convert h1 to '#', h2 to '##', h3 to '###' using '#'.repeat(level_number)
-      apply processStrong to the text
+      apply processFormatting to the text
       push 'PREFIX TEXT' to output (e.g. '# Instruction')
       push empty string to output (blank line after heading)
       continue
@@ -84,7 +106,7 @@ class Converter
 
     Handle paragraphs: if line starts with 'p:' {
       extract text after 'p:' and trim
-      apply processStrong to the text
+      apply processFormatting to the text
       push the text to output
       push empty string to output (blank line after paragraph)
       continue
@@ -92,10 +114,10 @@ class Converter
 
     Handle unordered lists: if line equals 'ul {' or starts with 'ul {' {
       advance to next line
-      loop until we find a line that is just '}' {
+      loop until we find a trimmed line that is just '}' {
         if line starts with 'li:' {
           extract text after 'li:' and trim
-          apply processStrong to the text
+          apply processFormatting to the text
           push '- TEXT' to output
         }
         advance to next line
@@ -104,10 +126,69 @@ class Converter
       continue
     }
 
+    Handle ordered lists: if line equals 'ol {' or starts with 'ol {' {
+      advance to next line
+      initialize counter num = 1
+      loop until we find a trimmed line that is just '}' {
+        if line starts with 'li:' {
+          extract text after 'li:' and trim
+          apply processFormatting to the text
+          push 'NUM. TEXT' to output (e.g. '1. First item')
+          increment num
+        }
+        advance to next line
+      }
+      push empty string to output (blank line after list)
+      continue
+    }
+
+    Handle code blocks: if line equals 'code {' or starts with 'code {' {
+      advance to next line
+      collect raw (untrimmed) lines with brace depth tracking:
+      - initialize depth = 1
+      - if trimmed line is '}': decrement depth; if 0 stop; else push RAW line
+      - otherwise: count '{' and '}' on trimmed line to update depth; push RAW line
+      Strip common indentation from collected lines:
+      - find minimum leading whitespace among non-empty lines
+      - remove that many characters from the start of each line
+      Output: push '```', then each dedented line, then '```'
+      push empty string to output
+      continue
+    }
+
+    Handle blockquotes: if line starts with 'blockquote:' {
+      extract text after 'blockquote:' and trim
+      apply processFormatting to the text
+      push '> TEXT' to output
+      push empty string to output
+      continue
+    }
+
+    Handle horizontal rules: if line equals 'hr' {
+      push '---' to output
+      push empty string to output
+      continue
+    }
+
+    Handle images: if line starts with 'img:' {
+      extract rest after 'img:'
+      split at first ':' to get alt text and path
+      push '![ALT](PATH)' to output
+      push empty string to output
+      continue
+    }
+
     Handle standalone list items: if line starts with 'li:' {
       extract text after 'li:' and trim
-      apply processStrong to the text
+      apply processFormatting to the text
       push '- TEXT' to output
+      continue
+    }
+
+    Handle standalone code: lines: if line starts with 'code:' (but not 'code {') {
+      extract text after 'code:' and trim
+      push '`TEXT`' to output
+      push empty string to output
       continue
     }
   }

@@ -1,39 +1,52 @@
 skill {
-  name: "Deployment Pipeline"
-  description: "Guides an agent through deployment procedures"
+  name: "G33kBoy Emulator Guide"
+  description: "Agent guidance for the Game Boy emulator written in C#"
   license: "MIT"
-  version: "3.0"
+  version: "1.0"
   content {
-    h1:Deployment Checklist {
-      p:strong:Important: Always follow this checklist before deploying to production.
+    h1:Agents Guidance for AI-assisted Development {
+      p:An overview of the current repository and its related projects.
 
-      h2:Pre-deployment {
+      h2:Summary for Agents {
+        p:Use this overview as factual context when generating or editing code.
         ul {
-          li:Ensure all tests pass
-          li:Check for strong:security vulnerabilities
-          li:Review database migrations
-          li:Verify environment variables are set
-          li:Confirm rollback plan is documented
+          li:Read this report top-to-bottom to understand the repository structure
+          li:Keep context usage lean and prefer summaries over full source files
+          li:Match the strong:American English style as reported below
+          li:Prefer existing frameworks, tests, and naming conventions
+          li:Use the ripgrep tool for efficient code searching
         }
       }
 
-      h2:Deployment Steps {
+      h2:Project Stats {
         ul {
-          li:Tag the release in git
-          li:Build the Docker image
-          li:Push to container registry
-          li:Deploy to staging first
-          li:Run smoke tests on staging
-          li:Deploy to production
-          li:Monitor dashboards for 30 minutes
+          li:Files: 919
+          li:Languages: C# at 99 percent
+          li:English: American English
         }
       }
 
-      h2:Post-deployment {
+      h2:Preferences {
+        p:Align with nullable settings, test framework, and UI patterns already used.
         ul {
-          li:Verify health checks are green
-          li:Check error rates in monitoring
-          li:Notify the team in Slack
+          li:strong:Nullable: disabled
+          li:strong:Tests: NUnit
+          li:strong:Mocking: Unknown
+          li:strong:UI: Avalonia
+        }
+      }
+
+      h2:Projects {
+        h3:Top-level
+        ul {
+          li:G33kBoy.csproj targeting net9.0
+          li:UnitTests.csproj targeting net9.0
+        }
+
+        h3:Internal
+        ul {
+          li:DTC.Core.csproj targeting net8.0
+          li:DTC.SM83.csproj targeting net9.0
         }
       }
     }

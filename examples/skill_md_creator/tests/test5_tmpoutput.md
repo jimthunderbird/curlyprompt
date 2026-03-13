@@ -1,54 +1,48 @@
 ---
-name: Project Architecture Guide
-description: Documents the architecture of a cross-platform desktop application
-license: MIT
-version: 1.2
+name: Generalized KMeans Clustering Guide
+description: Repository guidelines for the generalized k-means clustering library
+license: Apache-2.0
+version: 1.0
 ---
 
-# Project Overview
+# Repository Guidelines
 
-This is a cross-platform desktop application using a hybrid architecture.
+Use this guide to make concise, high-signal contributions to the generalized k-means clustering library.
 
-## Key Architecture Points
+# Project Structure
 
-- Runtime uses Rust-based Tauri for the native desktop shell
-- App uses .NET Blazor Server for the UI and business logic
-- Communication happens via HTTPS with TLS certificates
-- Multi-provider architecture supporting OpenAI and Anthropic
+- Scala sources live in src/main/scala
+- Tests use ScalaTest under src/test/scala with Spark-local fixtures
+- Python wrapper lives in python directory
+- Documentation follows Diataxis structure in docs directory
 
-# Building
+# Build and Test Commands
 
-## Prerequisites
+## **Scala Commands**
 
-- .NET 9 SDK
-- Rust toolchain stable
-- Tauri CLI
+- sbt compile to compile against default Scala and Spark matrix
+- sbt test for full JVM suite with ScalaTest
+- sbt scalafmtAll then sbt scalastyle for required format and lint gates
+- sbt coverage test coverageReport to generate coverage
 
-## Running Tests
+## **Python Commands**
 
-Tests can be run as follows:
+- cd python and pip install for setup
+- pytest for running tests
 
-- Run unit tests with pytest
-- Run integration tests with the test runner
-- Check coverage with the coverage tool
+# Coding Style
 
-# Architecture Details
+- Scalafmt enforces 2-space indent and 100-col limit
+- Prefer immutable vals and small helpers
+- PascalCase for classes and objects
+- camelCase for methods and vals
+- Document public APIs with Scaladoc
 
-## Runtime Layer
+# Commit Guidelines
 
-The runtime layer handles window management and system integration.
+Use **conventional commits** with format type scope subject
 
-- app_window - Tauri window management
-- dotnet - Launches and manages the .NET sidecar process
-- runtime_api - HTTPS API for communication
-- certificate - Generates self-signed TLS certificates
-
-## Application Layer
-
-The application layer provides the UI and core functionality.
-
-- Provider - LLM provider implementations
-- Chat - Chat functionality and message handling
-- Assistants - Pre-configured assistants
-- Tools - Core background services
+- PRs should summarize behavior changes
+- List executed commands
+- Link issues with Closes number
 

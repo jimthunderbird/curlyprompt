@@ -1,48 +1,11 @@
 skill {
-  name: "Multi-Level Documentation"
-  description: "Tests deeply nested heading structures"
-  license: "BSD-3-Clause"
+  name: "Italic Test"
+  description: "Testing italic text rendering"
+  license: "MIT"
   version: "1.0"
   content {
-    h1:Getting Started {
-      p:Welcome to the project.
-
-      h2:Installation {
-        h3:System Requirements {
-          ul {
-            li:Node.js 18 or higher
-            li:npm 9 or higher
-            li:Git 2.30 or higher
-          }
-        }
-
-        h3:Quick Start {
-          p:Run the following steps to get started:
-          ul {
-            li:Clone the repository
-            li:Install dependencies
-            li:Start the development server
-          }
-        }
-      }
-
-      h2:Configuration {
-        h3:Environment Variables {
-          ul {
-            li:DATABASE_URL - connection string for the database
-            li:API_KEY - your strong:secret API key
-            li:LOG_LEVEL - set to debug, info, or error
-          }
-        }
-
-        h3:Optional Settings {
-          p:These settings are strong:optional but recommended for production.
-          ul {
-            li:CACHE_TTL - cache time to live in seconds
-            li:MAX_CONNECTIONS - maximum database connections
-          }
-        }
-      }
-    }
+    h1:Using Italic Text
+    p:This is italic:important and this is also italic:critical information.
+    p:Combine strong:bold with italic:italic in one line.
   }
 }

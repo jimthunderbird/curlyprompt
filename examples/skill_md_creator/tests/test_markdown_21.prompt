@@ -1,0 +1,45 @@
+skill {
+  name: "Testing Strategy"
+  description: "Comprehensive testing strategy for the project"
+  license: "MIT"
+  version: "1.5"
+  content {
+    h1:Testing Strategy {
+      p:A strong:comprehensive approach to testing our application.
+
+      h2:Test Pyramid
+      ol {
+        li:strong:Unit Tests - Fast, isolated, test individual functions
+        li:strong:Integration Tests - Test component interactions
+        li:strong:E2E Tests - Test complete user flows
+      }
+
+      h2:Unit Testing
+      p:Use code:jest as the test framework.
+      code {
+        describe('Calculator', () => {
+          it('should add numbers', () => {
+            expect(add(1, 2)).toBe(3);
+          });
+        });
+      }
+
+      h2:Running Tests
+      ul {
+        li:code:npm test for all tests
+        li:code:npm run test:unit for unit tests only
+        li:code:npm run test:coverage for coverage report
+      }
+
+      blockquote:All PRs must have at least 80% code coverage.
+
+      h2:Mocking Guidelines
+      p:Use italic:dependency injection to make code testable.
+      ul {
+        li:Mock external APIs
+        li:Do strong:not mock the database in integration tests
+        li:Use italic:factory functions for test data
+      }
+    }
+  }
+}

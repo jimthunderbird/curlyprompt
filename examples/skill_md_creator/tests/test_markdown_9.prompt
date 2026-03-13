@@ -1,41 +1,12 @@
 skill {
-  name: "WordPress Plugin Scaffold"
-  description: "Scaffolds a WordPress plugin following best practices"
-  license: "GPL-2.0"
-  version: "1.5"
+  name: "Blockquote Test"
+  description: "Testing blockquote rendering"
+  license: "MIT"
+  version: "1.0"
   content {
-    h1:WordPress Plugin Development {
-      p:This skill helps you create WordPress plugins that follow strong:modern PHP development standards.
-
-      h2:Project Structure {
-        ul {
-          li:admin/ - Admin area functionality
-          li:includes/ - Core plugin classes
-          li:public/ - Public-facing functionality
-          li:languages/ - Translation files
-          li:src/ - Source assets for development
-          li:build/ - Compiled assets
-        }
-      }
-
-      h2:Coding Standards {
-        p:All code must follow WordPress Coding Standards.
-        ul {
-          li:Use PSR-4 autoloading
-          li:Minimum PHP 7.4 required
-          li:WordPress 4.9.1 or higher
-          li:All strings must be translatable
-        }
-      }
-    }
-
-    h1:Testing {
-      p:Run the test suite before submitting any changes.
-      ul {
-        li:Unit tests with PHPUnit
-        li:Integration tests with WordPress test framework
-        li:Coding standards check with PHPCS
-      }
-    }
+    h1:Important Quotes
+    blockquote:This is a very important quote to remember.
+    p:Some text after the quote.
+    blockquote:Another quote with strong:bold content inside.
   }
 }

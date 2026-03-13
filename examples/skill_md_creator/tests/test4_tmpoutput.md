@@ -1,28 +1,42 @@
 ---
-name: Code Review Agent
-description: An agent that reviews code for quality and best practices
-license: Apache-2.0
+name: QRCode Vue Agent Guide
+description: Guidelines for AI agents working on the qrcode.vue repository
+license: MIT
 version: 2.0
 ---
 
-# Code Review Guidelines
+# Agent Guidelines for qrcode.vue
 
-This agent performs automated code reviews on pull requests.
+This document provides guidelines for AI agents working on the qrcode.vue repository.
 
-It checks for common issues and suggests improvements.
+## Build and Development Commands
 
-## What We Check
+The project uses npm scripts defined in **package.json**:
 
-- Code style and formatting
-- Potential **security** vulnerabilities
-- Performance **bottlenecks**
-- Test coverage gaps
+- npm run dev to start development server with hot reload
+- npm run build to build production bundles using Rollup
+- npm test to run all tests using rstest
 
-## How to Use
+## Code Style Guidelines
 
-Simply open a pull request and the agent will automatically review your code.
+### Indentation and Formatting
 
-- Step 1 - push your branch
-- Step 2 - open a pull request
-- Step 3 - wait for the review
+- **Indentation**: 2 spaces, no tabs
+- **Line endings**: LF Unix
+- **Trailing whitespace**: Trimmed
+- **Final newline**: Yes
+
+### TypeScript Conventions
+
+- Strict mode is always enabled
+- Prefer explicit types for function parameters and return types
+- Use type for simple aliases, interface for extensible object shapes
+
+## Testing
+
+Tests written with **rstest** and **vue test utils**
+
+- Test files in test directory with .test.ts extension
+- Use describe and it pattern
+- Mount components with mount from vue test utils
 

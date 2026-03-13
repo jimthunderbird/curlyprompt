@@ -1,28 +1,44 @@
 skill {
-  name: "Code Review Agent"
-  description: "An agent that reviews code for quality and best practices"
-  license: "Apache-2.0"
+  name: "QRCode Vue Agent Guide"
+  description: "Guidelines for AI agents working on the qrcode.vue repository"
+  license: "MIT"
   version: "2.0"
   content {
-    h1:Code Review Guidelines {
-      p:This agent performs automated code reviews on pull requests.
-      p:It checks for common issues and suggests improvements.
+    h1:Agent Guidelines for qrcode.vue {
+      p:This document provides guidelines for AI agents working on the qrcode.vue repository.
 
-      h2:What We Check {
+      h2:Build and Development Commands {
+        p:The project uses npm scripts defined in strong:package.json:
         ul {
-          li:Code style and formatting
-          li:Potential strong:security vulnerabilities
-          li:Performance strong:bottlenecks
-          li:Test coverage gaps
+          li:npm run dev to start development server with hot reload
+          li:npm run build to build production bundles using Rollup
+          li:npm test to run all tests using rstest
         }
       }
 
-      h2:How to Use {
-        p:Simply open a pull request and the agent will automatically review your code.
+      h2:Code Style Guidelines {
+        h3:Indentation and Formatting
         ul {
-          li:Step 1 - push your branch
-          li:Step 2 - open a pull request
-          li:Step 3 - wait for the review
+          li:strong:Indentation: 2 spaces, no tabs
+          li:strong:Line endings: LF Unix
+          li:strong:Trailing whitespace: Trimmed
+          li:strong:Final newline: Yes
+        }
+
+        h3:TypeScript Conventions
+        ul {
+          li:Strict mode is always enabled
+          li:Prefer explicit types for function parameters and return types
+          li:Use type for simple aliases, interface for extensible object shapes
+        }
+      }
+
+      h2:Testing {
+        p:Tests written with strong:rstest and strong:vue test utils
+        ul {
+          li:Test files in test directory with .test.ts extension
+          li:Use describe and it pattern
+          li:Mount components with mount from vue test utils
         }
       }
     }

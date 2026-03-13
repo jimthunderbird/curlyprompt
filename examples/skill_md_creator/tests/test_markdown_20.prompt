@@ -1,0 +1,37 @@
+skill {
+  name: "Docker Setup"
+  description: "Docker containerization guide"
+  license: "Apache-2.0"
+  version: "1.0"
+  content {
+    h1:Docker Guide
+    p:This guide covers containerizing the application with Docker.
+
+    h2:Prerequisites
+    ul {
+      li:Docker Engine installed
+      li:Docker Compose installed
+      li:Access to container registry
+    }
+
+    h2:Dockerfile
+    code {
+      FROM node:18-alpine
+      WORKDIR /app
+      COPY package*.json ./
+      RUN npm ci
+      COPY . .
+      CMD ["node", "server.js"]
+    }
+
+    h2:Common Commands
+    ul {
+      li:code:docker build -t myapp . to build the image
+      li:code:docker run -p 3000:3000 myapp to run the container
+      li:code:docker compose up -d to start all services
+    }
+
+    h2:Architecture Diagram
+    img:Docker Architecture:docs/docker-arch.png
+  }
+}
