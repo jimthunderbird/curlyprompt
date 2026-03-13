@@ -111,4 +111,12 @@ run the following tasks, skip the task that is marked as completed {
       create 3 new tests for this feature request
     }
   }
+
+  task (completed) {
+    feature request {
+      make head an alias of header
+      create 2 tests for this request
+      update ./Spec.md
+    }
+  }
 }

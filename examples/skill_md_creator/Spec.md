@@ -68,7 +68,7 @@ skill {
 }
 ```
 
-#### Form B: Explicit `header { }` and `body { }` blocks
+#### Form B: Explicit `header { }` (or `head { }`) and `body { }` blocks
 
 ```
 skill {
@@ -88,7 +88,7 @@ skill {
 }
 ```
 
-`header { }` is an explicit grouping of frontmatter. `body { }` is an alias for `content { }`.
+`header { }` (or its alias `head { }`) is an explicit grouping of frontmatter. `body { }` is an alias for `content { }`.
 
 #### Supported Frontmatter Keys
 
@@ -641,6 +641,7 @@ The test runner:
 | Header/body blocks | 35–38 | `header { }` and `body { }` syntax |
 | Same-line strong/italic | 39–40 | `strong{...}`, `italic{...}` |
 | Same-line paragraph | 41 | `p{...}` form |
+| Head alias | 42–43 | `head { }` as alias for `header { }` |
 
 ---
 

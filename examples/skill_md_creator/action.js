@@ -23,7 +23,8 @@ class Converter {
 
       if (!in_content) {
         // Handle header { } block - contains frontmatter key-value pairs
-        if (line.startsWith('header {') || line === 'header {') {
+        if (line.startsWith('header {') || line === 'header {' ||
+            line.startsWith('head {') || line === 'head {') {
           i++;
           while (i < lines.length) {
             let headerLine = lines[i].trim();

@@ -1,0 +1,28 @@
+skill {
+  head {
+    name: Head With Meta Test
+    description: Test head alias with meta block
+    license: MIT
+    include: common-rules.md
+    meta {
+      author: Jane Smith
+      priority: high
+      category: testing
+    }
+  }
+  content {
+    h1:Configuration {
+      p:follow the strong:setup guide below
+      ul {
+        li:install dependencies
+        li:configure environment
+        li:run tests
+      }
+    }
+    h2:Summary
+    p {
+      the head block works just like header
+      all frontmatter keys are supported
+    }
+  }
+}
