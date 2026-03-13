@@ -1,0 +1,10 @@
+skill {
+  name: Minimal Agent
+  description: A minimal agent with no frills
+  license: MIT
+  version: 0.1
+  content {
+    h1:Instructions
+    p:Follow these rules carefully.
+  }
+}

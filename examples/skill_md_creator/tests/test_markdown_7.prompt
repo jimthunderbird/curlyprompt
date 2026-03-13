@@ -1,0 +1,41 @@
+skill {
+  name: "Deployment Pipeline"
+  description: "Guides an agent through deployment procedures"
+  license: "MIT"
+  version: "3.0"
+  content {
+    h1:Deployment Checklist {
+      p:strong:Important: Always follow this checklist before deploying to production.
+
+      h2:Pre-deployment {
+        ul {
+          li:Ensure all tests pass
+          li:Check for strong:security vulnerabilities
+          li:Review database migrations
+          li:Verify environment variables are set
+          li:Confirm rollback plan is documented
+        }
+      }
+
+      h2:Deployment Steps {
+        ul {
+          li:Tag the release in git
+          li:Build the Docker image
+          li:Push to container registry
+          li:Deploy to staging first
+          li:Run smoke tests on staging
+          li:Deploy to production
+          li:Monitor dashboards for 30 minutes
+        }
+      }
+
+      h2:Post-deployment {
+        ul {
+          li:Verify health checks are green
+          li:Check error rates in monitoring
+          li:Notify the team in Slack
+        }
+      }
+    }
+  }
+}

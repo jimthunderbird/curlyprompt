@@ -1,0 +1,44 @@
+skill {
+  name: "Game Boy Emulator Agent"
+  description: "Agent guidance for a C# Game Boy emulator project"
+  license: "MIT"
+  version: "1.0"
+  content {
+    h1:Agent Instructions {
+      p:Read this document to understand the repository structure and conventions.
+      ul {
+        li:Match the existing code style and naming conventions
+        li:Prefer existing frameworks and test patterns
+        li:Use strong:American English for comments and documentation
+        li:Avoid ingesting very large files wholesale
+      }
+    }
+
+    h1:Project Stats {
+      ul {
+        li:Languages - C# at 99 percent
+        li:Framework - .NET 9.0
+        li:UI Framework - Avalonia
+        li:Test Framework - NUnit
+      }
+    }
+
+    h1:Key Modules {
+      h2:Core Emulator {
+        ul {
+          li:Instructions.cs - CPU instruction implementations
+          li:PPU.cs - Pixel processing unit
+          li:ApuDevice.cs - Audio processing unit
+          li:BootRom.cs - Boot ROM data
+        }
+      }
+
+      h2:Application {
+        ul {
+          li:MainWindowViewModel.cs - Main window view model
+          li:ShaderControl.cs - GPU shader rendering control
+        }
+      }
+    }
+  }
+}

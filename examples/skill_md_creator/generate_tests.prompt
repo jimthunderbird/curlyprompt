@@ -1,0 +1,6 @@
+for (i = 1; i<=3; i++) {
+  learn from the source prompt ./tests/test_markdown_{i}.prompt
+  learn from the target generated markdown that are generated from the source prompt, ./tests/test_markdown_{i}.md
+}
+learn from "https://github.com/search?q=path%3AAGENTS.md+NOT+is%3Afork+NOT+is%3Aarchived&type=code"
+create 10 more tests in ./tests

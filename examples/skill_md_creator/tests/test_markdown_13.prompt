@@ -1,0 +1,55 @@
+skill {
+  name: "Python Project Setup"
+  description: "Sets up a Python project with best practices"
+  license: "MIT"
+  version: "1.0"
+  content {
+    h1:Project Setup {
+      h2:Virtual Environment {
+        p:Always use a virtual environment for Python projects.
+        ul {
+          li:Create with python3 -m venv .venv
+          li:Activate with source .venv/bin/activate
+          li:Install dependencies with pip install -r requirements.txt
+        }
+      }
+
+      h2:Dependencies {
+        p:Manage dependencies using strong:pip-tools for reproducible builds.
+        ul {
+          li:Define direct dependencies in requirements.in
+          li:Compile locked dependencies with pip-compile
+          li:Never edit requirements.txt manually
+        }
+      }
+    }
+
+    h1:Code Quality {
+      h2:Linting {
+        ul {
+          li:Use ruff for fast Python linting
+          li:Use mypy for type checking
+          li:Use black for code formatting
+        }
+      }
+
+      h2:Testing {
+        ul {
+          li:Use pytest as the test framework
+          li:Aim for 80 percent code coverage minimum
+          li:Run tests with pytest -s tests/
+        }
+      }
+    }
+
+    h1:Conventions {
+      p:Follow PEP 8 and these strong:additional conventions:
+      ul {
+        li:Use snake_case for functions and variables
+        li:Use PascalCase for classes
+        li:Use UPPER_CASE for constants
+        li:Write docstrings for all public functions
+      }
+    }
+  }
+}

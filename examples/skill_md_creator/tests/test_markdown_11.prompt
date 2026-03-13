@@ -1,0 +1,53 @@
+skill {
+  name: "API Design Guidelines"
+  description: "Best practices for designing RESTful APIs"
+  license: "MIT"
+  version: "2.1"
+  content {
+    h1:REST API Design Principles {
+      p:Follow these strong:principles when designing API endpoints.
+
+      h2:URL Structure {
+        p:Use nouns not verbs in endpoint paths.
+        ul {
+          li:Use plural resource names
+          li:Use lowercase with hyphens for multi-word resources
+          li:Nest resources to show relationships
+          li:Keep URLs under 3 levels of nesting
+        }
+      }
+
+      h2:HTTP Methods {
+        ul {
+          li:GET - retrieve resources
+          li:POST - create new resources
+          li:PUT - replace entire resources
+          li:PATCH - partial updates
+          li:DELETE - remove resources
+        }
+      }
+
+      h2:Response Codes {
+        ul {
+          li:200 - Success
+          li:201 - Created
+          li:400 - Bad Request
+          li:401 - Unauthorized
+          li:403 - Forbidden
+          li:404 - Not Found
+          li:500 - Internal Server Error
+        }
+      }
+    }
+
+    h1:Error Handling {
+      p:All errors must return a strong:consistent JSON structure.
+      ul {
+        li:Include an error code field
+        li:Include a human-readable message
+        li:Include a request ID for tracing
+        li:Never expose internal stack traces
+      }
+    }
+  }
+}

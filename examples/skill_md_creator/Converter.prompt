@@ -60,7 +60,8 @@ class Converter
 
   static processStrong(text) {
     replace all occurrences of pattern strong:WORD with **WORD**
-    use regex: text.replace(/strong:(\w+)/g, '**$1**')
+    WORD can contain hyphens, so use regex that matches word characters AND hyphens: text.replace(/strong:([\w-]+)/g, '**$1**')
+    IMPORTANT: use [\w-]+ not \w+ because words like "pip-tools" contain hyphens
     return the result
   }
 

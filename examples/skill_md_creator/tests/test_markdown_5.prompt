@@ -1,0 +1,61 @@
+skill {
+  name: "Project Architecture Guide"
+  description: "Documents the architecture of a cross-platform desktop application"
+  license: "MIT"
+  version: "1.2"
+  content {
+    h1:Project Overview {
+      p:This is a cross-platform desktop application using a hybrid architecture.
+
+      h2:Key Architecture Points {
+        ul {
+          li:Runtime uses Rust-based Tauri for the native desktop shell
+          li:App uses .NET Blazor Server for the UI and business logic
+          li:Communication happens via HTTPS with TLS certificates
+          li:Multi-provider architecture supporting OpenAI and Anthropic
+        }
+      }
+    }
+
+    h1:Building {
+      h2:Prerequisites {
+        ul {
+          li:.NET 9 SDK
+          li:Rust toolchain stable
+          li:Tauri CLI
+        }
+      }
+
+      h2:Running Tests {
+        p:Tests can be run as follows:
+        ul {
+          li:Run unit tests with pytest
+          li:Run integration tests with the test runner
+          li:Check coverage with the coverage tool
+        }
+      }
+    }
+
+    h1:Architecture Details {
+      h2:Runtime Layer {
+        p:The runtime layer handles window management and system integration.
+        ul {
+          li:app_window - Tauri window management
+          li:dotnet - Launches and manages the .NET sidecar process
+          li:runtime_api - HTTPS API for communication
+          li:certificate - Generates self-signed TLS certificates
+        }
+      }
+
+      h2:Application Layer {
+        p:The application layer provides the UI and core functionality.
+        ul {
+          li:Provider - LLM provider implementations
+          li:Chat - Chat functionality and message handling
+          li:Assistants - Pre-configured assistants
+          li:Tools - Core background services
+        }
+      }
+    }
+  }
+}

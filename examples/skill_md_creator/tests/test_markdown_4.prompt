@@ -1,0 +1,30 @@
+skill {
+  name: "Code Review Agent"
+  description: "An agent that reviews code for quality and best practices"
+  license: "Apache-2.0"
+  version: "2.0"
+  content {
+    h1:Code Review Guidelines {
+      p:This agent performs automated code reviews on pull requests.
+      p:It checks for common issues and suggests improvements.
+
+      h2:What We Check {
+        ul {
+          li:Code style and formatting
+          li:Potential strong:security vulnerabilities
+          li:Performance strong:bottlenecks
+          li:Test coverage gaps
+        }
+      }
+
+      h2:How to Use {
+        p:Simply open a pull request and the agent will automatically review your code.
+        ul {
+          li:Step 1 - push your branch
+          li:Step 2 - open a pull request
+          li:Step 3 - wait for the review
+        }
+      }
+    }
+  }
+}
