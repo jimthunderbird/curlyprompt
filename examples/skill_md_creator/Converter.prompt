@@ -21,13 +21,19 @@ class Converter
       if not in_skill then continue
 
       if not in_content {
-        parse frontmatter key-value pairs:
-        if line starts with 'name:' then frontmatter.name = rest of line after 'name:' trimmed, with all double quotes removed
-        if line starts with 'description:' then frontmatter.description = rest of line after 'description:' trimmed, with all double quotes removed
-        if line starts with 'license:' then frontmatter.license = rest of line after 'license:' trimmed, with all double quotes removed
-        if line starts with 'version:' then frontmatter.version = rest of line after 'version:' trimmed, with all double quotes removed
+        Handle header block: if line starts with 'header {' or line equals 'header {' {
+          advance to next line
+          loop until trimmed line is just '}' {
+            call parseFrontmatterLine on each line inside the header block
+            advance to next line
+          }
+          continue
+        }
 
-        if line starts with 'content {' or line equals 'content {' {
+        call parseFrontmatterLine to parse frontmatter key-value pairs from the current line
+
+        if line starts with 'content {' or line equals 'content {' or
+           line starts with 'body {' or line equals 'body {' {
           set in_content = true
           continue
         }
@@ -47,7 +53,16 @@ class Converter
 
     Step 2: Build the frontmatter section
     push '---' to output_lines
-    for each key in frontmatter, push 'key: value' to output_lines
+    for each key in frontmatter {
+      if key is 'meta' {
+        push 'meta:' to output_lines
+        for each attr_key in frontmatter.meta {
+          push '  attr_key: frontmatter.meta[attr_key]' to output_lines
+        }
+      } else {
+        push 'key: value' to output_lines
+      }
+    }
     push '---' to output_lines
     push empty string to output_lines
 
@@ -57,6 +72,27 @@ class Converter
     Step 4: Join output_lines with newline and add trailing newline
     let target_md_content = output_lines.join('\n') + '\n'
     write target_md_content to target_md_file using fs.writeFileSync
+  }
+
+  static parseFrontmatterLine(line, frontmatter, lines, i, setI) {
+    parse a single frontmatter key-value pair from the given line:
+    if line starts with 'name:' then frontmatter.name = rest of line after 'name:' trimmed, with all double quotes removed
+    if line starts with 'description:' then frontmatter.description = rest of line after 'description:' trimmed, with all double quotes removed
+    if line starts with 'license:' then frontmatter.license = rest of line after 'license:' trimmed, with all double quotes removed
+    if line starts with 'version:' then frontmatter.version = rest of line after 'version:' trimmed, with all double quotes removed
+    if line starts with 'include:' then frontmatter.include = rest of line after 'include:' trimmed, with all double quotes removed
+
+    if line starts with 'meta {' or line equals 'meta {' {
+      frontmatter.meta = {}
+      advance from i+1 until trimmed line is just '}' {
+        if line contains ':' {
+          split at first ':' to get key and value
+          frontmatter.meta[key.trim()] = value.trim() with all double quotes removed
+        }
+        advance to next line
+      }
+      call setI with the new index position
+    }
   }
 
   static processFormatting(text) {

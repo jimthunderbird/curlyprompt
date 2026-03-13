@@ -3,6 +3,7 @@ skill {
   description: A web application skill 
   license: Apache 2.0
   version: 1.0
+  include: global-restriction.md
   content {
     h1:Inital Instruction {
       p:this is a very strong:important instruction

@@ -1,0 +1,33 @@
+skill {
+  header {
+    name: Nested Meta Header
+    description: Header with meta and include
+    license: MIT
+    version: 3.1
+    include: base-config.md
+    meta {
+      author: jhuang
+      priority: high
+      category: testing
+      status: active
+    }
+  }
+  body {
+    h1:Configuration Guide {
+      p:this guide covers the strong:essential configuration for the project
+      h2:Environment Setup
+      p {
+        set up your local environment first
+        make sure all dependencies are installed
+      }
+      ol {
+        li:clone the repository
+        li:install packages
+        li:create the config file
+        li:start the server
+      }
+    }
+    h2:Additional Notes
+    p:refer to the italic:official documentation for more details
+  }
+}

@@ -1,0 +1,12 @@
+skill {
+  name: Basic Meta Test
+  description: Test basic meta keyword support
+  meta {
+    attr1: attribute 1
+    attr2: attribute 2
+  }
+  content {
+    h1:Getting Started
+    p:follow the instructions below
+  }
+}

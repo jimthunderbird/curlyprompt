@@ -1,0 +1,23 @@
+skill {
+  name: "Advanced Include Test"
+  description: "Test include with rich content"
+  license: "Apache 2.0"
+  version: "2.0"
+  include: security-rules.md
+  content {
+    h1:Setup Instructions {
+      p:this is a strong:critical setup guide
+      ul {
+        li:install dependencies
+        li:configure environment
+        li:run the application
+      }
+    }
+
+    h2:Additional Notes
+    p {
+      make sure to read the included file
+      it contains strong:important security rules
+    }
+  }
+}

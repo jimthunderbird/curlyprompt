@@ -22,18 +22,23 @@ class Converter {
       if (!in_skill) continue;
 
       if (!in_content) {
-        // Parse frontmatter key-value pairs
-        if (line.startsWith('name:')) {
-          frontmatter.name = line.substring(5).trim().replace(/"/g, '');
-        } else if (line.startsWith('description:')) {
-          frontmatter.description = line.substring(12).trim().replace(/"/g, '');
-        } else if (line.startsWith('license:')) {
-          frontmatter.license = line.substring(8).trim().replace(/"/g, '');
-        } else if (line.startsWith('version:')) {
-          frontmatter.version = line.substring(8).trim().replace(/"/g, '');
+        // Handle header { } block - contains frontmatter key-value pairs
+        if (line.startsWith('header {') || line === 'header {') {
+          i++;
+          while (i < lines.length) {
+            let headerLine = lines[i].trim();
+            if (headerLine === '}') break;
+            this.parseFrontmatterLine(headerLine, frontmatter, lines, i, (newI) => { i = newI; });
+            i++;
+          }
+          continue;
         }
 
-        if (line.startsWith('content {') || line === 'content {') {
+        // Parse frontmatter key-value pairs (flat structure, no header block)
+        this.parseFrontmatterLine(line, frontmatter, lines, i, (newI) => { i = newI; });
+
+        if (line.startsWith('content {') || line === 'content {' ||
+            line.startsWith('body {') || line === 'body {') {
           in_content = true;
           continue;
         }
@@ -62,7 +67,14 @@ class Converter {
     // Step 2: Build the frontmatter section
     output_lines.push('---');
     for (let key in frontmatter) {
-      output_lines.push(key + ': ' + frontmatter[key]);
+      if (key === 'meta') {
+        output_lines.push('meta:');
+        for (let attr_key in frontmatter.meta) {
+          output_lines.push('  ' + attr_key + ': ' + frontmatter.meta[attr_key]);
+        }
+      } else {
+        output_lines.push(key + ': ' + frontmatter[key]);
+      }
     }
     output_lines.push('---');
     output_lines.push('');
@@ -73,6 +85,35 @@ class Converter {
     // Step 4: Join output_lines with newline and add trailing newline
     let target_md_content = output_lines.join('\n') + '\n';
     fs.writeFileSync(target_md_file, target_md_content);
+  }
+
+  static parseFrontmatterLine(line, frontmatter, lines, i, setI) {
+    if (line.startsWith('name:')) {
+      frontmatter.name = line.substring(5).trim().replace(/"/g, '');
+    } else if (line.startsWith('description:')) {
+      frontmatter.description = line.substring(12).trim().replace(/"/g, '');
+    } else if (line.startsWith('license:')) {
+      frontmatter.license = line.substring(8).trim().replace(/"/g, '');
+    } else if (line.startsWith('version:')) {
+      frontmatter.version = line.substring(8).trim().replace(/"/g, '');
+    } else if (line.startsWith('include:')) {
+      frontmatter.include = line.substring(8).trim().replace(/"/g, '');
+    } else if (line.startsWith('meta {') || line === 'meta {') {
+      frontmatter.meta = {};
+      let j = i + 1;
+      while (j < lines.length) {
+        let metaLine = lines[j].trim();
+        if (metaLine === '}') break;
+        let colonIdx = metaLine.indexOf(':');
+        if (colonIdx !== -1) {
+          let key = metaLine.substring(0, colonIdx).trim();
+          let value = metaLine.substring(colonIdx + 1).trim().replace(/"/g, '');
+          frontmatter.meta[key] = value;
+        }
+        j++;
+      }
+      setI(j);
+    }
   }
 
   static processFormatting(text) {

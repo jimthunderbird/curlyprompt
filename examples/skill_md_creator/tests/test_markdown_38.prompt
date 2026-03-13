@@ -1,0 +1,17 @@
+skill {
+  header {
+    name: Header Only Skill
+    description: A skill with header but minimal body
+    version: 1.0
+    meta {
+      scope: internal
+      tier: free
+    }
+  }
+  body {
+    h1:Welcome
+    p:this is a strong:minimal skill with only a header
+    hr
+    blockquote:keep it simple
+  }
+}

@@ -44,14 +44,58 @@ learn from {
   - https://github.com/deanthecoder/G33kBoy/blob/9e0a83bb5376db3b5490f73e4aac3f8ded33021d/agents.md?plain=1
 }
 
-create 2 new tests to for this request:
-<input>
-p {
-  this is a simple paragraph
-  this is a second line of the paragraph
+run the following tasks, skip the task that is marked as completed {
+  task (completed) {
+    create 2 new tests for this request:
+    <input>
+    p {
+      this is a simple paragraph
+      this is a second line of the paragraph
+    }
+    </input>
+    <output>
+    this is a simple paragraph
+    this is a second line of the paragraph
+    </output>
+  }
+
+  task (completed) {
+    create 2 new tests for this request:
+    in addition to keywords like "name","description"..., add support for "include" 
+  }
+
+  task (completed) {
+    create 3 new tests for this request:
+    add support to keywords "meta"
+    <input>
+    skill {
+      name: Simple Skill
+      meta {
+        attr1: attribute 1
+        attr2: attribute 2
+        ...
+      }
+    } 
+    </input>
+    <output>
+    ---
+    name: "Simple Skill"
+    meta:
+      attr1: "attriute 1"
+      attr2: "attriute 2"
+      ...
+    ---
+    </output>
+    the meta can contain N attributes, like attr3, attr4...
+  }
+
+  task (completed) {
+    feature request {
+      support header and content section, example:
+      ./tests/test_markdown_35.prompt and ./tests/test_markdown_35.md
+      header can contain any nested attributes
+      body is basically an alias of content
+    }
+    create 3 new tests for this feature request
+  }
 }
-</input>
-<output>
-this is a simple paragraph
-this is a second line of the paragraph
-</output>
