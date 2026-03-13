@@ -99,7 +99,7 @@ run the following tasks, skip the task that is marked as completed {
     create 3 new tests for this feature request
   }
 
-  task {
+  task (completed) {
     feature request {
       for p, strong, italic, support "same line open and close" , example:
       <input>
