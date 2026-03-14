@@ -42,7 +42,7 @@ Reference for all sections covered in [`tutorial/index.html`](tutorial/index.htm
 | Section | ID | Description |
 | --- | --- | --- |
 | [Code Block (code { })](#code-block-code--) | `code-block` | Raw lines collected with brace depth tracking, output as fenced triple backticks |
-| [Inline Code (code:)](#inline-code-code) | `code-inline` | Standalone `code:TEXT` wraps in backticks; inline word-capture or `code{...}` brace syntax |
+| [Inline Code (code:)](#inline-code-code) | `code-inline` | Standalone `code:TEXT` wraps in backticks; inline end-of-line capture or `code{...}` brace syntax |
 
 ### Media & Links
 
@@ -57,11 +57,11 @@ Reference for all sections covered in [`tutorial/index.html`](tutorial/index.htm
 
 | Section | ID | Description |
 | --- | --- | --- |
-| [strong: (Word-Capture)](#strong-word-capture) | `strong-word` | Captures words until a stop word, wraps in `**...**` |
+| [strong: (End of Line)](#strong-end-of-line) | `strong-word` | Captures everything to end of line, wraps in `**...**` |
 | [strong{...} (Inline Brace)](#strong-inline-brace) | `strong-brace` | `strong{text}` becomes `**text**` |
-| [italic: (Word-Capture)](#italic-word-capture) | `italic-word` | Captures words until a stop word, wraps in `*...*` |
+| [italic: (End of Line)](#italic-end-of-line) | `italic-word` | Captures everything to end of line, wraps in `*...*` |
 | [italic{...} (Inline Brace)](#italic-inline-brace) | `italic-brace` | `italic{text}` becomes `*text*` |
-| [code: (Word-Capture, Inline)](#code-word-capture-inline) | `code-word` | Inline `code:` captures words using `\S+`, wraps in backticks |
+| [code: (End of Line, Inline)](#code-end-of-line-inline) | `code-word` | Inline `code:` captures everything to end of line, wraps in backticks |
 | [code{...} (Inline Brace)](#code-inline-brace) | `code-brace` | `code{text}` becomes `` `text` `` |
 
 ### Other Elements
@@ -251,9 +251,9 @@ h3:also strong:important:
 
 ###### Section Six
 
-## very **important** steps
+## very **important steps**
 
-### also **important**:
+### also **important:**
 ```
 
 ## Header Section Braces
@@ -277,7 +277,7 @@ h2:some more paragraph
 ```markdown
 # Instruction
 
-this is a very **important** instruction
+this is a very **important instruction**
 
 - step 1
 - step 2
@@ -300,7 +300,7 @@ p:Use code:npm install to set up.
 ```markdown
 This is a simple paragraph.
 
-Use `npm install` to set up.
+Use `npm install to set up.`
 ```
 
 ## Block Paragraph (p { })
@@ -448,17 +448,12 @@ exports.up = function(knex) {
 
 ## Inline Code (code:)
 
-Standalone `code:TEXT` wraps in backticks. Inline `code:` uses word-capture. `code{...}` brace syntax for precise control.
+Standalone `code:TEXT` wraps text in backticks and appends a blank line. Inline `code:` captures to end of line. `code{...}` brace syntax for precise control.
 
 ```
 code: npx knex migrate:make name
 
 p:Use code:npm install to set up.
-
-ul {
-  li:code:main branch is production
-  li:Feature branches use code:feature/ prefix
-}
 
 p:use code{docker build} to build the image
 p:run code{npm install} and then code{npm start}
@@ -469,10 +464,7 @@ p:run code{npm install} and then code{npm start}
 ```markdown
 `npx knex migrate:make name`
 
-Use `npm install` to set up.
-
-- `main` branch is production
-- Feature branches use `feature/` prefix
+Use `npm install to set up.`
 
 use `docker build` to build the image
 
@@ -553,9 +545,9 @@ Visit [Google](https://www.google.com) for searching.
 Go to [Docs](https://docs.example.com) for help.
 ```
 
-## strong: (Word-Capture)
+## strong: (End of Line)
 
-Captures words until a stop word, wraps in `**...**`.
+`strong:` captures everything from the colon to the end of the current line and wraps it in `**...**`. Use `strong{...}` brace syntax for fine-grained control over which words are bolded.
 
 ```
 p:this is a very strong:important instruction
@@ -566,12 +558,14 @@ li:strong:Nullable: disabled
 **Output:**
 
 ```markdown
-this is a very **important** instruction
+this is a very **important instruction**
 
-Use **conventional commits** with format
+Use **conventional commits with format**
 
-- **Nullable**: disabled
+- **Nullable: disabled**
 ```
+
+> **Tip:** `strong:` captures everything to the end of the current line. Use `strong{...}` brace syntax when you need to bold only specific words in the middle of a line.
 
 ## strong{...} (Inline Brace)
 
@@ -590,9 +584,9 @@ p:read the strong{critical section} before proceeding
 read the **critical section** before proceeding
 ```
 
-## italic: (Word-Capture)
+## italic: (End of Line)
 
-Captures words until a stop word, wraps in `*...*`.
+`italic:` works like `strong:` but wraps in `*...*`. Captures everything to the end of the current line. Use `italic{...}` brace syntax for fine-grained control.
 
 ```
 p:This is italic:important and critical
@@ -602,9 +596,9 @@ p:Keep migrations italic:small and focused
 **Output:**
 
 ```markdown
-This is *important* and critical
+This is *important and critical*
 
-Keep migrations *small* and focused
+Keep migrations *small and focused*
 ```
 
 ## italic{...} (Inline Brace)
@@ -624,25 +618,25 @@ the *key concept* is explained below
 ##### Italic *styled* h5
 ```
 
-## code: (Word-Capture, Inline)
+## code: (End of Line, Inline)
 
-Inline `code:` captures words using `\S+`, wraps in backticks.
+When used inline (not as a standalone element), `code:` captures everything to the end of the current line and wraps in backticks. Use `code{...}` brace syntax for fine-grained control.
 
 ```
 p:Use code:npm install to install packages.
 ul {
-  li:code:docker build -t myapp . to build the image
-  li:code:docker compose up -d to start services
+  li:code:docker build -t myapp .
+  li:code:docker compose up -d
 }
 ```
 
 **Output:**
 
 ```markdown
-Use `npm install` to install packages.
+Use `npm install to install packages.`
 
-- `docker build -t myapp .` to build the image
-- `docker compose up -d` to start services
+- `docker build -t myapp .`
+- `docker compose up -d`
 ```
 
 ## code{...} (Inline Brace)
@@ -665,7 +659,7 @@ run `npm install` and then `npm start` to get started
 combine **important** with `run.sh` in one line
 ```
 
-> **Tip:** Use `code{...}` for precise control. Use `code:` (word-capture) for simpler cases where stop-word detection works well.
+> **Tip:** Use `code{...}` for precise control over what gets wrapped in backticks. Use `code:` when you want everything to end of line in backticks.
 
 ## Blockquote
 
@@ -787,9 +781,9 @@ The `processFormatting(text)` function applies transforms in this order:
 3. `strong{...}` — brace syntax bold
 4. `italic{...}` — brace syntax italics
 5. `code{...}` — brace syntax inline code
-6. `strong:` — word-capture bold
-7. `italic:` — word-capture italics
-8. `code:` — word-capture inline code
+6. `strong:` — end-of-line bold
+7. `italic:` — end-of-line italics
+8. `code:` — end-of-line inline code
 
 > **Tip:** Brace syntax is always processed before colon syntax.
 
@@ -816,7 +810,7 @@ skill {
         p:code:GET /api/users
         ul {
           li:Returns a list of all users
-          li:Supports code:page and code:limit parameters
+          li:Supports code{page} and code{limit} parameters
         }
 
         h3:Create User
@@ -854,7 +848,7 @@ This describes the REST API.
 
 ## Authentication
 
-Requires a **Bearer** token.
+Requires a **Bearer token.**
 
 > Tokens expire after 24h.
 
@@ -882,7 +876,7 @@ Request body:
 
 ## Rate Limiting
 
-Limited to **100** requests per minute.
+Limited to **100 requests per minute.**
 
 See [docs](https://api.example.com/docs) for details.
 ```
