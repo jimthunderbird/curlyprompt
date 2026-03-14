@@ -1,0 +1,23 @@
+skill {
+  name: "Checklist Test"
+  description: "Test checklist feature"
+  content {
+    h1:My Checklist
+    checklist {
+      item.checked:checked item 1
+      item.checked:checked item 2
+      item.checked:checked item 3
+      item:unchecked item 1
+      item:unchecked item 2
+      item:unchecked item 3
+      item:unchecked item 4
+    }
+    h2:Alias Checklist
+    cl {
+      itm.c:alias checked 1
+      itm.u:alias unchecked 1
+      item.unchecked:full unchecked 1
+      item.checked:full checked 1
+    }
+  }
+}

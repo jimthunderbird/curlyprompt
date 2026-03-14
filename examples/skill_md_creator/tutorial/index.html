@@ -293,6 +293,7 @@
   <a href="#blockquote">Blockquote</a>
   <a href="#hr">Horizontal Rule</a>
   <a href="#table">Table</a>
+  <a href="#checklist">Checklist</a>
 
   <div class="nav-group">Advanced</div>
   <a href="#include">Include</a>
@@ -1024,6 +1025,30 @@ Content in section two.</pre>
 | Bob | 25 | London |</pre>
       </div>
     </div>
+  </section>
+
+  <section id="checklist">
+    <h2>Checklist</h2>
+    <p><code>checklist { }</code> (or alias <code>cl { }</code>) creates a checkbox list. Use <code>item.checked:</code> (or <code>itm.c:</code>) for checked items and <code>item:</code>, <code>item.unchecked:</code>, or <code>itm.u:</code> for unchecked items. Inline formatting is applied.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">checklist</span> {
+  <span class="kw">item.checked</span>:Set up environment
+  <span class="kw">item.checked</span>:Install dependencies
+  <span class="kw">item</span>:Write tests
+  <span class="kw">item</span>:Deploy to production
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>- [x] Set up environment
+- [x] Install dependencies
+- [ ] Write tests
+- [ ] Deploy to production</pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> <code>cl</code> is an alias for <code>checklist</code>. <code>itm.c</code> is an alias for <code>item.checked</code>, and <code>itm.u</code> is an alias for <code>item.unchecked</code>.</div>
   </section>
 
   <!-- ==================== ADVANCED ==================== -->

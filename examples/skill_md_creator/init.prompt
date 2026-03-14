@@ -2,6 +2,13 @@ logic.update_tutorial {
   apply only most relevant updates to ./tutorial's index.html, do not change tutorial's UI/UX
 }
 
+logic.create_tests {
+  - find num of *.prompt file as {num_of_test_cases}
+  - let test_number = {num_of_test_cases} + 1
+  - create tests/test_markdown_{test_number}.prompt as the source test prompt
+  - create tests/test_markdown_{test_number}.md as the target markdown file
+}
+
 logic.run_tests {
   perform a loop {
     let result = sh run_tests.sh
@@ -21,10 +28,7 @@ logic.run_tests {
 
 run the following tasks, skip the task that is marked as completed, after the task is run {
   in ./tests:
-  - find num of *.prompt file as {num_of_test_cases}
-  - let test_number = {num_of_test_cases} + 1
-  - create tests/test_markdown_{test_number}.prompt as the source test prompt
-  - create tests/test_markdown_{test_number}.md as the taret markdown file
+  start logic.create_tests
   start logic.run_test 
 }
 
@@ -198,35 +202,64 @@ tasks {
 
   task (completed){
     for link, it will be behaving the same as img tag, the spacing between the link and { and the attribute separator and spacing inside of link { } are as liberal as the img tag
-  }
-
-  task.tag_open_effect_until_end_of_current_line (completed) {
-    for all of the following tags: p,h1-h6,italic,strong,code, their behavior should be {
-      if i have strong:this is a paragraph, it will mean **this is a paragraph**
-      with strong:, we will "promote" the strong effect "all the way to the end of the current line"
-      in order to control which words should be marked as strong, we use strong{...} to group them
-      for example:
-      this is a strong{very important} message
-      please make sure the tutorial also reflect the logic mentioned above
     }
-  }
 
-  task (completed) {
-    we should allow shortcuts: i for italic, b, or bold for strong
-  }
+    task.tag_open_effect_until_end_of_current_line (completed) {
+      for all of the following tags: p,h1-h6,italic,strong,code, their behavior should be {
+        if i have strong:this is a paragraph, it will mean **this is a paragraph**
+        with strong:, we will "promote" the strong effect "all the way to the end of the current line"
+        in order to control which words should be marked as strong, we use strong{...} to group them
+        for example:
+        this is a strong{very important} message
+        please make sure the tutorial also reflect the logic mentioned above
+      }
+    }
 
-  task (completed) {
-    markdown supports table header:
-    <markdown>
-    | Header 1 | Header 2 | Header 3 |
-    | --- | --- | --- |
-    | Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
-    | Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
-    </markdown>
-    add new tag th to make header in markdown
-  }
+    task (completed) {
+      we should allow shortcuts: i for italic, b, or bold for strong
+    }
 
-  task (completed) {
-    for all tags, the spaces between the <tag_name> and the beginning { should not matter
-  }
-}
+    task (completed) {
+      markdown supports table header:
+      <markdown>
+      | Header 1 | Header 2 | Header 3 |
+      | --- | --- | --- |
+      | Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
+      | Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
+      </markdown>
+      add new tag th to make header in markdown
+    }
+
+    task (completed) {
+      for all tags, the spaces between the <tag_name> and the beginning { should not matter
+      }
+    }
+
+    task (completed) {
+      add a new tag: checklist {
+        <input>
+        checklist {
+          item.checked:checked item 1
+          item.checked:checked item 2
+          item.checked:checked item 3
+          item:unchecked item 1
+          item:unchecked item 2
+          item:unchecked item 3
+          item:unchecked item 4
+        }
+        </input>
+        <output>
+        - [x] checked item 1
+        - [x] checked item 2
+        - [x] checked item 3
+        - [ ] uncheck item 1
+        - [ ] uncheck item 2
+        - [ ] uncheck item 3
+        - [ ] uncheck item 4
+        </output>
+
+        checklist has alias: cl
+        item.checked has alias: itm.c
+        item.unchecked has alias: itm.u
+      }  
+    }

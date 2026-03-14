@@ -86,4 +86,6 @@
 
 38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
 
-39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
+39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
+
+40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.

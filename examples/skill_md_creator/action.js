@@ -364,6 +364,32 @@ class Converter {
         continue;
       }
 
+      // Handle checklists (checklist or cl)
+      if (/^(?:checklist|cl)\s*\{/.test(line)) {
+        i++;
+        while (i < lines.length) {
+          let inner = lines[i].trim();
+          if (inner === '}') break;
+          // item.checked / itm.c
+          if (/^(?:item\.checked|itm\.c):/.test(inner)) {
+            let prefix = inner.match(/^(?:item\.checked|itm\.c):/)[0];
+            let text = inner.substring(prefix.length).trim();
+            text = this.processFormatting(text);
+            output.push('- [x] ' + text);
+          }
+          // item.unchecked / itm.u / item (plain)
+          else if (/^(?:item\.unchecked|itm\.u|item):/.test(inner)) {
+            let prefix = inner.match(/^(?:item\.unchecked|itm\.u|item):/)[0];
+            let text = inner.substring(prefix.length).trim();
+            text = this.processFormatting(text);
+            output.push('- [ ] ' + text);
+          }
+          i++;
+        }
+        output.push('');
+        continue;
+      }
+
       // Handle standalone list items
       if (line.startsWith('li:')) {
         let text = line.substring(3).trim();
