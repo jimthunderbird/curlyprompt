@@ -297,6 +297,7 @@
   <div class="nav-group">Advanced</div>
   <a href="#include">Include</a>
   <a href="#format-order">Formatting Order</a>
+  <a href="#flexible-spacing">Flexible Spacing</a>
   <a href="#full-example">Full Example</a>
 </nav>
 
@@ -1073,6 +1074,28 @@ follow the instructions below</pre>
     </ol>
     <p>Applied to: headers, paragraphs, list items, and blockquotes.</p>
     <div class="tip"><strong>Tip:</strong> Brace syntax is always processed before colon syntax. This means <code>link{...}</code> takes priority over <code>link:</code> within the same text.</div>
+  </section>
+
+  <section id="flexible-spacing">
+    <h2>Flexible Spacing</h2>
+    <p>For <strong>all</strong> tags, the amount of whitespace between the tag name and the opening <code>{</code> is irrelevant. All of the following are equivalent:</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">All equivalent</span>
+        <pre><span class="el">p</span>{text here}
+<span class="el">p</span> {text here}
+<span class="el">p</span>   {text here}
+
+<span class="el">ul</span>{
+<span class="el">ul</span> {
+<span class="el">ul</span>    {
+
+<span class="el">strong</span>{important}
+<span class="el">strong</span> {important}
+<span class="el">strong</span>   {important}</pre>
+      </div>
+    </div>
+    <p>This applies to every tag: <code>skill</code>, <code>header</code>/<code>head</code>, <code>content</code>/<code>body</code>, <code>meta</code>, <code>p</code>, <code>ul</code>, <code>ol</code>, <code>code</code>, <code>table</code>, <code>tr</code>, <code>strong</code>/<code>bold</code>/<code>b</code>, <code>italic</code>/<code>i</code>, <code>link</code>, and <code>img</code>.</p>
   </section>
 
   <section id="full-example">

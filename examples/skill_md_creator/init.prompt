@@ -225,4 +225,8 @@ tasks {
     </markdown>
     add new tag th to make header in markdown
   }
+
+  task (completed) {
+    for all tags, the spaces between the <tag_name> and the beginning { should not matter
   }
+}

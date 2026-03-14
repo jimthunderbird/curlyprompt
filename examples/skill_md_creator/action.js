@@ -14,7 +14,7 @@ class Converter {
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
 
-      if (!in_skill && (line.startsWith('skill {') || line === 'skill {')) {
+      if (!in_skill && /^skill\s*\{/.test(line)) {
         in_skill = true;
         continue;
       }
@@ -23,8 +23,7 @@ class Converter {
 
       if (!in_content) {
         // Handle header { } block - contains frontmatter key-value pairs
-        if (line.startsWith('header {') || line === 'header {' ||
-            line.startsWith('head {') || line === 'head {') {
+        if (/^(?:header|head)\s*\{/.test(line)) {
           i++;
           while (i < lines.length) {
             let headerLine = lines[i].trim();
@@ -38,8 +37,7 @@ class Converter {
         // Parse frontmatter key-value pairs (flat structure, no header block)
         this.parseFrontmatterLine(line, frontmatter, lines, i, (newI) => { i = newI; });
 
-        if (line.startsWith('content {') || line === 'content {' ||
-            line.startsWith('body {') || line === 'body {') {
+        if (/^(?:content|body)\s*\{/.test(line)) {
           in_content = true;
           continue;
         }
@@ -99,7 +97,7 @@ class Converter {
       frontmatter.version = line.substring(8).trim().replace(/"/g, '');
     } else if (line.startsWith('include:')) {
       frontmatter.include = line.substring(8).trim().replace(/"/g, '');
-    } else if (line.startsWith('meta {') || line === 'meta {') {
+    } else if (/^meta\s*\{/.test(line)) {
       frontmatter.meta = {};
       let j = i + 1;
       while (j < lines.length) {
@@ -133,9 +131,9 @@ class Converter {
     text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
 
     // Process same-line open/close: strong{...}/bold{...}/b{...}, italic{...}/i{...}, code{...}
-    text = text.replace(/(?:strong|bold|b)\{([^}]+)\}/g, '**$1**');
-    text = text.replace(/(?:italic|i)\{([^}]+)\}/g, '*$1*');
-    text = text.replace(/code\{([^}]+)\}/g, '`$1`');
+    text = text.replace(/(?:strong|bold|b)\s*\{([^}]+)\}/g, '**$1**');
+    text = text.replace(/(?:italic|i)\s*\{([^}]+)\}/g, '*$1*');
+    text = text.replace(/code\s*\{([^}]+)\}/g, '`$1`');
 
     // Process strong/bold/b: captures to end of line
     text = text.replace(/(?:strong|bold|b):(.+)$/, '**$1**');
@@ -170,7 +168,7 @@ class Converter {
       }
 
       // Handle paragraphs (same-line form: p{...})
-      let pInlineMatch = line.match(/^p\{(.+)\}$/);
+      let pInlineMatch = line.match(/^p\s*\{(.+)\}$/);
       if (pInlineMatch) {
         let text = this.processFormatting(pInlineMatch[1]);
         output.push(text);
@@ -179,7 +177,7 @@ class Converter {
       }
 
       // Handle paragraphs (block form: p { ... })
-      if (line === 'p {' || line.startsWith('p {')) {
+      if (/^p\s*\{/.test(line)) {
         i++;
         while (i < lines.length) {
           let inner = lines[i].trim();
@@ -204,7 +202,7 @@ class Converter {
       }
 
       // Handle unordered lists
-      if (line === 'ul {' || line.startsWith('ul {')) {
+      if (/^ul\s*\{/.test(line)) {
         i++;
         while (i < lines.length) {
           let inner = lines[i].trim();
@@ -221,7 +219,7 @@ class Converter {
       }
 
       // Handle ordered lists
-      if (line === 'ol {' || line.startsWith('ol {')) {
+      if (/^ol\s*\{/.test(line)) {
         i++;
         let num = 1;
         while (i < lines.length) {
@@ -240,7 +238,7 @@ class Converter {
       }
 
       // Handle code blocks
-      if (line === 'code {' || line.startsWith('code {')) {
+      if (/^code\s*\{/.test(line)) {
         i++;
         let codeLines = [];
         let depth = 1;
@@ -318,14 +316,14 @@ class Converter {
       }
 
       // Handle tables
-      if (line === 'table {' || line.startsWith('table {')) {
+      if (/^table\s*\{/.test(line)) {
         let rows = [];
         let hasHeader = false;
         i++;
         while (i < lines.length) {
           let inner = lines[i].trim();
           if (inner === '}') break;
-          if (inner === 'tr {' || inner.startsWith('tr {')) {
+          if (/^tr\s*\{/.test(inner)) {
             let cells = [];
             let isHeaderRow = false;
             i++;

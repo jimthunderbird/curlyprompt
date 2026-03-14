@@ -85,3 +85,5 @@
 37. **Static `Converter` class** — Exports a single static class with methods: `convertCurlyPromptToSKILL(source, target)`, `parseFrontmatterLine(...)`, `processFormatting(text)`, `processContentLines(lines, output)`.
 
 38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
+
+39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
