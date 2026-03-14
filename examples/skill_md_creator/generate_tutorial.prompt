@@ -1,0 +1,1 @@
+based on ./Spec.md and ./tests, generate a html/css/javascript single page application tutorial at ./tutorial/index.html, it should have clickable sections, each section focus on one feature of the curly prompt language and how they map to the markdown elements

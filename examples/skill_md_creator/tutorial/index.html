@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CurlyPrompt Language Tutorial</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent-hover: #79c0ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --red: #f85149;
+    --code-bg: #0d1117;
+    --nav-width: 280px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar Navigation */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 0;
+    z-index: 100;
+  }
+
+  nav h1 {
+    font-size: 18px;
+    padding: 0 20px 16px;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  nav a {
+    display: block;
+    padding: 6px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.15s, background 0.15s;
+    border-left: 3px solid transparent;
+  }
+
+  nav a:hover {
+    color: var(--text);
+    background: rgba(88,166,255,0.06);
+  }
+
+  nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(88,166,255,0.1);
+  }
+
+  nav .nav-group {
+    margin-top: 14px;
+    padding: 0 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  /* Main content */
+  main {
+    margin-left: var(--nav-width);
+    flex: 1;
+    max-width: 900px;
+    padding: 40px 48px 80px;
+  }
+
+  main > h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+
+  main > .subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 48px;
+    scroll-margin-top: 24px;
+  }
+
+  section h2 {
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section h3 {
+    font-size: 16px;
+    color: var(--accent);
+    margin: 20px 0 8px;
+  }
+
+  section p {
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  /* Example boxes */
+  .example {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .example-col {
+    padding: 0;
+  }
+
+  .example-col .label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+
+  .example-col:first-child .label {
+    color: var(--orange);
+    background: rgba(210,153,34,0.08);
+  }
+
+  .example-col:last-child .label {
+    color: var(--green);
+    background: rgba(63,185,80,0.08);
+  }
+
+  .example-col:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .example-col pre {
+    margin: 0;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    background: var(--code-bg);
+    color: var(--text);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* Single code block */
+  pre.standalone {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  code {
+    background: rgba(110,118,129,0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  }
+
+  /* Syntax highlighting tokens */
+  .kw { color: var(--purple); }
+  .el { color: var(--red); }
+  .str { color: #a5d6ff; }
+  .cmt { color: var(--text-muted); font-style: italic; }
+  .attr { color: var(--orange); }
+  .md { color: var(--green); }
+
+  /* Tip boxes */
+  .tip {
+    background: rgba(88,166,255,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  .tip strong { color: var(--accent); }
+
+  /* Arrow indicator between columns */
+  .arrow-indicator {
+    display: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 1000px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 24px 20px 60px; }
+  }
+
+  @media (max-width: 700px) {
+    .example {
+      grid-template-columns: 1fr;
+    }
+    .example-col:first-child {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h1>CurlyPrompt Tutorial</h1>
+
+  <div class="nav-group">Structure</div>
+  <a href="#skill-block">Skill Block</a>
+  <a href="#frontmatter">Frontmatter</a>
+  <a href="#header-body">Header / Body Blocks</a>
+  <a href="#meta">Meta Block</a>
+  <a href="#content-body">Content / Body</a>
+
+  <div class="nav-group">Headers</div>
+  <a href="#headers">Headers (h1–h6)</a>
+  <a href="#header-sections">Header Section Braces</a>
+
+  <div class="nav-group">Text Content</div>
+  <a href="#paragraph-inline">Inline Paragraph (p:)</a>
+  <a href="#paragraph-block">Block Paragraph (p { })</a>
+  <a href="#paragraph-sameline">Same-line Paragraph (p{...})</a>
+
+  <div class="nav-group">Lists</div>
+  <a href="#unordered-list">Unordered List (ul)</a>
+  <a href="#ordered-list">Ordered List (ol)</a>
+  <a href="#standalone-li">Standalone li:</a>
+
+  <div class="nav-group">Code</div>
+  <a href="#code-block">Code Block (code { })</a>
+  <a href="#code-inline">Inline Code (code:)</a>
+
+  <div class="nav-group">Media &amp; Links</div>
+  <a href="#images-colon">Image Colon Syntax</a>
+  <a href="#images-brace">Image Brace Syntax</a>
+  <a href="#links-colon">Link Colon Syntax</a>
+  <a href="#links-brace">Link Brace Syntax</a>
+
+  <div class="nav-group">Inline Formatting</div>
+  <a href="#strong-word">strong: (word-capture)</a>
+  <a href="#strong-brace">strong{...} (inline)</a>
+  <a href="#italic-word">italic: (word-capture)</a>
+  <a href="#italic-brace">italic{...} (inline)</a>
+  <a href="#code-word">code: (word-capture)</a>
+
+  <div class="nav-group">Other Elements</div>
+  <a href="#blockquote">Blockquote</a>
+  <a href="#hr">Horizontal Rule</a>
+  <a href="#table">Table</a>
+
+  <div class="nav-group">Advanced</div>
+  <a href="#include">Include</a>
+  <a href="#format-order">Formatting Order</a>
+  <a href="#full-example">Full Example</a>
+</nav>
+
+<main>
+  <h1>CurlyPrompt Language Tutorial</h1>
+  <p class="subtitle">A curly-brace DSL that compiles to SKILL Markdown — learn every feature with side-by-side examples.</p>
+
+  <!-- ==================== STRUCTURE ==================== -->
+
+  <section id="skill-block">
+    <h2>Skill Block</h2>
+    <p>Every <code>.prompt</code> file must contain exactly one <code>skill { }</code> block. All content outside it is ignored. Inside, you define frontmatter (metadata) and a content block.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="attr">name</span>: "My Skill"
+  <span class="attr">description</span>: "A helpful skill"
+  <span class="kw">content</span> {
+    <span class="el">h1</span>:Hello World
+    <span class="el">p</span>:Welcome to CurlyPrompt.
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: My Skill
+<span class="attr">description</span>: A helpful skill
+<span class="md">---</span>
+
+<span class="md"># Hello World</span>
+
+Welcome to CurlyPrompt.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="frontmatter">
+    <h2>Frontmatter Key-Value Pairs</h2>
+    <p>Before the <code>content {</code> block, keys like <code>name</code>, <code>description</code>, <code>license</code>, <code>version</code>, and <code>include</code> are parsed as <code>key: value</code>. Double quotes around values are automatically stripped.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="attr">name</span>: "Simple Skill"
+  <span class="attr">description</span>: "A simple skill for AI Agent"
+  <span class="attr">license</span>: "MIT"
+  <span class="attr">version</span>: "1.0"
+  <span class="kw">content</span> {
+    <span class="el">h1</span>:Hello
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: Simple Skill
+<span class="attr">description</span>: A simple skill for AI Agent
+<span class="attr">license</span>: MIT
+<span class="attr">version</span>: 1.0
+<span class="md">---</span>
+
+<span class="md"># Hello</span></pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> Quotes are optional — both <code>name: "My Skill"</code> and <code>name: My Skill</code> produce the same output.</div>
+  </section>
+
+  <section id="header-body">
+    <h2>Header / Body Blocks</h2>
+    <p>As an alternative to flat frontmatter, you can group metadata inside a <code>header { }</code> (or its alias <code>head { }</code>) block, paired with <code>body { }</code> for content.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="kw">header</span> {
+    <span class="attr">name</span>: Simple Header Test
+    <span class="attr">description</span>: Testing header/body
+    <span class="attr">version</span>: 2.0
+  }
+  <span class="kw">body</span> {
+    <span class="el">h1</span>:Getting Started
+    <span class="el">p</span>:follow these steps to begin
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: Simple Header Test
+<span class="attr">description</span>: Testing header/body
+<span class="attr">version</span>: 2.0
+<span class="md">---</span>
+
+<span class="md"># Getting Started</span>
+
+follow these steps to begin</pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> <code>head { }</code> is an exact alias for <code>header { }</code>. Use whichever you prefer.</div>
+  </section>
+
+  <section id="meta">
+    <h2>Meta Block</h2>
+    <p>The <code>meta { }</code> block holds arbitrary key-value metadata. It can appear inside <code>header { }</code> or at the flat frontmatter level. It serializes as nested YAML in the output.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="attr">name</span>: Multi Meta Test
+  <span class="attr">description</span>: Test meta attributes
+  <span class="attr">license</span>: MIT
+  <span class="kw">meta</span> {
+    <span class="attr">author</span>: John Doe
+    <span class="attr">category</span>: utilities
+    <span class="attr">platform</span>: cross-platform
+    <span class="attr">priority</span>: high
+  }
+  <span class="kw">content</span> {
+    <span class="el">h1</span>:Overview
+    <span class="el">p</span>:multi-platform tool
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: Multi Meta Test
+<span class="attr">description</span>: Test meta attributes
+<span class="attr">license</span>: MIT
+<span class="attr">meta</span>:
+  <span class="attr">author</span>: John Doe
+  <span class="attr">category</span>: utilities
+  <span class="attr">platform</span>: cross-platform
+  <span class="attr">priority</span>: high
+<span class="md">---</span>
+
+<span class="md"># Overview</span>
+
+multi-platform tool</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="content-body">
+    <h2>Content / Body Block</h2>
+    <p>The content block can be delimited by either <code>content { }</code> or <code>body { }</code>. This is where all markdown elements live.</p>
+    <div class="tip"><strong>Tip:</strong> When using <code>header { }</code>, pair it with <code>body { }</code>. When using flat frontmatter, use <code>content { }</code>. Both work identically.</div>
+  </section>
+
+  <!-- ==================== HEADERS ==================== -->
+
+  <section id="headers">
+    <h2>Headers (h1 – h6)</h2>
+    <p><code>h1:</code> through <code>h6:</code> map directly to Markdown <code>#</code> through <code>######</code>. Each header is followed by a blank line. Inline formatting is applied to header text.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">h1</span>:Main Title
+<span class="el">h2</span>:Section Two
+<span class="el">h3</span>:Section Three
+<span class="el">h4</span>:Section Four
+<span class="el">h5</span>:Section Five
+<span class="el">h6</span>:Section Six
+
+<span class="cmt">&lt;!-- with inline formatting --&gt;</span>
+<span class="el">h2</span>:very <span class="kw">strong:</span>important steps
+<span class="el">h3</span>:also <span class="kw">strong:</span>important:</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md"># Main Title</span>
+
+<span class="md">## Section Two</span>
+
+<span class="md">### Section Three</span>
+
+<span class="md">#### Section Four</span>
+
+<span class="md">##### Section Five</span>
+
+<span class="md">###### Section Six</span>
+
+<span class="md">## very **important** steps</span>
+
+<span class="md">### also **important**:</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="header-sections">
+    <h2>Header Section Braces</h2>
+    <p>When a header line ends with <code>{</code>, the brace is stripped from the title. The matching closing <code>}</code> is silently consumed. This provides structural grouping only — no effect on Markdown indentation.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">h1</span>:Instruction <span class="kw">{</span>
+  <span class="el">p</span>:this is a very <span class="kw">strong:</span>important instruction
+  <span class="el">ul</span> {
+    <span class="el">li</span>:step 1
+    <span class="el">li</span>:step 2
+    <span class="el">li</span>:step 3
+  }
+<span class="kw">}</span>
+
+<span class="el">h2</span>:some more paragraph</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md"># Instruction</span>
+
+this is a very **important** instruction
+
+- step 1
+- step 2
+- step 3
+
+<span class="md">## some more paragraph</span></pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> Section braces are purely for readability and editor folding — they don't change the output structure.</div>
+  </section>
+
+  <!-- ==================== TEXT CONTENT ==================== -->
+
+  <section id="paragraph-inline">
+    <h2>Inline Paragraph (p:)</h2>
+    <p><code>p:TEXT</code> outputs the text followed by a blank line. Inline formatting is applied.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:This is a simple paragraph.
+<span class="el">p</span>:Use <span class="kw">code:</span>npm install to set up.</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>This is a simple paragraph.
+
+Use `npm install` to set up.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="paragraph-block">
+    <h2>Block Paragraph (p { })</h2>
+    <p>Multi-line paragraph block. Each non-empty line inside is emitted with inline formatting. One trailing blank line after the block. Empty lines within are skipped.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span> {
+  use <span class="kw">italic{</span>emphasis<span class="kw">}</span> when highlighting
+  and <span class="kw">strong{</span>bold<span class="kw">}</span> for critical warnings
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>use *emphasis* when highlighting
+and **bold** for critical warnings</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="paragraph-sameline">
+    <h2>Same-line Paragraph (p{...})</h2>
+    <p><code>p{text here}</code> extracts content between <code>p{</code> and <code>}</code> on the same line. Emitted as a paragraph with inline formatting and a trailing blank line.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p{</span>this is a same-line paragraph<span class="el">}</span>
+<span class="el">p{</span>another with <span class="kw">strong{</span>important<span class="kw">}</span> info<span class="el">}</span></pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>this is a same-line paragraph
+
+another with **important** info</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LISTS ==================== -->
+
+  <section id="unordered-list">
+    <h2>Unordered List (ul { })</h2>
+    <p>Contains <code>li:</code> prefixed lines. Each becomes <code>- Item text</code>. Non-<code>li:</code> lines are ignored. Inline formatting is applied.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">ul</span> {
+  <span class="el">li</span>:Docker Engine installed
+  <span class="el">li</span>:Docker Compose installed
+  <span class="el">li</span>:Access to container registry
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>- Docker Engine installed
+- Docker Compose installed
+- Access to container registry</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="ordered-list">
+    <h2>Ordered List (ol { })</h2>
+    <p>Contains <code>li:</code> prefixed lines. Numbered starting at 1. Inline formatting is applied.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">ol</span> {
+  <span class="el">li</span>:<span class="kw">strong:</span>Build - Compile source code
+  <span class="el">li</span>:<span class="kw">strong:</span>Test - Run unit tests
+  <span class="el">li</span>:<span class="kw">strong:</span>Deploy - Push to production
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>1. **Build** - Compile source code
+2. **Test** - Run unit tests
+3. **Deploy** - Push to production</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="standalone-li">
+    <h2>Standalone li:</h2>
+    <p><code>li:Text</code> outside a list block becomes <code>- Text</code>. Inline formatting is applied. No trailing blank line.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">li</span>:standalone item outside a list</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>- standalone item outside a list</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CODE ==================== -->
+
+  <section id="code-block">
+    <h2>Code Block (code { })</h2>
+    <p>Lines inside are collected raw. Common leading whitespace is stripped. Brace depth tracking ensures inner <code>{</code>/<code>}</code> don't close the block prematurely. Output uses fenced triple backticks.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">code</span> {
+  FROM node:18-alpine
+  WORKDIR /app
+  COPY package*.json ./
+  RUN npm ci
+  COPY . .
+  CMD ["node", "server.js"]
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>```
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+CMD ["node", "server.js"]
+```</pre>
+      </div>
+    </div>
+    <h3>Brace Depth Tracking</h3>
+    <p>Code blocks can contain <code>{</code> and <code>}</code> characters. The converter tracks brace depth — only a standalone <code>}</code> at depth 0 ends the block.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">code</span> {
+  exports.up = function(knex) {
+    return knex.schema.createTable('users', (table) => {
+      table.increments('id');
+      table.string('name');
+    });
+  };
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>```
+exports.up = function(knex) {
+  return knex.schema.createTable('users', (table) => {
+    table.increments('id');
+    table.string('name');
+  });
+};
+```</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="code-inline">
+    <h2>Inline Code (code:)</h2>
+    <p>As a standalone line, <code>code:TEXT</code> wraps text in backticks and appends a blank line. Inline within paragraphs and list items, it uses word-capture to wrap words in backticks.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="cmt">&lt;!-- standalone --&gt;</span>
+<span class="el">code</span>: npx knex migrate:make name
+
+<span class="cmt">&lt;!-- inline in paragraph --&gt;</span>
+<span class="el">p</span>:Use <span class="kw">code:</span>npm install to set up.
+
+<span class="cmt">&lt;!-- inline in list items --&gt;</span>
+<span class="el">ul</span> {
+  <span class="el">li</span>:<span class="kw">code:</span>main branch is production
+  <span class="el">li</span>:Feature branches use <span class="kw">code:</span>feature/ prefix
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>`npx knex migrate:make name`
+
+Use `npm install` to set up.
+
+- `main` branch is production
+- Feature branches use `feature/` prefix</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MEDIA & LINKS ==================== -->
+
+  <section id="images-colon">
+    <h2>Image — Colon Syntax</h2>
+    <p><code>img:ALT:PATH</code> becomes <code>![ALT](PATH)</code>. The first <code>:</code> after <code>img:</code> separates the alt text from the path.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">img</span>:Main Dashboard:screenshots/dashboard.png
+<span class="el">img</span>:Docker Architecture:docs/docker-arch.png</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>![Main Dashboard](screenshots/dashboard.png)
+
+![Docker Architecture](docs/docker-arch.png)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="images-brace">
+    <h2>Image — Brace Syntax</h2>
+    <p>One-line brace form with <code>src</code> and <code>alt</code> key-value pairs. Key order doesn't matter. Values are double-quoted. Spacing between <code>img</code> and <code>{</code> is flexible.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="cmt">&lt;!-- comma-separated --&gt;</span>
+<span class="el">img</span>{<span class="attr">src</span>:<span class="str">"photo.jpg"</span>,<span class="attr">alt</span>:<span class="str">"a photo"</span>}
+
+<span class="cmt">&lt;!-- space-separated --&gt;</span>
+<span class="el">img</span>{ <span class="attr">src</span>:<span class="str">"logo.svg"</span> <span class="attr">alt</span>:<span class="str">"company logo"</span>}
+
+<span class="cmt">&lt;!-- reversed order --&gt;</span>
+<span class="el">img</span>{<span class="attr">alt</span>:<span class="str">"reverse"</span> <span class="attr">src</span>:<span class="str">"reverse.png"</span>}
+
+<span class="cmt">&lt;!-- flexible spacing --&gt;</span>
+<span class="el">img</span>   {<span class="attr">src</span>:<span class="str">"spaced.jpg"</span> <span class="attr">alt</span>:<span class="str">"space"</span>}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>![a photo](photo.jpg)
+
+![company logo](logo.svg)
+
+![reverse](reverse.png)
+
+![space](spaced.jpg)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="links-colon">
+    <h2>Link — Colon Syntax</h2>
+    <p><code>link:DISPLAY:URL</code> becomes <code>[DISPLAY](URL)</code>. URL must start with <code>http://</code> or <code>https://</code>.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:Visit <span class="kw">link:</span>Google:<span class="str">https://www.google.com</span> for searching.
+<span class="el">p</span>:See <span class="kw">link:</span>rate limit docs:<span class="str">https://api.example.com/docs</span> for details.</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>Visit [Google](https://www.google.com) for searching.
+
+See [rate limit docs](https://api.example.com/docs) for details.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="links-brace">
+    <h2>Link — Brace Syntax</h2>
+    <p>One-line brace form with <code>display</code> and <code>url</code> key-value pairs. Key order doesn't matter. Spacing between <code>link</code> and <code>{</code> is flexible.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:Visit <span class="kw">link{</span><span class="attr">display</span>:<span class="str">"Google"</span> <span class="attr">url</span>:<span class="str">"https://www.google.com"</span><span class="kw">}</span> for searching.
+<span class="el">p</span>:Go to <span class="kw">link</span>  {<span class="attr">display</span>:<span class="str">"Docs"</span> <span class="attr">url</span>:<span class="str">"https://docs.example.com"</span>} for help.</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>Visit [Google](https://www.google.com) for searching.
+
+Go to [Docs](https://docs.example.com) for help.</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== INLINE FORMATTING ==================== -->
+
+  <section id="strong-word">
+    <h2>strong: (Word-Capture)</h2>
+    <p><code>strong:</code> captures one or more words and wraps them in <code>**...**</code>. Capture stops before a stop word (like <code>to</code>, <code>for</code>, <code>in</code>, <code>and</code>, <code>or</code>, etc.).</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:this is a very <span class="kw">strong:</span>important instruction
+<span class="el">p</span>:Use <span class="kw">strong:</span>conventional commits with format
+<span class="el">li</span>:<span class="kw">strong:</span>Nullable: disabled</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>this is a very **important** instruction
+
+Use **conventional commits** with format
+
+- **Nullable**: disabled</pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> Word-capture uses <code>[\w.]+</code> (including dots and hyphens). Stop words include: <code>to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an</code>, and many context-specific words.</div>
+  </section>
+
+  <section id="strong-brace">
+    <h2>strong{...} (Inline Brace)</h2>
+    <p><code>strong{important text}</code> becomes <code>**important text**</code>. Same-line brace form for explicit control over what gets bolded.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:<span class="kw">strong{</span>this is very important<span class="kw">}</span>, rest is ok
+<span class="el">p</span>:read the <span class="kw">strong{</span>critical section<span class="kw">}</span> before proceeding</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>**this is very important**, rest is ok
+
+read the **critical section** before proceeding</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="italic-word">
+    <h2>italic: (Word-Capture)</h2>
+    <p><code>italic:</code> works like <code>strong:</code> but wraps in <code>*...*</code>. Same mechanics, different stop words.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:This is <span class="kw">italic:</span>important and critical
+<span class="el">p</span>:Keep migrations <span class="kw">italic:</span>small and focused</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>This is *important* and critical
+
+Keep migrations *small* and focused</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="italic-brace">
+    <h2>italic{...} (Inline Brace)</h2>
+    <p><code>italic{key concept}</code> becomes <code>*key concept*</code>. Same-line brace form.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:the <span class="kw">italic{</span>key concept<span class="kw">}</span> is explained below
+<span class="el">h5</span>:Italic <span class="kw">italic{</span>styled<span class="kw">}</span> h5</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>the *key concept* is explained below
+
+##### Italic *styled* h5</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="code-word">
+    <h2>code: (Word-Capture, Inline)</h2>
+    <p>When used inline (not as a standalone element), <code>code:</code> captures words using <code>\S+</code> (allowing special characters) and wraps in backticks.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:Use <span class="kw">code:</span>npm install to install packages.
+<span class="el">ul</span> {
+  <span class="el">li</span>:<span class="kw">code:</span>docker build -t myapp . to build the image
+  <span class="el">li</span>:<span class="kw">code:</span>docker compose up -d to start services
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>Use `npm install` to install packages.
+
+- `docker build -t myapp .` to build the image
+- `docker compose up -d` to start services</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== OTHER ELEMENTS ==================== -->
+
+  <section id="blockquote">
+    <h2>Blockquote</h2>
+    <p><code>blockquote:TEXT</code> becomes <code>&gt; TEXT</code>. Inline formatting is applied.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">blockquote</span>:This is a very important quote.
+<span class="el">blockquote</span>:Another with <span class="kw">strong:</span>bold content inside.</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>&gt; This is a very important quote.
+
+&gt; Another with **bold** content inside.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="hr">
+    <h2>Horizontal Rule</h2>
+    <p>A line that is exactly <code>hr</code> outputs <code>---</code> followed by a blank line.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">h1</span>:Section One
+<span class="el">p</span>:Content in section one.
+<span class="el">hr</span>
+<span class="el">h1</span>:Section Two
+<span class="el">p</span>:Content in section two.</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md"># Section One</span>
+
+Content in section one.
+
+---
+
+<span class="md"># Section Two</span>
+
+Content in section two.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="table">
+    <h2>Table</h2>
+    <p>Contains <code>tr { }</code> row blocks, each containing <code>td:</code> (data) or <code>th:</code> (header) cells. The first row becomes the header, followed by a <code>| --- | ... |</code> separator. Cells support inline formatting.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">table</span> {
+  <span class="el">tr</span> {
+    <span class="el">td</span>: Name
+    <span class="el">td</span>: Age
+    <span class="el">td</span>: City
+  }
+  <span class="el">tr</span> {
+    <span class="el">td</span>: Alice
+    <span class="el">td</span>: 30
+    <span class="el">td</span>: New York
+  }
+  <span class="el">tr</span> {
+    <span class="el">td</span>: Bob
+    <span class="el">td</span>: 25
+    <span class="el">td</span>: London
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>| Name | Age | City |
+| --- | --- | --- |
+| Alice | 30 | New York |
+| Bob | 25 | London |</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ADVANCED ==================== -->
+
+  <section id="include">
+    <h2>Include</h2>
+    <p><code>include: filename.md</code> in the frontmatter adds an include path. Quotes are stripped like all frontmatter values.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="attr">name</span>: "Include Test"
+  <span class="attr">description</span>: "Test include keyword"
+  <span class="attr">include</span>: global-restriction.md
+  <span class="kw">content</span> {
+    <span class="el">h1</span>:Getting Started
+    <span class="el">p</span>:follow the instructions below
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: Include Test
+<span class="attr">description</span>: Test include keyword
+<span class="attr">include</span>: global-restriction.md
+<span class="md">---</span>
+
+<span class="md"># Getting Started</span>
+
+follow the instructions below</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="format-order">
+    <h2>Inline Formatting Application Order</h2>
+    <p>The <code>processFormatting(text)</code> function applies transforms in this exact order:</p>
+    <ol style="margin: 12px 0 12px 24px; color: var(--text);">
+      <li><code>link{...}</code> — brace syntax links</li>
+      <li><code>link:</code> — colon syntax links</li>
+      <li><code>strong{...}</code> — brace syntax bold</li>
+      <li><code>italic{...}</code> — brace syntax italics</li>
+      <li><code>strong:</code> — word-capture bold</li>
+      <li><code>italic:</code> — word-capture italics</li>
+      <li><code>code:</code> — word-capture inline code</li>
+    </ol>
+    <p>Applied to: headers, paragraphs, list items, and blockquotes.</p>
+    <div class="tip"><strong>Tip:</strong> Brace syntax is always processed before colon syntax. This means <code>link{...}</code> takes priority over <code>link:</code> within the same text.</div>
+  </section>
+
+  <section id="full-example">
+    <h2>Full Example</h2>
+    <p>Here's a complete <code>.prompt</code> file using many features together, and its Markdown output.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="kw">skill</span> {
+  <span class="attr">name</span>: "REST API Guide"
+  <span class="attr">description</span>: "API documentation"
+  <span class="attr">license</span>: "MIT"
+  <span class="attr">version</span>: "3.1"
+  <span class="kw">content</span> {
+    <span class="el">h1</span>:API Documentation <span class="kw">{</span>
+      <span class="el">p</span>:This describes the REST API.
+
+      <span class="el">h2</span>:Authentication
+      <span class="el">p</span>:Requires a <span class="kw">strong:</span>Bearer token.
+      <span class="el">blockquote</span>:Tokens expire after 24h.
+
+      <span class="el">h2</span>:Endpoints <span class="kw">{</span>
+        <span class="el">h3</span>:Get All Users
+        <span class="el">p</span>:<span class="kw">code:</span>GET /api/users
+        <span class="el">ul</span> {
+          <span class="el">li</span>:Returns a list of all users
+          <span class="el">li</span>:Supports <span class="kw">code:</span>page and <span class="kw">code:</span>limit parameters
+        }
+
+        <span class="el">h3</span>:Create User
+        <span class="el">p</span>:<span class="kw">code:</span>POST /api/users
+        <span class="el">p</span>:Request body:
+        <span class="el">code</span> {
+          {
+            "name": "John Doe",
+            "email": "john@example.com"
+          }
+        }
+      <span class="kw">}</span>
+
+      <span class="el">h2</span>:Rate Limiting
+      <span class="el">p</span>:Limited to <span class="kw">strong:</span>100 requests per minute.
+      <span class="el">p</span>:See <span class="kw">link:</span>docs:<span class="str">https://api.example.com/docs</span> for details.
+    <span class="kw">}</span>
+  }
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre><span class="md">---</span>
+<span class="attr">name</span>: REST API Guide
+<span class="attr">description</span>: API documentation
+<span class="attr">license</span>: MIT
+<span class="attr">version</span>: 3.1
+<span class="md">---</span>
+
+<span class="md"># API Documentation</span>
+
+This describes the REST API.
+
+<span class="md">## Authentication</span>
+
+Requires a **Bearer** token.
+
+&gt; Tokens expire after 24h.
+
+<span class="md">## Endpoints</span>
+
+<span class="md">### Get All Users</span>
+
+`GET /api/users`
+
+- Returns a list of all users
+- Supports `page` and `limit` parameters
+
+<span class="md">### Create User</span>
+
+`POST /api/users`
+
+Request body:
+
+```
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+```
+
+<span class="md">## Rate Limiting</span>
+
+Limited to **100** requests per minute.
+
+See [docs](https://api.example.com/docs) for details.</pre>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  function updateActiveLink() {
+    let current = '';
+    for (const section of sections) {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 80) {
+        current = section.id;
+      }
+    }
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveLink);
+  updateActiveLink();
+
+  // Smooth scroll for nav links
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
