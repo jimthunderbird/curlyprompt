@@ -1,1 +1,16 @@
-based on ./Spec.md and ./tests, generate a html/css/javascript single page application tutorial at ./tutorial/index.html, it should have clickable sections, each section focus on one feature of the curly prompt language and how they map to the markdown elements
+perform the following tasks, skip all tasks that are completed
+
+tasks {
+  task (completed){
+    based on ./Spec.md and ./tests, generate a html/css/javascript single page application tutorial at ./tutorial/index.html, it should have clickable sections, each section focus on one feature of the curly prompt language and how they map to the markdown elements
+  }
+
+  task (completed) {
+    apply minimum change to UI/UX on ./tutorial/index.html, make only background and color styling like: https://vuejs.org/tutorial/
+    do not apply other changes, the layout is perfect, do not change!
+  }
+
+  task {
+    apply minimum change to UI/UX on ./tutorial/index.html, the background should be white and the other color styles should be very similar to https://vuejs.org/tutorial/
+  }
+}
