@@ -132,9 +132,10 @@ class Converter {
     // Process links: link:display text:url
     text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
 
-    // Process same-line open/close: strong{...}, italic{...}
+    // Process same-line open/close: strong{...}, italic{...}, code{...}
     text = text.replace(/strong\{([^}]+)\}/g, '**$1**');
     text = text.replace(/italic\{([^}]+)\}/g, '*$1*');
+    text = text.replace(/code\{([^}]+)\}/g, '`$1`');
 
     // Process strong: word captures until stop word
     // Word pattern: [\w.]+ with optional hyphenated parts, excluding standalone -

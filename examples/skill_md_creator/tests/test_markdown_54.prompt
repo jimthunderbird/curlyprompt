@@ -1,0 +1,11 @@
+skill {
+  name: Inline Code Brace Test
+  description: Test same-line code brace formatting
+  content {
+    h1:Code Examples
+    p:use code{docker build} to build the image
+    p:run code{npm install} and then code{npm start} to get started
+    p:the code{config.yaml} file contains all settings
+    p:combine strong{important} with code{run.sh} in one line
+  }
+}

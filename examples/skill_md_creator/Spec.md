@@ -56,13 +56,15 @@
 
 24. **Inline `italic{...}`** — `italic{key concept}` becomes `*key concept*`. Same-line brace form.
 
+24b. **Inline `code{...}`** — `code{docker build}` becomes `` `docker build` ``. Same-line brace form, consistent with `strong{...}` and `italic{...}`.
+
 25. **Word-capture `strong:WORDS`** — Captures one or more words after `strong:` using `[\w.]+` (with optional hyphenated parts). Capture stops before a stop word. E.g., `strong:bold text and more` → `**bold text** and more`. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, instruction, token, supported, setup, requests, mock, approach, function, word, text, specification, element, steps, style, content, authentication, inside, guide, mode, scripts, paragraph`.
 
 26. **Word-capture `italic:WORDS`** — Same mechanics as `strong:` but wraps in `*...*`. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, text, information, reviewers`.
 
 27. **Word-capture `code:WORDS` (inline)** — Same mechanics but uses `\S+` for tokens (allowing special characters). Wraps in backticks. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, parameters, branch, prefix`.
 
-28. **Inline formatting application order** — `processFormatting(text)` applies transforms in this exact order: (1) `link{...}` brace syntax, (2) `link:` colon syntax, (3) `strong{...}`, (4) `italic{...}`, (5) `strong:`, (6) `italic:`, (7) `code:`. Applied to headers, paragraphs, list items, and blockquotes.
+28. **Inline formatting application order** — `processFormatting(text)` applies transforms in this exact order: (1) `link{...}` brace syntax, (2) `link:` colon syntax, (3) `strong{...}`, (4) `italic{...}`, (5) `code{...}`, (6) `strong:`, (7) `italic:`, (8) `code:`. Applied to headers, paragraphs, list items, and blockquotes.
 
 29. **Content block brace depth tracking** — When entering `content { }` or `body { }`, lines are collected using brace depth tracking (same rules as code blocks) to handle nested section braces.
 

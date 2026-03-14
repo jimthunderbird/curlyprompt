@@ -287,6 +287,7 @@
   <a href="#italic-word">italic: (word-capture)</a>
   <a href="#italic-brace">italic{...} (inline)</a>
   <a href="#code-word">code: (word-capture)</a>
+  <a href="#code-brace">code{...} (inline)</a>
 
   <div class="nav-group">Other Elements</div>
   <a href="#blockquote">Blockquote</a>
@@ -695,7 +696,7 @@ exports.up = function(knex) {
 
   <section id="code-inline">
     <h2>Inline Code (code:)</h2>
-    <p>As a standalone line, <code>code:TEXT</code> wraps text in backticks and appends a blank line. Inline within paragraphs and list items, it uses word-capture to wrap words in backticks.</p>
+    <p>As a standalone line, <code>code:TEXT</code> wraps text in backticks and appends a blank line. Inline within paragraphs and list items, it uses word-capture to wrap words in backticks. You can also use <code>code{...}</code> brace syntax for precise control over what gets wrapped.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -709,7 +710,11 @@ exports.up = function(knex) {
 <span class="el">ul</span> {
   <span class="el">li</span>:<span class="kw">code:</span>main branch is production
   <span class="el">li</span>:Feature branches use <span class="kw">code:</span>feature/ prefix
-}</pre>
+}
+
+<span class="cmt">&lt;!-- brace syntax for multi-word code --&gt;</span>
+<span class="el">p</span>:use <span class="kw">code{</span>docker build<span class="kw">}</span> to build the image
+<span class="el">p</span>:run <span class="kw">code{</span>npm install<span class="kw">}</span> and then <span class="kw">code{</span>npm start<span class="kw">}</span></pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
@@ -718,7 +723,11 @@ exports.up = function(knex) {
 Use `npm install` to set up.
 
 - `main` branch is production
-- Feature branches use `feature/` prefix</pre>
+- Feature branches use `feature/` prefix
+
+use `docker build` to build the image
+
+run `npm install` and then `npm start`</pre>
       </div>
     </div>
   </section>
@@ -910,6 +919,28 @@ Keep migrations *small* and focused</pre>
     </div>
   </section>
 
+  <section id="code-brace">
+    <h2>code{...} (Inline Brace)</h2>
+    <p><code>code{text}</code> becomes <code>`text`</code>. Same-line brace form for explicit control over what gets wrapped in backticks, consistent with <code>strong{...}</code> and <code>italic{...}</code>.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span>:use <span class="kw">code{</span>docker build<span class="kw">}</span> to build the image
+<span class="el">p</span>:run <span class="kw">code{</span>npm install<span class="kw">}</span> and then <span class="kw">code{</span>npm start<span class="kw">}</span> to get started
+<span class="el">p</span>:combine <span class="kw">strong{</span>important<span class="kw">}</span> with <span class="kw">code{</span>run.sh<span class="kw">}</span> in one line</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>use `docker build` to build the image
+
+run `npm install` and then `npm start` to get started
+
+combine **important** with `run.sh` in one line</pre>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip:</strong> Use <code>code{...}</code> when you need precise control over what gets wrapped in backticks. Use <code>code:</code> (word-capture) for simpler cases where stop-word detection works well.</div>
+  </section>
+
   <!-- ==================== OTHER ELEMENTS ==================== -->
 
   <section id="blockquote">
@@ -1036,6 +1067,7 @@ follow the instructions below</pre>
       <li><code>link:</code> — colon syntax links</li>
       <li><code>strong{...}</code> — brace syntax bold</li>
       <li><code>italic{...}</code> — brace syntax italics</li>
+      <li><code>code{...}</code> — brace syntax inline code</li>
       <li><code>strong:</code> — word-capture bold</li>
       <li><code>italic:</code> — word-capture italics</li>
       <li><code>code:</code> — word-capture inline code</li>

@@ -137,4 +137,17 @@ tasks {
   task (completed) {
     apply logic.update_tutorial for task.bq change
   }
+
+  task.code_inline_brace (completed) {
+    the code block should also support inline brace like strong
+    create 1 new test covering all possible senarios in this task
+  }
+
+  task (completed){
+    apply logic.update_tutorial for task.code_inline_brace
+  }
+
+  task (completed) {
+    in ./tutorial/index.html, section: Inline Code, it should show sample code for code block inline brace
+  }
 }
