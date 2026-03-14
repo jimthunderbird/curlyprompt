@@ -2,13 +2,12 @@ skill {
   name: Header Flat Structure Test
   description: Test that headers do not wrap content
   content {
-    h1:Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:step 1
-        li:step 2
-        li:step 3
-      }
+    h1:Instruction
+    p:this is a very strong:important instruction
+    ul {
+      li:step 1
+      li:step 2
+      li:step 3
     }
   }
 }

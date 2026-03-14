@@ -4,13 +4,12 @@ skill {
   license: "MIT"
   version: "1.0"
   content {
-    h1:Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:this is step 1
-        li:this is step 2
-        li:this is step 3
-      }
+    h1:Instruction
+    p:this is a very strong:important instruction
+    ul {
+      li:this is step 1
+      li:this is step 2
+      li:this is step 3
     }
 
     h2:some more paragraph

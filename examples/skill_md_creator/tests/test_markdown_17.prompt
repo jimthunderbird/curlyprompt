@@ -4,33 +4,32 @@ skill {
   license: "MIT"
   version: "1.0"
   content {
-    h1:CI/CD Pipeline {
-      p:This guide covers the continuous integration and deployment process.
+    h1:CI/CD Pipeline
+    p:This guide covers the continuous integration and deployment process.
 
-      h2:Pipeline Stages
-      ol {
-        li:strong:Build - Compile source code and assets
-        li:strong:Test - Run unit and integration tests
-        li:strong:Deploy - Push to staging or production
-      }
+    h2:Pipeline Stages
+    ol {
+      li:strong:Build - Compile source code and assets
+      li:strong:Test - Run unit and integration tests
+      li:strong:Deploy - Push to staging or production
+    }
 
-      h2:Branch Strategy
-      ul {
-        li:code:main branch is production
-        li:code:develop branch is staging
-        li:Feature branches use code:feature/ prefix
-      }
+    h2:Branch Strategy
+    ul {
+      li:code:main branch is production
+      li:code:develop branch is staging
+      li:Feature branches use code:feature/ prefix
+    }
 
-      blockquote:Never push directly to the main branch.
+    blockquote:Never push directly to the main branch.
 
-      h2:Deployment Checklist
-      ol {
-        li:Ensure all tests pass
-        li:Review code changes
-        li:Update version number
-        li:Create release tag
-        li:Monitor deployment logs
-      }
+    h2:Deployment Checklist
+    ol {
+      li:Ensure all tests pass
+      li:Review code changes
+      li:Update version number
+      li:Create release tag
+      li:Monitor deployment logs
     }
   }
 }

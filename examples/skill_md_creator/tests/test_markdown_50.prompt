@@ -24,8 +24,7 @@ skill {
     h5:Italic italic{styled} h5
     h6:Code code:snippet in h6
 
-    h4:Grouped Section {
-      p:content inside h4 section
-    }
+    h4:Grouped Section
+    p:content inside h4 section
   }
 }

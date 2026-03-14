@@ -2,22 +2,18 @@ skill {
   name: Nested Header Flat Structure Test
   description: Test nested headers produce flat markdown structure
   content {
-    h1:Getting Started {
-      p:Welcome to the guide
-      h2:Installation {
-        p:Run the following commands
-        ol {
-          li:download the package
-          li:install dependencies
-          li:run the app
-        }
-      }
-      h2:Configuration {
-        p:Edit the config file
-        h3:Advanced Settings {
-          p:These settings are for italic{advanced} users
-        }
-      }
+    h1:Getting Started
+    p:Welcome to the guide
+    h2:Installation
+    p:Run the following commands
+    ol {
+      li:download the package
+      li:install dependencies
+      li:run the app
     }
+    h2:Configuration
+    p:Edit the config file
+    h3:Advanced Settings
+    p:These settings are for italic{advanced} users
   }
 }

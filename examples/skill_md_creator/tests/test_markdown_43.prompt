@@ -11,13 +11,12 @@ skill {
     }
   }
   content {
-    h1:Configuration {
-      p:follow the strong:setup guide below
-      ul {
-        li:install dependencies
-        li:configure environment
-        li:run tests
-      }
+    h1:Configuration
+    p:follow the strong:setup guide below
+    ul {
+      li:install dependencies
+      li:configure environment
+      li:run tests
     }
     h2:Summary
     p {

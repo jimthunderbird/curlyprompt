@@ -4,35 +4,33 @@ skill {
   license: "MIT"
   version: "3.1"
   content {
-    h1:API Documentation {
-      p:This document describes the REST API endpoints.
+    h1:API Documentation
+    p:This document describes the REST API endpoints.
 
-      h2:Authentication
-      p:All requests require a strong:Bearer token in the Authorization header.
-      blockquote:Tokens expire after 24 hours.
+    h2:Authentication
+    p:All requests require a strong:Bearer token in the Authorization header.
+    blockquote:Tokens expire after 24 hours.
 
-      h2:Endpoints {
-        h3:Get All Users
-        p:code:GET /api/users
-        ul {
-          li:Returns a list of all users
-          li:Supports pagination with code:page and code:limit parameters
-        }
-
-        h3:Create User
-        p:code:POST /api/users
-        p:Request body:
-        code {
-          {
-            "name": "John Doe",
-            "email": "john@example.com"
-          }
-        }
-      }
-
-      h2:Rate Limiting
-      p:API is limited to strong:100 requests per minute.
-      p:See link:rate limit docs:https://api.example.com/docs/rate-limits for details.
+    h2:Endpoints
+    h3:Get All Users
+    p:code:GET /api/users
+    ul {
+      li:Returns a list of all users
+      li:Supports pagination with code:page and code:limit parameters
     }
+
+    h3:Create User
+    p:code:POST /api/users
+    p:Request body:
+    code {
+      {
+        "name": "John Doe",
+        "email": "john@example.com"
+      }
+    }
+
+    h2:Rate Limiting
+    p:API is limited to strong:100 requests per minute.
+    p:See link:rate limit docs:https://api.example.com/docs/rate-limits for details.
   }
 }

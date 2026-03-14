@@ -4,26 +4,23 @@ skill {
   license: "MIT"
   version: "1.0"
   content {
-    h1:Top Level {
-      p:Introduction paragraph.
-      h2:Second Level {
-        p:Details at level two.
-        h3:Third Level
-        p:Specific details at level three.
-        ul {
-          li:Detail A
-          li:Detail B
-        }
-      }
-      h2:Another Second Level {
-        p:More level two content.
-        h3:Another Third Level
-        ol {
-          li:Step one
-          li:Step two
-          li:Step three
-        }
-      }
+    h1:Top Level
+    p:Introduction paragraph.
+    h2:Second Level
+    p:Details at level two.
+    h3:Third Level
+    p:Specific details at level three.
+    ul {
+      li:Detail A
+      li:Detail B
+    }
+    h2:Another Second Level
+    p:More level two content.
+    h3:Another Third Level
+    ol {
+      li:Step one
+      li:Step two
+      li:Step three
     }
   }
 }

@@ -12,14 +12,13 @@ skill {
     }
   }
   body {
-    h1:Deployment Guide {
-      p:ensure all strong:critical checks pass before deploying
-      ol {
-        li:run the test suite
-        li:verify the build
-        li:deploy to staging
-        li:promote to production
-      }
+    h1:Deployment Guide
+    p:ensure all strong:critical checks pass before deploying
+    ol {
+      li:run the test suite
+      li:verify the build
+      li:deploy to staging
+      li:promote to production
     }
     h2:Notes
     p {

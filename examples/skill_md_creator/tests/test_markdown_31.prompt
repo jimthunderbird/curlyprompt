@@ -5,13 +5,12 @@ skill {
   version: "2.0"
   include: security-rules.md
   content {
-    h1:Setup Instructions {
-      p:this is a strong:critical setup guide
-      ul {
-        li:install dependencies
-        li:configure environment
-        li:run the application
-      }
+    h1:Setup Instructions
+    p:this is a strong:critical setup guide
+    ul {
+      li:install dependencies
+      li:configure environment
+      li:run the application
     }
 
     h2:Additional Notes

@@ -4,45 +4,44 @@ skill {
   license: "MIT"
   version: "2.0"
   content {
-    h1:React Component Guide {
-      p:Follow these guidelines when creating React components.
+    h1:React Component Guide
+    p:Follow these guidelines when creating React components.
 
-      h2:Component Structure
-      code {
-        import React from 'react';
+    h2:Component Structure
+    code {
+      import React from 'react';
 
-        interface Props {
-          title: string;
-          count: number;
-        }
-
-        export const MyComponent: React.FC<Props> = ({ title, count }) => {
-          return <div>{title}: {count}</div>;
-        };
+      interface Props {
+        title: string;
+        count: number;
       }
 
-      h2:Naming Conventions
-      ul {
-        li:Use strong:PascalCase for component names
-        li:Use strong:camelCase for props and variables
-        li:Prefix custom hooks with code:use
-      }
-
-      h2:Best Practices
-      blockquote:Favor composition over inheritance.
-      ul {
-        li:Keep components italic:small and focused
-        li:Extract reusable logic into custom hooks
-        li:Use code:React.memo for expensive renders
-      }
-
-      h2:Resources
-      ul {
-        li:link:React Docs:https://react.dev
-        li:link:TypeScript Handbook:https://www.typescriptlang.org/docs
-      }
-
-      img:Component Lifecycle:docs/lifecycle.png
+      export const MyComponent: React.FC<Props> = ({ title, count }) => {
+        return <div>{title}: {count}</div>;
+      };
     }
-  }
+
+    h2:Naming Conventions
+    ul {
+      li:Use strong:PascalCase for component names
+      li:Use strong:camelCase for props and variables
+      li:Prefix custom hooks with code:use
+    }
+
+    h2:Best Practices
+    blockquote:Favor composition over inheritance.
+    ul {
+      li:Keep components italic:small and focused
+      li:Extract reusable logic into custom hooks
+      li:Use code:React.memo for expensive renders
+    }
+
+    h2:Resources
+    ul {
+      li:link:React Docs:https://react.dev
+      li:link:TypeScript Handbook:https://www.typescriptlang.org/docs
+    }
+
+    img:Component Lifecycle:docs/lifecycle.png
+    }
 }
