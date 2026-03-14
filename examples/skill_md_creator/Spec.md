@@ -52,15 +52,15 @@
 
 22b. **Inline link brace syntax (`link{display:"TEXT" url:"URL"}`)** — One-line brace form with `display` and `url` key-value pairs. Key order doesn't matter. Values are double-quoted. Commas, spaces, or both can separate pairs. Spacing between `link` and `{` is flexible (`link{`, `link {`, `link   {` all work). Processed before the colon syntax in `processFormatting()`.
 
-23. **Inline `strong{...}`** — `strong{important text}` becomes `**important text**`. Same-line brace form.
+23. **Inline `strong{...}` / `bold{...}` / `b{...}`** — `strong{important text}` becomes `**important text**`. Same-line brace form. `bold` and `b` are aliases for `strong`.
 
-24. **Inline `italic{...}`** — `italic{key concept}` becomes `*key concept*`. Same-line brace form.
+24. **Inline `italic{...}` / `i{...}`** — `italic{key concept}` becomes `*key concept*`. Same-line brace form. `i` is an alias for `italic`.
 
 24b. **Inline `code{...}`** — `code{docker build}` becomes `` `docker build` ``. Same-line brace form, consistent with `strong{...}` and `italic{...}`.
 
-25. **End-of-line `strong:TEXT`** — `strong:` captures everything from the colon to the end of the current line and wraps it in `**...**`. E.g., `strong:bold text and more` → `**bold text and more**`. Use `strong{specific words}` (brace syntax) for fine-grained control over which words are bolded.
+25. **End-of-line `strong:TEXT` / `bold:TEXT` / `b:TEXT`** — `strong:` captures everything from the colon to the end of the current line and wraps it in `**...**`. E.g., `strong:bold text and more` → `**bold text and more**`. `bold:` and `b:` are aliases. Use `strong{specific words}` (brace syntax) for fine-grained control over which words are bolded.
 
-26. **End-of-line `italic:TEXT`** — Same mechanics as `strong:` but wraps in `*...*`. `italic:` captures to end of line. Use `italic{specific words}` for fine-grained control.
+26. **End-of-line `italic:TEXT` / `i:TEXT`** — Same mechanics as `strong:` but wraps in `*...*`. `italic:` captures to end of line. `i:` is an alias. Use `italic{specific words}` for fine-grained control.
 
 27. **End-of-line `code:TEXT` (inline)** — Same mechanics but wraps in backticks. `code:` captures to end of line. Use `code{specific text}` for fine-grained control.
 

@@ -839,12 +839,12 @@ Use **conventional commits with format**
 - **Nullable: disabled**</pre>
       </div>
     </div>
-    <div class="tip"><strong>Tip:</strong> <code>strong:</code> captures everything to the end of the current line. Use <code>strong{...}</code> brace syntax when you need to bold only specific words in the middle of a line.</div>
+    <div class="tip"><strong>Tip:</strong> <code>strong:</code> captures everything to the end of the current line. Use <code>strong{...}</code> brace syntax when you need to bold only specific words in the middle of a line. Shortcuts: <code>b:</code> and <code>bold:</code> are aliases for <code>strong:</code>.</div>
   </section>
 
   <section id="strong-brace">
     <h2>strong{...} (Inline Brace)</h2>
-    <p><code>strong{important text}</code> becomes <code>**important text**</code>. Same-line brace form for explicit control over what gets bolded.</p>
+    <p><code>strong{important text}</code> becomes <code>**important text**</code>. Same-line brace form for explicit control over what gets bolded. Shortcuts: <code>b{...}</code> and <code>bold{...}</code> are aliases.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -862,7 +862,7 @@ read the **critical section** before proceeding</pre>
 
   <section id="italic-word">
     <h2>italic: (End of Line)</h2>
-    <p><code>italic:</code> works like <code>strong:</code> but wraps in <code>*...*</code>. Captures everything to the end of the current line. Use <code>italic{...}</code> brace syntax for fine-grained control.</p>
+    <p><code>italic:</code> works like <code>strong:</code> but wraps in <code>*...*</code>. Captures everything to the end of the current line. Use <code>italic{...}</code> brace syntax for fine-grained control. Shortcut: <code>i:</code> is an alias for <code>italic:</code>.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -880,7 +880,7 @@ Keep migrations *small and focused*</pre>
 
   <section id="italic-brace">
     <h2>italic{...} (Inline Brace)</h2>
-    <p><code>italic{key concept}</code> becomes <code>*key concept*</code>. Same-line brace form.</p>
+    <p><code>italic{key concept}</code> becomes <code>*key concept*</code>. Same-line brace form. Shortcut: <code>i{...}</code> is an alias.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -999,9 +999,9 @@ Content in section two.</pre>
         <span class="label">CurlyPrompt</span>
         <pre><span class="el">table</span> {
   <span class="el">tr</span> {
-    <span class="el">td</span>: Name
-    <span class="el">td</span>: Age
-    <span class="el">td</span>: City
+    <span class="kw">th</span>: Name
+    <span class="kw">th</span>: Age
+    <span class="kw">th</span>: City
   }
   <span class="el">tr</span> {
     <span class="el">td</span>: Alice
@@ -1064,11 +1064,11 @@ follow the instructions below</pre>
     <ol style="margin: 12px 0 12px 24px; color: var(--text);">
       <li><code>link{...}</code> — brace syntax links</li>
       <li><code>link:</code> — colon syntax links</li>
-      <li><code>strong{...}</code> — brace syntax bold</li>
-      <li><code>italic{...}</code> — brace syntax italics</li>
+      <li><code>strong{...}</code> / <code>bold{...}</code> / <code>b{...}</code> — brace syntax bold</li>
+      <li><code>italic{...}</code> / <code>i{...}</code> — brace syntax italics</li>
       <li><code>code{...}</code> — brace syntax inline code</li>
-      <li><code>strong:</code> — end-of-line bold</li>
-      <li><code>italic:</code> — end-of-line italics</li>
+      <li><code>strong:</code> / <code>bold:</code> / <code>b:</code> — end-of-line bold</li>
+      <li><code>italic:</code> / <code>i:</code> — end-of-line italics</li>
       <li><code>code:</code> — end-of-line inline code</li>
     </ol>
     <p>Applied to: headers, paragraphs, list items, and blockquotes.</p>

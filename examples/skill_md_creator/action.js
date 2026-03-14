@@ -132,16 +132,16 @@ class Converter {
     // Process links: link:display text:url
     text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
 
-    // Process same-line open/close: strong{...}, italic{...}, code{...}
-    text = text.replace(/strong\{([^}]+)\}/g, '**$1**');
-    text = text.replace(/italic\{([^}]+)\}/g, '*$1*');
+    // Process same-line open/close: strong{...}/bold{...}/b{...}, italic{...}/i{...}, code{...}
+    text = text.replace(/(?:strong|bold|b)\{([^}]+)\}/g, '**$1**');
+    text = text.replace(/(?:italic|i)\{([^}]+)\}/g, '*$1*');
     text = text.replace(/code\{([^}]+)\}/g, '`$1`');
 
-    // Process strong: captures to end of line
-    text = text.replace(/strong:(.+)$/, '**$1**');
+    // Process strong/bold/b: captures to end of line
+    text = text.replace(/(?:strong|bold|b):(.+)$/, '**$1**');
 
-    // Process italic: captures to end of line
-    text = text.replace(/italic:(.+)$/, '*$1*');
+    // Process italic/i: captures to end of line
+    text = text.replace(/(?:italic|i):(.+)$/, '*$1*');
 
     // Process inline code: captures to end of line
     text = text.replace(/code:\s*(.+)$/, '`$1`');

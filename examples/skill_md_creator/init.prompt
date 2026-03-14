@@ -8,6 +8,10 @@ logic.run_tests {
     if (result shows all tests passed) {
       update ./Spec.md
       apply logic.update_tutorial
+      examine ./init.prompt, mark all non-completed tasks as completed, like:
+      task (completed) {
+        <the task detail here>
+      }
       break
     } else {
       update ./action.js and try to fix the issues
@@ -16,12 +20,16 @@ logic.run_tests {
 }
 
 run the following tasks, skip the task that is marked as completed, after the task is run {
+  in ./tests:
+  - find num of *.prompt file as {num_of_test_cases}
+  - let test_number = {num_of_test_cases} + 1
+  - create tests/test_markdown_{test_number}.prompt as the source test prompt
+  - create tests/test_markdown_{test_number}.md as the taret markdown file
   start logic.run_test 
 }
 
 tasks {
   task (completed) {
-    create 2 new tests for this request:
     <input>
     p {
       this is a simple paragraph
@@ -35,7 +43,6 @@ tasks {
   }
 
   task (completed) {
-    create 2 new tests for this request:
     in addition to keywords like "name","description"..., add support for "include" 
   }
 
@@ -81,14 +88,12 @@ tasks {
       <output>
       **this is very important**, rest of them are ok
       </output>
-      create 3 new tests for this feature request
     }
   }
 
   task (completed) {
     feature request {
       make head an alias of header
-      create 2 tests for this request
     }
   }
 
@@ -111,7 +116,6 @@ tasks {
     img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
     img   {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
     </input>
-    create 1 new test covering all possible senarios in this task
     }
   }
 
@@ -121,17 +125,14 @@ tasks {
 
   task (completed){
     please add support to h4,h5,h6, same as h1
-    create 1 new test covering all possible senarios in this task
   }
 
   task (completed) {
     please add support for using html tags such as table,tr,td to generate table in markdown.
-    create 2 new tests covering all possible senarios in this task
   }
 
   task.bq (completed){
     make bq the alias of blockquote
-    create 1 new test covering all possible senarios in this task
   }
 
   task (completed) {
@@ -140,7 +141,6 @@ tasks {
 
   task.code_inline_brace (completed) {
     the code block should also support inline brace like strong
-    create 1 new test covering all possible senarios in this task
   }
 
   task (completed){
@@ -173,8 +173,6 @@ tasks {
       li:step 3
     }
     </expect>
-
-    create 2 new tests covering all possible scenarios in this task
   }
 
   task (completed){
@@ -200,7 +198,6 @@ tasks {
 
   task (completed){
     for link, it will be behaving the same as img tag, the spacing between the link and { and the attribute separator and spacing inside of link { } are as liberal as the img tag
-    create 1 new test for this task
   }
 
   task.tag_open_effect_until_end_of_current_line (completed) {
@@ -213,4 +210,19 @@ tasks {
       please make sure the tutorial also reflect the logic mentioned above
     }
   }
-}
+
+  task (completed) {
+    we should allow shortcuts: i for italic, b, or bold for strong
+  }
+
+  task (completed) {
+    markdown supports table header:
+    <markdown>
+    | Header 1 | Header 2 | Header 3 |
+    | --- | --- | --- |
+    | Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
+    | Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
+    </markdown>
+    add new tag th to make header in markdown
+  }
+  }
