@@ -10,7 +10,7 @@ tasks {
     do not apply other changes, the layout is perfect, do not change!
   }
 
-  task {
+  task (completed) {
     apply minimum change to UI/UX on ./tutorial/index.html, the background should be white and the other color styles should be very similar to https://vuejs.org/tutorial/
   }
 }
