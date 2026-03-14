@@ -16,7 +16,7 @@ skill {
     p:code:GET /api/users
     ul {
       li:Returns a list of all users
-      li:Supports pagination with code:page and code:limit parameters
+      li:Supports pagination with code{page} and code{limit} parameters
     }
 
     h3:Create User

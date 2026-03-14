@@ -28,8 +28,8 @@ exports.up = function(knex) {
 
 ## Running Migrations
 
-1. Run `npx knex migrate:latest` to apply
-2. Run `npx knex migrate:rollback` to undo
+1. Run `npx knex migrate:latest to apply`
+2. Run `npx knex migrate:rollback to undo`
 
 > Always test migrations on a staging database first.
 
@@ -38,6 +38,6 @@ exports.up = function(knex) {
 ## Best Practices
 
 - Never modify an existing migration
-- Always provide a **rollback** function
-- Keep migrations *small* and focused
+- Always provide a **rollback function**
+- Keep migrations *small and focused*
 

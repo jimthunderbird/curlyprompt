@@ -26,17 +26,17 @@ export const MyComponent: React.FC<Props> = ({ title, count }) => {
 
 ## Naming Conventions
 
-- Use **PascalCase** for component names
-- Use **camelCase** for props and variables
+- Use **PascalCase for component names**
+- Use **camelCase for props and variables**
 - Prefix custom hooks with `use`
 
 ## Best Practices
 
 > Favor composition over inheritance.
 
-- Keep components *small* and focused
+- Keep components *small and focused*
 - Extract reusable logic into custom hooks
-- Use `React.memo` for expensive renders
+- Use `React.memo for expensive renders`
 
 ## Resources
 

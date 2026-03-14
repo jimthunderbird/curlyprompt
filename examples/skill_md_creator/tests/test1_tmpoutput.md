@@ -7,7 +7,7 @@ version: 1.0
 
 # Instruction
 
-this is a very **important** instruction
+this is a very **important instruction**
 
 - this is step 1
 - this is step 2

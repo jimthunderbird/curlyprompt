@@ -8,12 +8,12 @@ skill {
     p:This document demonstrates strong:every supported element.
 
     h2:Text Formatting
-    p:Here is strong:bold text and italic:italic text in paragraphs.
+    p:Here is strong{bold text} and italic{italic text} in paragraphs.
     p:You can also use code:inline code within text.
 
     h2:Blockquotes
     blockquote:This is a simple blockquote.
-    blockquote:This blockquote contains strong:bold and italic:italic text.
+    blockquote:This blockquote contains strong{bold} and italic{italic} text.
 
     h2:Unordered List
     ul {

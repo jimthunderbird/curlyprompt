@@ -11,5 +11,5 @@ version: 1.0
 
 Some text after the quote.
 
-> Another quote with **bold** content inside.
+> Another quote with **bold content inside.**
 

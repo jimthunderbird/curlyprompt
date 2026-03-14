@@ -6,7 +6,7 @@ skill {
 
     bq:This is a simple blockquote using bq.
 
-    bq:This blockquote has strong:bold text and italic:emphasis in the quote.
+    bq:This blockquote has strong{bold text} and italic{emphasis} in the quote.
 
     blockquote:This still works with the full blockquote keyword.
 

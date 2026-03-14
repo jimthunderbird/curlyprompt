@@ -11,7 +11,7 @@ meta:
 
 # Configuration
 
-follow the **setup** guide below
+follow the **setup guide below**
 
 - install dependencies
 - configure environment

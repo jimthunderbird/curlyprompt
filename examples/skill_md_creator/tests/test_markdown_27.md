@@ -7,13 +7,13 @@ version: 1.0
 
 # Complete Element Reference
 
-This document demonstrates **every** supported element.
+This document demonstrates **every supported element.**
 
 ## Text Formatting
 
-Here is **bold** text and *italic* text in paragraphs.
+Here is **bold text** and *italic text* in paragraphs.
 
-You can also use `inline code` within text.
+You can also use `inline code within text.`
 
 ## Blockquotes
 
@@ -24,7 +24,7 @@ You can also use `inline code` within text.
 ## Unordered List
 
 - First unordered item
-- Second with **bold** word
+- Second with **bold word**
 - Third with *emphasis*
 - Fourth with `inline code`
 - Fifth with [a link](https://example.com)

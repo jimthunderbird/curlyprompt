@@ -137,18 +137,14 @@ class Converter {
     text = text.replace(/italic\{([^}]+)\}/g, '*$1*');
     text = text.replace(/code\{([^}]+)\}/g, '`$1`');
 
-    // Process strong: word captures until stop word
-    // Word pattern: [\w.]+ with optional hyphenated parts, excluding standalone -
-    const sw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|instruction|token|supported|setup|requests|mock|approach|function|word|text|specification|element|steps|style|content|authentication|inside|guide|mode|scripts|paragraph)';
-    text = text.replace(new RegExp(`strong:([\\w.]+(?:-[\\w.]+)*(?:\\s+(?!${sw}\\b)[\\w.]+(?:-[\\w.]+)*)*)`, 'g'), '**$1**');
+    // Process strong: captures to end of line
+    text = text.replace(/strong:(.+)$/, '**$1**');
 
-    // Process italic: word captures until stop word
-    const iw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|text|information|reviewers)';
-    text = text.replace(new RegExp(`italic:([\\w.]+(?:-[\\w.]+)*(?:\\s+(?!${iw}\\b)[\\w.]+(?:-[\\w.]+)*)*)`, 'g'), '*$1*');
+    // Process italic: captures to end of line
+    text = text.replace(/italic:(.+)$/, '*$1*');
 
-    // Process inline code: captures until stop word
-    const cw = '(?:to|for|in|with|and|or|within|from|by|at|on|of|as|the|is|are|a|an|parameters|branch|prefix)';
-    text = text.replace(new RegExp(`code:\\s*(\\S+(?:\\s+(?!${cw}\\b)\\S+)*)`, 'g'), '`$1`');
+    // Process inline code: captures to end of line
+    text = text.replace(/code:\s*(.+)$/, '`$1`');
 
     return text;
   }

@@ -5,7 +5,7 @@ description: Test that headers do not wrap content
 
 # Instruction
 
-this is a very **important** instruction
+this is a very **important instruction**
 
 - step 1
 - step 2

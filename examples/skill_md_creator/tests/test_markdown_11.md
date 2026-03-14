@@ -7,9 +7,9 @@ version: 1.0
 
 # Code Examples
 
-Use `npm install` to install packages.
+Use `npm install to install packages.`
 
-Run `npm test` to execute the test suite.
+Run `npm test to execute the test suite.`
 
 ## Configuration File
 

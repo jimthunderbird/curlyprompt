@@ -7,8 +7,8 @@ version: 1.0
 
 # Getting Started
 
-this is a **bold** paragraph
-this line has *emphasized* text
+this is a **bold paragraph**
+this line has *emphasized text*
 this is a normal line
 
 ## Next Section

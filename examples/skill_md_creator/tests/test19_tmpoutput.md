@@ -11,9 +11,9 @@ version: 2.0
 
 ## Authentication
 
-- Use **bcrypt** for password hashing
+- Use **bcrypt for password hashing**
 - Implement rate limiting on login endpoints
-- Enable **two-factor** authentication
+- Enable **two-factor authentication**
 
 ## Data Protection
 
@@ -34,7 +34,7 @@ See also [Security Best Practices](https://example.com/security-guide) for inter
 
 In case of a security incident:
 
-1. **Contain** the breach immediately
+1. **Contain the breach immediately**
 2. Notify the security team
 3. Document the incident
 4. Perform a post-mortem

@@ -6,7 +6,7 @@ version: 2.0
 
 # Getting Started
 
-follow these **simple** steps to begin
+follow these **simple steps to begin**
 
 - install dependencies
 - configure settings

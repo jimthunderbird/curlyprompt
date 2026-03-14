@@ -11,7 +11,7 @@ This document describes the REST API endpoints.
 
 ## Authentication
 
-All requests require a **Bearer** token in the Authorization header.
+All requests require a **Bearer token in the Authorization header.**
 
 > Tokens expire after 24 hours.
 
@@ -39,7 +39,7 @@ Request body:
 
 ## Rate Limiting
 
-API is limited to **100** requests per minute.
+API is limited to **100 requests per minute.**
 
 See [rate limit docs](https://api.example.com/docs/rate-limits) for details.
 

@@ -7,7 +7,7 @@ version: 1.0
 
 # Inital Instruction
 
-this is a very **important** instruction
+this is a very **important instruction**
 
 - this is step 1
 - this is step 2
@@ -15,9 +15,9 @@ this is a very **important** instruction
 
 # Testing Steps
 
-## very **important** steps to follow:
+## very **important steps to follow:**
 
-### also **important**:
+### also **important:**
 
 - testing step 1
 - testing step 2

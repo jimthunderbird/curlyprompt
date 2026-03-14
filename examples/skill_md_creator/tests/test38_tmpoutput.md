@@ -9,7 +9,7 @@ meta:
 
 # Welcome
 
-this is a **minimal skill** with only a header
+this is a **minimal skill with only a header**
 
 ---
 

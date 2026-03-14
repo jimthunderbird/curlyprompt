@@ -12,7 +12,7 @@ skill {
     ol {
       li:Clone the repository
       li:Run code:npm install
-      li:Copy code:.env.example to code:.env
+      li:Copy code{.env.example} to code{.env}
     }
 
     h2:Configuration

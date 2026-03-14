@@ -58,11 +58,11 @@
 
 24b. **Inline `code{...}`** — `code{docker build}` becomes `` `docker build` ``. Same-line brace form, consistent with `strong{...}` and `italic{...}`.
 
-25. **Word-capture `strong:WORDS`** — Captures one or more words after `strong:` using `[\w.]+` (with optional hyphenated parts). Capture stops before a stop word. E.g., `strong:bold text and more` → `**bold text** and more`. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, instruction, token, supported, setup, requests, mock, approach, function, word, text, specification, element, steps, style, content, authentication, inside, guide, mode, scripts, paragraph`.
+25. **End-of-line `strong:TEXT`** — `strong:` captures everything from the colon to the end of the current line and wraps it in `**...**`. E.g., `strong:bold text and more` → `**bold text and more**`. Use `strong{specific words}` (brace syntax) for fine-grained control over which words are bolded.
 
-26. **Word-capture `italic:WORDS`** — Same mechanics as `strong:` but wraps in `*...*`. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, text, information, reviewers`.
+26. **End-of-line `italic:TEXT`** — Same mechanics as `strong:` but wraps in `*...*`. `italic:` captures to end of line. Use `italic{specific words}` for fine-grained control.
 
-27. **Word-capture `code:WORDS` (inline)** — Same mechanics but uses `\S+` for tokens (allowing special characters). Wraps in backticks. Stop words: `to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an, parameters, branch, prefix`.
+27. **End-of-line `code:TEXT` (inline)** — Same mechanics but wraps in backticks. `code:` captures to end of line. Use `code{specific text}` for fine-grained control.
 
 28. **Inline formatting application order** — `processFormatting(text)` applies transforms in this exact order: (1) `link{...}` brace syntax, (2) `link:` colon syntax, (3) `strong{...}`, (4) `italic{...}`, (5) `code{...}`, (6) `strong:`, (7) `italic:`, (8) `code:`. Applied to headers, paragraphs, list items, and blockquotes.
 

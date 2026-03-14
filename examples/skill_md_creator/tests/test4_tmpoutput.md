@@ -11,7 +11,7 @@ This document provides guidelines for AI agents working on the qrcode.vue reposi
 
 ## Build and Development Commands
 
-The project uses npm scripts defined in **package.json**:
+The project uses npm scripts defined in **package.json:**
 
 - npm run dev to start development server with hot reload
 - npm run build to build production bundles using Rollup
@@ -21,10 +21,10 @@ The project uses npm scripts defined in **package.json**:
 
 ### Indentation and Formatting
 
-- **Indentation**: 2 spaces, no tabs
-- **Line endings**: LF Unix
-- **Trailing whitespace**: Trimmed
-- **Final newline**: Yes
+- **Indentation: 2 spaces, no tabs**
+- **Line endings: LF Unix**
+- **Trailing whitespace: Trimmed**
+- **Final newline: Yes**
 
 ### TypeScript Conventions
 

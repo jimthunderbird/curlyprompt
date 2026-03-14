@@ -1,40 +1,7 @@
 skill {
-  name: A web application skill
-  description: A web application skill 
-  license: Apache 2.0
-  version: 1.0
-  include: global-restriction.md
   content {
-    h1:Inital Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:this is step 1
-        li:this is step 2
-        li:this is step 3
-        li:this is step 4
-      }
-    }
-
-    h1:Testing Steps {
-      h2: very strong:important steps to follow:
-      h3: also strong:important:
-      ul {
-        li: testing step 1
-        li: testing step 2
-        li: testing step 3
-        li: testing step 4
-        li: testing step 5
-      }
-    }
-
-    h1:Deployment Steps {
-      h2: very strong:important steps to follow:
-      h3: also strong:important:
-      ul {
-        li: deploy to server 1
-        li: deploy to server 2
-        li: deploy to server 3 
-      }
-    }
+    p:this is a very strong:important instruction
+    p:Use strong:conventional commits with format
+    li:strong:Nullable: disabled
   }
 }

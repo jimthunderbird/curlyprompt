@@ -11,15 +11,15 @@ This guide covers the continuous integration and deployment process.
 
 ## Pipeline Stages
 
-1. **Build** - Compile source code and assets
-2. **Test** - Run unit and integration tests
-3. **Deploy** - Push to staging or production
+1. **Build - Compile source code and assets**
+2. **Test - Run unit and integration tests**
+3. **Deploy - Push to staging or production**
 
 ## Branch Strategy
 
-- `main` branch is production
-- `develop` branch is staging
-- Feature branches use `feature/` prefix
+- `main branch is production`
+- `develop branch is staging`
+- Feature branches use `feature/ prefix`
 
 > Never push directly to the main branch.
 

@@ -282,11 +282,11 @@
   <a href="#links-brace">Link Brace Syntax</a>
 
   <div class="nav-group">Inline Formatting</div>
-  <a href="#strong-word">strong: (word-capture)</a>
+  <a href="#strong-word">strong: (end of line)</a>
   <a href="#strong-brace">strong{...} (inline)</a>
-  <a href="#italic-word">italic: (word-capture)</a>
+  <a href="#italic-word">italic: (end of line)</a>
   <a href="#italic-brace">italic{...} (inline)</a>
-  <a href="#code-word">code: (word-capture)</a>
+  <a href="#code-word">code: (end of line)</a>
   <a href="#code-brace">code{...} (inline)</a>
 
   <div class="nav-group">Other Elements</div>
@@ -481,9 +481,9 @@ multi-platform tool</pre>
 
 <span class="md">###### Section Six</span>
 
-<span class="md">## very **important** steps</span>
+<span class="md">## very **important steps**</span>
 
-<span class="md">### also **important**:</span></pre>
+<span class="md">### also **important:**</span></pre>
       </div>
     </div>
   </section>
@@ -508,7 +508,7 @@ multi-platform tool</pre>
         <span class="label">Markdown Output</span>
         <pre><span class="md"># Instruction</span>
 
-this is a very **important** instruction
+this is a very **important instruction**
 
 - step 1
 - step 2
@@ -535,7 +535,7 @@ this is a very **important** instruction
         <span class="label">Markdown Output</span>
         <pre>This is a simple paragraph.
 
-Use `npm install` to set up.</pre>
+Use `npm install to set up.`</pre>
       </div>
     </div>
   </section>
@@ -614,9 +614,9 @@ another with **important** info</pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
-        <pre>1. **Build** - Compile source code
-2. **Test** - Run unit tests
-3. **Deploy** - Push to production</pre>
+        <pre>1. **Build - Compile source code**
+2. **Test - Run unit tests**
+3. **Deploy - Push to production**</pre>
       </div>
     </div>
   </section>
@@ -695,7 +695,7 @@ exports.up = function(knex) {
 
   <section id="code-inline">
     <h2>Inline Code (code:)</h2>
-    <p>As a standalone line, <code>code:TEXT</code> wraps text in backticks and appends a blank line. Inline within paragraphs and list items, it uses word-capture to wrap words in backticks. You can also use <code>code{...}</code> brace syntax for precise control over what gets wrapped.</p>
+    <p>As a standalone line, <code>code:TEXT</code> wraps text in backticks and appends a blank line. Inline within paragraphs and list items, <code>code:</code> captures everything to the end of the line. Use <code>code{...}</code> brace syntax for precise control over what gets wrapped.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -711,7 +711,7 @@ exports.up = function(knex) {
   <span class="el">li</span>:Feature branches use <span class="kw">code:</span>feature/ prefix
 }
 
-<span class="cmt">&lt;!-- brace syntax for multi-word code --&gt;</span>
+<span class="cmt">&lt;!-- brace syntax for precise control --&gt;</span>
 <span class="el">p</span>:use <span class="kw">code{</span>docker build<span class="kw">}</span> to build the image
 <span class="el">p</span>:run <span class="kw">code{</span>npm install<span class="kw">}</span> and then <span class="kw">code{</span>npm start<span class="kw">}</span></pre>
       </div>
@@ -719,10 +719,10 @@ exports.up = function(knex) {
         <span class="label">Markdown Output</span>
         <pre>`npx knex migrate:make name`
 
-Use `npm install` to set up.
+Use `npm install to set up.`
 
-- `main` branch is production
-- Feature branches use `feature/` prefix
+- `main branch is production`
+- Feature branches use `feature/ prefix`
 
 use `docker build` to build the image
 
@@ -821,8 +821,8 @@ Go to [Docs](https://docs.example.com) for help.</pre>
   <!-- ==================== INLINE FORMATTING ==================== -->
 
   <section id="strong-word">
-    <h2>strong: (Word-Capture)</h2>
-    <p><code>strong:</code> captures one or more words and wraps them in <code>**...**</code>. Capture stops before a stop word (like <code>to</code>, <code>for</code>, <code>in</code>, <code>and</code>, <code>or</code>, etc.).</p>
+    <h2>strong: (End of Line)</h2>
+    <p><code>strong:</code> captures everything from the colon to the end of the current line and wraps it in <code>**...**</code>. Use <code>strong{...}</code> brace syntax for fine-grained control over which words are bolded.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -832,14 +832,14 @@ Go to [Docs](https://docs.example.com) for help.</pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
-        <pre>this is a very **important** instruction
+        <pre>this is a very **important instruction**
 
-Use **conventional commits** with format
+Use **conventional commits with format**
 
-- **Nullable**: disabled</pre>
+- **Nullable: disabled**</pre>
       </div>
     </div>
-    <div class="tip"><strong>Tip:</strong> Word-capture uses <code>[\w.]+</code> (including dots and hyphens). Stop words include: <code>to, for, in, with, and, or, within, from, by, at, on, of, as, the, is, are, a, an</code>, and many context-specific words.</div>
+    <div class="tip"><strong>Tip:</strong> <code>strong:</code> captures everything to the end of the current line. Use <code>strong{...}</code> brace syntax when you need to bold only specific words in the middle of a line.</div>
   </section>
 
   <section id="strong-brace">
@@ -861,8 +861,8 @@ read the **critical section** before proceeding</pre>
   </section>
 
   <section id="italic-word">
-    <h2>italic: (Word-Capture)</h2>
-    <p><code>italic:</code> works like <code>strong:</code> but wraps in <code>*...*</code>. Same mechanics, different stop words.</p>
+    <h2>italic: (End of Line)</h2>
+    <p><code>italic:</code> works like <code>strong:</code> but wraps in <code>*...*</code>. Captures everything to the end of the current line. Use <code>italic{...}</code> brace syntax for fine-grained control.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -871,9 +871,9 @@ read the **critical section** before proceeding</pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
-        <pre>This is *important* and critical
+        <pre>This is *important and critical*
 
-Keep migrations *small* and focused</pre>
+Keep migrations *small and focused*</pre>
       </div>
     </div>
   </section>
@@ -897,23 +897,23 @@ Keep migrations *small* and focused</pre>
   </section>
 
   <section id="code-word">
-    <h2>code: (Word-Capture, Inline)</h2>
-    <p>When used inline (not as a standalone element), <code>code:</code> captures words using <code>\S+</code> (allowing special characters) and wraps in backticks.</p>
+    <h2>code: (End of Line, Inline)</h2>
+    <p>When used inline (not as a standalone element), <code>code:</code> captures everything to the end of the current line and wraps in backticks. Use <code>code{...}</code> brace syntax for fine-grained control.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
         <pre><span class="el">p</span>:Use <span class="kw">code:</span>npm install to install packages.
 <span class="el">ul</span> {
-  <span class="el">li</span>:<span class="kw">code:</span>docker build -t myapp . to build the image
-  <span class="el">li</span>:<span class="kw">code:</span>docker compose up -d to start services
+  <span class="el">li</span>:<span class="kw">code:</span>docker build -t myapp .
+  <span class="el">li</span>:<span class="kw">code:</span>docker compose up -d
 }</pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
-        <pre>Use `npm install` to install packages.
+        <pre>Use `npm install to install packages.`
 
-- `docker build -t myapp .` to build the image
-- `docker compose up -d` to start services</pre>
+- `docker build -t myapp .`
+- `docker compose up -d`</pre>
       </div>
     </div>
   </section>
@@ -937,7 +937,7 @@ run `npm install` and then `npm start` to get started
 combine **important** with `run.sh` in one line</pre>
       </div>
     </div>
-    <div class="tip"><strong>Tip:</strong> Use <code>code{...}</code> when you need precise control over what gets wrapped in backticks. Use <code>code:</code> (word-capture) for simpler cases where stop-word detection works well.</div>
+    <div class="tip"><strong>Tip:</strong> Use <code>code{...}</code> when you need precise control over what gets wrapped in backticks. Use <code>code:</code> when the entire rest of the line should be code.</div>
   </section>
 
   <!-- ==================== OTHER ELEMENTS ==================== -->
@@ -958,7 +958,7 @@ combine **important** with `run.sh` in one line</pre>
 
 &gt; Short alias works the same way.
 
-&gt; Another with **bold** content inside.</pre>
+&gt; Another with **bold content inside.**</pre>
       </div>
     </div>
     <div class="tip"><strong>Tip:</strong> <code>bq:</code> is an exact alias for <code>blockquote:</code>. Use whichever you prefer.</div>
@@ -1067,9 +1067,9 @@ follow the instructions below</pre>
       <li><code>strong{...}</code> — brace syntax bold</li>
       <li><code>italic{...}</code> — brace syntax italics</li>
       <li><code>code{...}</code> — brace syntax inline code</li>
-      <li><code>strong:</code> — word-capture bold</li>
-      <li><code>italic:</code> — word-capture italics</li>
-      <li><code>code:</code> — word-capture inline code</li>
+      <li><code>strong:</code> — end-of-line bold</li>
+      <li><code>italic:</code> — end-of-line italics</li>
+      <li><code>code:</code> — end-of-line inline code</li>
     </ol>
     <p>Applied to: headers, paragraphs, list items, and blockquotes.</p>
     <div class="tip"><strong>Tip:</strong> Brace syntax is always processed before colon syntax. This means <code>link{...}</code> takes priority over <code>link:</code> within the same text.</div>
@@ -1099,7 +1099,7 @@ follow the instructions below</pre>
         <span class="el">p</span>:<span class="kw">code:</span>GET /api/users
         <span class="el">ul</span> {
           <span class="el">li</span>:Returns a list of all users
-          <span class="el">li</span>:Supports <span class="kw">code:</span>page and <span class="kw">code:</span>limit parameters
+          <span class="el">li</span>:Supports <span class="kw">code{</span>page<span class="kw">}</span> and <span class="kw">code{</span>limit<span class="kw">}</span> parameters
         }
 
         <span class="el">h3</span>:Create User
@@ -1135,7 +1135,7 @@ This describes the REST API.
 
 <span class="md">## Authentication</span>
 
-Requires a **Bearer** token.
+Requires a **Bearer token.**
 
 &gt; Tokens expire after 24h.
 
@@ -1163,7 +1163,7 @@ Request body:
 
 <span class="md">## Rate Limiting</span>
 
-Limited to **100** requests per minute.
+Limited to **100 requests per minute.**
 
 See [docs](https://api.example.com/docs) for details.</pre>
       </div>

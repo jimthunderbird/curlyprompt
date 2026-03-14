@@ -27,5 +27,5 @@ version: 1.0
 ## Notes
 
 - All tasks should have a corresponding ticket
-- Use **labels** to categorize issues
+- Use **labels to categorize issues**
 

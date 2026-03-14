@@ -40,7 +40,7 @@ Use this guide to make concise, high-signal contributions to the generalized k-m
 
 # Commit Guidelines
 
-Use **conventional commits** with format type scope subject
+Use **conventional commits with format type scope subject**
 
 - PRs should summarize behavior changes
 - List executed commands

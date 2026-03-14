@@ -13,7 +13,7 @@ This file provides coding and release guidelines for the Light Manager Air integ
 
 - Do NOT include generated with Claude Code in commit messages
 - Commit messages should be clear, concise, and descriptive
-- Use the **imperative mood** in commit messages
+- Use the **imperative mood in commit messages**
 - No need for co-author attribution to Claude
 
 ## Code Style Guidelines
@@ -29,9 +29,9 @@ This file provides coding and release guidelines for the Light Manager Air integ
 ### Naming Conventions
 
 - Use descriptive names for classes, methods, and variables
-- **snake_case** for methods and variables
-- **CamelCase** for classes
-- **UPPER_CASE** for constants
+- **snake_case for methods and variables**
+- **CamelCase for classes**
+- **UPPER_CASE for constants**
 
 ## Release Process
 

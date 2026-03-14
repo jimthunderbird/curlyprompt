@@ -15,7 +15,7 @@ Use this overview as factual context when generating or editing code.
 
 - Read this report top-to-bottom to understand the repository structure
 - Keep context usage lean and prefer summaries over full source files
-- Match the **American English** style as reported below
+- Match the **American English style as reported below**
 - Prefer existing frameworks, tests, and naming conventions
 - Use the ripgrep tool for efficient code searching
 
@@ -29,10 +29,10 @@ Use this overview as factual context when generating or editing code.
 
 Align with nullable settings, test framework, and UI patterns already used.
 
-- **Nullable**: disabled
-- **Tests**: NUnit
-- **Mocking**: Unknown
-- **UI**: Avalonia
+- **Nullable: disabled**
+- **Tests: NUnit**
+- **Mocking: Unknown**
+- **UI: Avalonia**
 
 ## Projects
 

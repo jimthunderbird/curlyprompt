@@ -202,4 +202,15 @@ tasks {
     for link, it will be behaving the same as img tag, the spacing between the link and { and the attribute separator and spacing inside of link { } are as liberal as the img tag
     create 1 new test for this task
   }
+
+  task.tag_open_effect_until_end_of_current_line (completed) {
+    for all of the following tags: p,h1-h6,italic,strong,code, their behavior should be {
+      if i have strong:this is a paragraph, it will mean **this is a paragraph**
+      with strong:, we will "promote" the strong effect "all the way to the end of the current line"
+      in order to control which words should be marked as strong, we use strong{...} to group them
+      for example:
+      this is a strong{very important} message
+      please make sure the tutorial also reflect the logic mentioned above
+    }
+  }
 }

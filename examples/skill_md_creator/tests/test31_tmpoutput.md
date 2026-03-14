@@ -8,7 +8,7 @@ include: security-rules.md
 
 # Setup Instructions
 
-this is a **critical** setup guide
+this is a **critical setup guide**
 
 - install dependencies
 - configure environment

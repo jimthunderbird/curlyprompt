@@ -28,9 +28,9 @@ CMD ["node", "server.js"]
 
 ## Common Commands
 
-- `docker build -t myapp .` to build the image
-- `docker run -p 3000:3000 myapp` to run the container
-- `docker compose up -d` to start all services
+- `docker build -t myapp . to build the image`
+- `docker run -p 3000:3000 myapp to run the container`
+- `docker compose up -d to start all services`
 
 ## Architecture Diagram
 

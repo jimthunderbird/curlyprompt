@@ -7,7 +7,7 @@ version: 2.0
 
 # Getting Started
 
-Welcome to the **project** setup guide.
+Welcome to the **project setup guide.**
 
 > Make sure you have Node.js installed before proceeding.
 
@@ -19,13 +19,13 @@ Welcome to the **project** setup guide.
 
 ## Configuration
 
-Edit the configuration file at `config/default.json` with your settings.
+Edit the configuration file at `config/default.json with your settings.`
 
 ---
 
 ## Running the App
 
-Use `npm start` to launch the application.
+Use `npm start to launch the application.`
 
 Visit [localhost](http://localhost:3000) in your browser.
 

@@ -11,14 +11,14 @@ This document describes our team's Git workflow.
 
 ## Branch Naming
 
-- `feature/description` for new features
-- `bugfix/description` for bug fixes
-- `hotfix/description` for urgent production fixes
-- `release/version` for release branches
+- `feature/description for new features`
+- `bugfix/description for bug fixes`
+- `hotfix/description for urgent production fixes`
+- `release/version for release branches`
 
 ## Commit Message Format
 
-Follow the **Conventional Commits** specification:
+Follow the **Conventional Commits specification:**
 
 `type(scope): description`
 
@@ -35,7 +35,7 @@ Follow the **Conventional Commits** specification:
 1. Create a feature branch
 2. Make your changes and commit
 3. Push and open a pull request
-4. Request at least *two* reviewers
+4. Request at least *two reviewers*
 5. Address feedback and merge
 
 > Squash commits before merging to main.

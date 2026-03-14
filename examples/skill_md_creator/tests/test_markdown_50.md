@@ -27,11 +27,11 @@ finer details
 
 finest details
 
-#### Bold **Header** in h4
+#### Bold **Header in h4**
 
 ##### Italic *styled* h5
 
-###### Code `snippet` in h6
+###### Code `snippet in h6`
 
 #### Grouped Section
 

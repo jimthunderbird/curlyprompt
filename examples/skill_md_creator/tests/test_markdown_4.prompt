@@ -32,7 +32,7 @@ skill {
     }
 
     h2:Testing
-    p:Tests written with strong:rstest and strong:vue test utils
+    p:Tests written with strong{rstest} and strong{vue test utils}
     ul {
       li:Test files in test directory with .test.ts extension
       li:Use describe and it pattern

@@ -13,7 +13,7 @@ meta:
 
 # Configuration Guide
 
-this guide covers the **essential configuration** for the project
+this guide covers the **essential configuration for the project**
 
 ## Environment Setup
 
@@ -27,5 +27,5 @@ make sure all dependencies are installed
 
 ## Additional Notes
 
-refer to the *official documentation* for more details
+refer to the *official documentation for more details*
 
