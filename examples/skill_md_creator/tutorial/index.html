@@ -490,18 +490,17 @@ multi-platform tool</pre>
 
   <section id="header-sections">
     <h2>Header Section Braces</h2>
-    <p>When a header line ends with <code>{</code>, the brace is stripped from the title. The matching closing <code>}</code> is silently consumed. This provides structural grouping only — no effect on Markdown indentation.</p>
+    <p>In Markdown, headers are flat and linear — they don't "wrap" content below them. Simply place the header on its own line, followed by the content that belongs under it.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
-        <pre><span class="el">h1</span>:Instruction <span class="kw">{</span>
-  <span class="el">p</span>:this is a very <span class="kw">strong:</span>important instruction
-  <span class="el">ul</span> {
-    <span class="el">li</span>:step 1
-    <span class="el">li</span>:step 2
-    <span class="el">li</span>:step 3
-  }
-<span class="kw">}</span>
+        <pre><span class="el">h1</span>:Instruction
+<span class="el">p</span>:this is a very <span class="kw">strong:</span>important instruction
+<span class="el">ul</span> {
+  <span class="el">li</span>:step 1
+  <span class="el">li</span>:step 2
+  <span class="el">li</span>:step 3
+}
 
 <span class="el">h2</span>:some more paragraph</pre>
       </div>
@@ -518,7 +517,7 @@ this is a very **important** instruction
 <span class="md">## some more paragraph</span></pre>
       </div>
     </div>
-    <div class="tip"><strong>Tip:</strong> Section braces are purely for readability and editor folding — they don't change the output structure.</div>
+    <div class="tip"><strong>Tip:</strong> Headers mark where a new section begins — they don't wrap or contain the content that follows.</div>
   </section>
 
   <!-- ==================== TEXT CONTENT ==================== -->

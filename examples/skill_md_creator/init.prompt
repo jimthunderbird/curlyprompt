@@ -150,4 +150,51 @@ tasks {
   task (completed) {
     in ./tutorial/index.html, section: Inline Code, it should show sample code for code block inline brace
   }
+
+  task (completed) {
+    In Markdown, the structure is flat and linear. The h1 to h6 header doesn't "wrap" the text below it; it simply marks a point where a new section begins.
+
+    <existing>
+    h1:Instruction {
+      p:this is a very strong:important instruction
+      ul {
+        li:step 1
+        li:step 2
+        li:step 3
+      }
+    }
+    </existing>
+    <expect>
+    h1:Instruction
+    p:this is a very strong:important instruction
+    ul {
+      li:step 1
+      li:step 2
+      li:step 3
+    }
+    </expect>
+
+    create 2 new tests covering all possible scenarios in this task
+  }
+
+  task (completed){
+    in ./tutorial/index.html, Header Section Braces, the code example shows:
+    h1:Instruction {
+      p:this is a very strong:important instruction
+      ul {
+        li:step 1
+        li:step 2
+        li:step 3
+      }
+    }
+
+    it should show as:
+    h1:Instruction
+    p:this is a very strong:important instruction
+    ul {
+      li:step 1
+      li:step 2
+      li:step 3
+    }
+  }
 }
