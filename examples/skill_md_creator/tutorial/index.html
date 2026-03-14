@@ -964,6 +964,24 @@ combine **important** with `run.sh` in one line</pre>
       </div>
     </div>
     <div class="tip"><strong>Tip:</strong> <code>bq:</code> is an exact alias for <code>blockquote:</code>. Use whichever you prefer.</div>
+    <h3>Multi-line Blockquote</h3>
+    <p>Use <code>blockquote { }</code> or <code>bq { }</code> for multi-line blockquotes. Each line inside becomes a <code>&gt;</code> prefixed line.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">bq</span> {
+  This is the first line.
+  This is the second line.
+  This has <span class="kw">strong:</span>bold text.
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>&gt; This is the first line.
+&gt; This is the second line.
+&gt; This has **bold text.**</pre>
+      </div>
+    </div>
   </section>
 
   <section id="hr">

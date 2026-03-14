@@ -274,6 +274,22 @@ class Converter {
         continue;
       }
 
+      // Handle multi-line blockquotes (blockquote { } or bq { })
+      if (/^(?:blockquote|bq)\s*\{/.test(line)) {
+        i++;
+        while (i < lines.length) {
+          let inner = lines[i].trim();
+          if (inner === '}') break;
+          if (inner !== '') {
+            let text = this.processFormatting(inner);
+            output.push('> ' + text);
+          }
+          i++;
+        }
+        output.push('');
+        continue;
+      }
+
       // Handle blockquotes (blockquote: or bq:)
       if (line.startsWith('blockquote:') || line.startsWith('bq:')) {
         let prefix = line.startsWith('blockquote:') ? 'blockquote:' : 'bq:';

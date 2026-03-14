@@ -1,0 +1,18 @@
+skill {
+  name: Blockquote Test
+  description: Test multi-line blockquote
+  content {
+    bq {
+      This is the first line of the blockquote.
+      This is the second line.
+      This is the third line.
+    }
+    blockquote {
+      Another multi-line blockquote.
+      With strong:bold text here.
+    }
+    bq   {
+      Liberal spacing test.
+    }
+  }
+}

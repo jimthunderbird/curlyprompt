@@ -42,6 +42,8 @@
 
 18. **Blockquote (`blockquote:TEXT` / `bq:TEXT`)** — `blockquote:Note here` or `bq:Note here` becomes `> Note here`. `bq` is an alias for `blockquote`. Inline formatting applied. Trailing blank line.
 
+18b. **Multi-line blockquote (`blockquote { }` / `bq { }`)** — Block form for multi-line blockquotes. Each non-empty line inside becomes `> Line text`. `bq` is an alias for `blockquote`. Spacing between tag name and `{` is flexible. Inline formatting is applied to each line. Trailing blank line after the block.
+
 19. **Horizontal rule (`hr`)** — A line that is exactly `hr` outputs `---` followed by a blank line.
 
 20. **Image colon syntax (`img:ALT:PATH`)** — `img:Docker Arch:docs/arch.png` becomes `![Docker Arch](docs/arch.png)`. First `:` after `img:` separates alt from path. Trailing blank line.
@@ -86,6 +88,6 @@
 
 38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
 
-39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
+39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
 
 40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.

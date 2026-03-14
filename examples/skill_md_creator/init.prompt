@@ -263,3 +263,17 @@ tasks {
         item.unchecked has alias: itm.u
       }  
     }
+
+    task (completed) {
+      blockquote can have multiple lines, please add support for:
+      blockquote {
+        ...
+      }
+      or
+      bq {
+        ...
+      }
+      the spacing should be very liberal as other tags
+    }
+  }
+}
