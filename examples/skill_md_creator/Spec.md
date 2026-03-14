@@ -40,7 +40,7 @@
 
 17. **Standalone inline code (`code:TEXT`)** — `code:docker build` as a standalone line wraps text in backticks and appends a blank line.
 
-18. **Blockquote (`blockquote:TEXT`)** — `blockquote:Note here` becomes `> Note here`. Inline formatting applied. Trailing blank line.
+18. **Blockquote (`blockquote:TEXT` / `bq:TEXT`)** — `blockquote:Note here` or `bq:Note here` becomes `> Note here`. `bq` is an alias for `blockquote`. Inline formatting applied. Trailing blank line.
 
 19. **Horizontal rule (`hr`)** — A line that is exactly `hr` outputs `---` followed by a blank line.
 
@@ -66,7 +66,7 @@
 
 29. **Content block brace depth tracking** — When entering `content { }` or `body { }`, lines are collected using brace depth tracking (same rules as code blocks) to handle nested section braces.
 
-30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote:`, (10) `hr`, (11) `img:`, (12) `table {`, (13) `li:`, (14) `code:`.
+30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote:`/`bq:`, (10) `hr`, (11) `img:`, (12) `table {`, (13) `li:`, (14) `code:`.
 
 31. **`include` frontmatter key** — `include: global-restriction.md` adds an include path to the frontmatter. Quotes stripped.
 

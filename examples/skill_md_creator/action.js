@@ -279,9 +279,10 @@ class Converter {
         continue;
       }
 
-      // Handle blockquotes
-      if (line.startsWith('blockquote:')) {
-        let text = line.substring(11).trim();
+      // Handle blockquotes (blockquote: or bq:)
+      if (line.startsWith('blockquote:') || line.startsWith('bq:')) {
+        let prefix = line.startsWith('blockquote:') ? 'blockquote:' : 'bq:';
+        let text = line.substring(prefix.length).trim();
         text = this.processFormatting(text);
         output.push('> ' + text);
         output.push('');

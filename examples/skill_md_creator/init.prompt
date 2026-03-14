@@ -1,8 +1,13 @@
+logic.update_tutorial {
+  apply only most relevant updates to ./tutorial's index.html, do not change tutorial's UI/UX
+}
+
 logic.run_tests {
   perform a loop {
     let result = sh run_tests.sh
     if (result shows all tests passed) {
       update ./Spec.md
+      apply logic.update_tutorial
       break
     } else {
       update ./action.js and try to fix the issues
@@ -119,8 +124,17 @@ tasks {
     create 1 new test covering all possible senarios in this task
   }
 
-  task {
+  task (completed) {
     please add support for using html tags such as table,tr,td to generate table in markdown.
     create 2 new tests covering all possible senarios in this task
+  }
+
+  task.bq (completed){
+    make bq the alias of blockquote
+    create 1 new test covering all possible senarios in this task
+  }
+
+  task (completed) {
+    apply logic.update_tutorial for task.bq change
   }
 }

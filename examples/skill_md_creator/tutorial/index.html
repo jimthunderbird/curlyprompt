@@ -914,20 +914,24 @@ Keep migrations *small* and focused</pre>
 
   <section id="blockquote">
     <h2>Blockquote</h2>
-    <p><code>blockquote:TEXT</code> becomes <code>&gt; TEXT</code>. Inline formatting is applied.</p>
+    <p><code>blockquote:TEXT</code> (or its alias <code>bq:TEXT</code>) becomes <code>&gt; TEXT</code>. Inline formatting is applied.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
         <pre><span class="el">blockquote</span>:This is a very important quote.
+<span class="el">bq</span>:Short alias works the same way.
 <span class="el">blockquote</span>:Another with <span class="kw">strong:</span>bold content inside.</pre>
       </div>
       <div class="example-col">
         <span class="label">Markdown Output</span>
         <pre>&gt; This is a very important quote.
 
+&gt; Short alias works the same way.
+
 &gt; Another with **bold** content inside.</pre>
       </div>
     </div>
+    <div class="tip"><strong>Tip:</strong> <code>bq:</code> is an exact alias for <code>blockquote:</code>. Use whichever you prefer.</div>
   </section>
 
   <section id="hr">
