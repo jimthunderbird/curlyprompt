@@ -1,0 +1,15 @@
+skill {
+  name: Link Flexible Spacing Test
+  description: Test link brace syntax with various spacing and separators
+  content {
+    p:visit link{display:"Google" url:"https://www.google.com"} for search
+    p:visit link{ display:"Google" , url:"https://www.google.com"} for search
+    p:visit link{ display:"Google" url:"https://www.google.com"} for search
+    p:visit link{  display:"Google"   url:"https://www.google.com"} for search
+    p:visit link {display:"Google" url:"https://www.google.com"} for search
+    p:visit link  {display:"Google" url:"https://www.google.com"} for search
+    p:visit link   {  display:"Google"   url:"https://www.google.com"  } for search
+    p:visit link{url:"https://www.google.com",display:"Google"} for search
+    p:visit link{  url:"https://www.google.com"  ,  display:"Google"  } for search
+  }
+}

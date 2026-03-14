@@ -197,4 +197,9 @@ tasks {
       li:step 3
     }
   }
+
+  task (completed){
+    for link, it will be behaving the same as img tag, the spacing between the link and { and the attribute separator and spacing inside of link { } are as liberal as the img tag
+    create 1 new test for this task
+  }
 }
