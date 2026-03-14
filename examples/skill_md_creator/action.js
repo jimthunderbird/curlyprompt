@@ -159,7 +159,7 @@ class Converter {
       if (line === '' || line === '}') continue;
 
       // Handle headers
-      let headerMatch = line.match(/^(h[1-3]):(.*)/);
+      let headerMatch = line.match(/^(h[1-6]):(.*)/);
       if (headerMatch) {
         let level = parseInt(headerMatch[1].substring(1));
         let text = headerMatch[2].trim();
@@ -316,6 +316,55 @@ class Converter {
         let path = rest.substring(colonIdx + 1);
         output.push('![' + alt + '](' + path + ')');
         output.push('');
+        continue;
+      }
+
+      // Handle tables
+      if (line === 'table {' || line.startsWith('table {')) {
+        let rows = [];
+        let hasHeader = false;
+        i++;
+        while (i < lines.length) {
+          let inner = lines[i].trim();
+          if (inner === '}') break;
+          if (inner === 'tr {' || inner.startsWith('tr {')) {
+            let cells = [];
+            let isHeaderRow = false;
+            i++;
+            while (i < lines.length) {
+              let cellLine = lines[i].trim();
+              if (cellLine === '}') break;
+              if (cellLine.startsWith('th:')) {
+                isHeaderRow = true;
+                let text = cellLine.substring(3).trim();
+                text = this.processFormatting(text);
+                cells.push(text);
+              } else if (cellLine.startsWith('td:')) {
+                let text = cellLine.substring(3).trim();
+                text = this.processFormatting(text);
+                cells.push(text);
+              }
+              i++;
+            }
+            rows.push({ cells, isHeader: isHeaderRow });
+            if (isHeaderRow) hasHeader = true;
+          }
+          i++;
+        }
+        if (rows.length > 0) {
+          let firstRow = rows[0];
+          let colCount = firstRow.cells.length;
+          // Emit header row
+          output.push('| ' + firstRow.cells.join(' | ') + ' |');
+          // Emit separator
+          output.push('| ' + Array(colCount).fill('---').join(' | ') + ' |');
+          // Emit data rows (skip first row since it's used as header)
+          let startIdx = 1;
+          for (let r = startIdx; r < rows.length; r++) {
+            output.push('| ' + rows[r].cells.join(' | ') + ' |');
+          }
+          output.push('');
+        }
         continue;
       }
 

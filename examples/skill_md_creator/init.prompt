@@ -113,4 +113,14 @@ tasks {
   task (completed) {
     for links, also mimic task.image_tag_format
   }
+
+  task (completed){
+    please add support to h4,h5,h6, same as h1
+    create 1 new test covering all possible senarios in this task
+  }
+
+  task {
+    please add support for using html tags such as table,tr,td to generate table in markdown.
+    create 2 new tests covering all possible senarios in this task
+  }
 }

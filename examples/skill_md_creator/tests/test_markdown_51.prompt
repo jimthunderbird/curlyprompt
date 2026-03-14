@@ -1,0 +1,24 @@
+skill {
+  name: Table Test Basic
+  content {
+    h1:Simple Table
+
+    table {
+      tr {
+        td: Name
+        td: Age
+        td: City
+      }
+      tr {
+        td: Alice
+        td: 30
+        td: New York
+      }
+      tr {
+        td: Bob
+        td: 25
+        td: London
+      }
+    }
+  }
+}

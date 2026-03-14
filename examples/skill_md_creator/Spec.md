@@ -18,7 +18,7 @@
 
 6. **YAML frontmatter output** — Output starts with `---` delimited YAML frontmatter. Keys appear in source order. A blank line follows the closing `---`.
 
-7. **Headers (`h1:`, `h2:`, `h3:`)** — `h1:Title` becomes `# Title`, `h2:` becomes `##`, `h3:` becomes `###`. Each header is followed by a blank line. Inline formatting is applied to header text.
+7. **Headers (`h1:` through `h6:`)** — `h1:Title` becomes `# Title`, `h2:` becomes `##`, `h3:` becomes `###`, `h4:` becomes `####`, `h5:` becomes `#####`, `h6:` becomes `######`. Each header is followed by a blank line. Inline formatting is applied to header text.
 
 8. **Header section braces (`h1:Title {`)** — When a header line ends with `{`, the `{` is stripped from the title. The matching closing `}` is silently consumed. This is structural grouping only — no effect on Markdown indentation.
 
@@ -66,7 +66,7 @@
 
 29. **Content block brace depth tracking** — When entering `content { }` or `body { }`, lines are collected using brace depth tracking (same rules as code blocks) to handle nested section braces.
 
-30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote:`, (10) `hr`, (11) `img:`, (12) `li:`, (13) `code:`.
+30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote:`, (10) `hr`, (11) `img:`, (12) `table {`, (13) `li:`, (14) `code:`.
 
 31. **`include` frontmatter key** — `include: global-restriction.md` adds an include path to the frontmatter. Quotes stripped.
 
@@ -76,8 +76,10 @@
 
 34. **Synchronous file I/O** — Uses `fs.readFileSync` (UTF-8) for reading and `fs.writeFileSync` for writing. No async patterns.
 
-35. **CLI interface** — `process.argv[2]` is the source file, `process.argv[3]` is the target file. Fewer than 4 arguments causes silent exit. No flags or `--help`.
+35. **Table (`table { }`)** — Contains `tr { }` row blocks, each containing `td:` (data) or `th:` (header) cell lines. The first row is always used as the header row in Markdown output (whether it uses `th:` or `td:`). A `| --- | ... |` separator is emitted after the header row. Remaining rows are emitted as data rows. Cells support inline formatting via `processFormatting()`. Trailing blank line after the table.
 
-36. **Static `Converter` class** — Exports a single static class with methods: `convertCurlyPromptToSKILL(source, target)`, `parseFrontmatterLine(...)`, `processFormatting(text)`, `processContentLines(lines, output)`.
+36. **CLI interface** — `process.argv[2]` is the source file, `process.argv[3]` is the target file. Fewer than 4 arguments causes silent exit. No flags or `--help`.
 
-37. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
+37. **Static `Converter` class** — Exports a single static class with methods: `convertCurlyPromptToSKILL(source, target)`, `parseFrontmatterLine(...)`, `processFormatting(text)`, `processContentLines(lines, output)`.
+
+38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
