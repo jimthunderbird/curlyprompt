@@ -1,6 +1,6 @@
-# Spec: CurlyPrompt-to-SKILL Markdown Converter — Feature List
+# Spec: CurlySkillConverter — Feature List
 
-`action.js` is a Node.js CLI tool that converts CurlyPrompt DSL (`.prompt` files) into SKILL Markdown (`.md` files). Invocation: `node action.js <source.prompt> <target.md>`.
+`convert.js` is a Node.js CLI tool that converts CurlyPrompt DSL (`.prompt` files) into SKILL Markdown (`.md` files). Invocation: `node convert.js <source.prompt> <target.md>`.
 
 ---
 
@@ -84,14 +84,12 @@
 
 36. **CLI interface** — `process.argv[2]` is the source file, `process.argv[3]` is the target file. Fewer than 4 arguments causes silent exit. No flags or `--help`.
 
-37. **Static `Converter` class** — Exports a single static class with methods: `convertCurlyPromptToSKILL(source, target)`, `parseFrontmatterLine(...)`, `processFormatting(text)`, `processContentLines(lines, output)`.
+37. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
 
-38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
+38. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`it`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
 
-39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`it`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
+39. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.
 
-40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.
+40. **Line break (`br:`)** — A line that is exactly `br:` outputs a blank line in the Markdown, acting as a line break. No HTML `<br>` tag is used; instead, a new blank line is emitted. The colon is required — `br` without a colon is not recognized. Works both as a standalone content line and inside paragraph blocks (`p { }`). Processed before horizontal rules in the element dispatch order.
 
-41. **Line break (`br:`)** — A line that is exactly `br:` outputs a blank line in the Markdown, acting as a line break. No HTML `<br>` tag is used; instead, a new blank line is emitted. The colon is required — `br` without a colon is not recognized. Works both as a standalone content line and inside paragraph blocks (`p { }`). Processed before horizontal rules in the element dispatch order.
-
-42. **Language-specific code block (`code.<lang> { }` / `code.<lang>:TEXT`)** — `code.<language_name>` behaves like the `code` tag but generates a fenced code block with a language specifier. Block form: `code.php { ... }` produces `` ```php ... ``` ``. Inline form: `code.bash:npm run build` produces `` ```bash\nnpm run build\n``` ``. Supports all the same brace depth tracking and indentation stripping as plain `code { }`. The language name follows the dot and must be a word character sequence (`\w+`).
+41. **Language-specific code block (`code.<lang> { }` / `code.<lang>:TEXT`)** — `code.<language_name>` behaves like the `code` tag but generates a fenced code block with a language specifier. Block form: `code.php { ... }` produces `` ```php ... ``` ``. Inline form: `code.bash:npm run build` produces `` ```bash\nnpm run build\n``` ``. Supports all the same brace depth tracking and indentation stripping as plain `code { }`. The language name follows the dot and must be a word character sequence (`\w+`).
