@@ -22,7 +22,7 @@ logic.run_tests(task_prompt_file_name) {
       add task_prompt_file_name to {completed_tasks_list}, if task_prompt_file_name already exists in {completed_tasks_list}, update {completed_tasks_list}, remove it and append it at the end of the list
       break
     } else {
-      update ./convert.js and try to fix the issues
+      update ./converter.js and try to fix the issues
     }
   }
 }
