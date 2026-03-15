@@ -5,7 +5,7 @@ skill {
   version: "1.0"
   content {
     h1:Using Italic Text
-    p:This is strong{italic{important}} and this is also italic{critical} information.
+    p:This is b{i{important}} and this is also i{b{critical}} information.
     p:Combine strong{bold} with italic{italic} in one line.
   }
 }
