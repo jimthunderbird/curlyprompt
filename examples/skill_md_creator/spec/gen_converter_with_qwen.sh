@@ -1,0 +1,1 @@
+{ echo "generate javascript code based on the following spec\n"; cat Spec.md; } | ollama run qwen3.5:9b | awk '/```javascript/ {show=1; next} /```/ {show=0} show {print; fflush()}' | tee convert_qwen.js

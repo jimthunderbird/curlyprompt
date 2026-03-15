@@ -1,0 +1,5 @@
+peform modification and improvement of ./ask_gemini.sh based on the following task list, DO NOT peform task.completed
+
+task {
+  it should accept cli argument -p to let user input a command prompt 
+}
