@@ -1,0 +1,1 @@
+sh ask_gemini.sh -p "please generate javascript code based on the following spec, no extra word and no explanation, only return the javascript codeblock, do not open up canvas to edit!: $(cat Spec.md)" && cp gemini_output.py converter.js

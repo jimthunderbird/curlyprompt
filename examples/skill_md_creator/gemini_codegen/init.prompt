@@ -1,5 +1,21 @@
 peform modification and improvement of ./ask_gemini.sh based on the following task list, DO NOT peform task.completed
 
-task {
+task.completed {
   it should accept cli argument -p to let user input a command prompt 
+}
+
+task.completed {
+  examine ./code_gen.sh and see how to generate ./converter.js, when i run: node converter.js, it said:
+  let output = "---
+                     ^^^^
+
+SyntaxError: Invalid or unexpected token
+}
+
+task.completed {
+  in ./converter.js, i noticed:
+  md += "> " + this.processFormatting(line.split(':')[1].trim()) + "
+
+";
+  this breaks: node converter.js
 }

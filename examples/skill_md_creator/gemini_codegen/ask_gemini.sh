@@ -254,10 +254,12 @@ done
 # Step 5: Extract code block from the response
 echo "[5/5] Capturing code block from response..."
 
-RESULT=$(osascript <<'ASCRIPT' 2>/dev/null || echo ""
+RESULT_B64=$(osascript <<'ASCRIPT' 2>/dev/null || echo ""
 tell application "Google Chrome"
   set jsResult to execute active tab of front window javascript "
     (function() {
+      var text = '';
+
       // Try to extract code block content specifically
       var codeSelectors = [
         'code-block pre',
@@ -278,36 +280,45 @@ tell application "Google Chrome"
       }
 
       if (codeEl) {
-        return codeEl.innerText || codeEl.textContent;
+        text = codeEl.innerText || codeEl.textContent;
+      } else {
+        // Fallback: extract from full response markdown
+        var mdSelectors = [
+          'message-content .markdown',
+          '.model-response-text .markdown',
+          '.response-container .markdown',
+          '[data-message-author-role=\"model\"] .markdown-main-panel',
+          '.response-content',
+          '.markdown'
+        ];
+
+        var responses = null;
+        for (var j = 0; j < mdSelectors.length; j++) {
+          responses = document.querySelectorAll(mdSelectors[j]);
+          if (responses.length > 0) break;
+        }
+
+        if (responses && responses.length > 0) {
+          text = responses[responses.length - 1].innerText;
+        }
       }
 
-      // Fallback: extract from full response markdown
-      var mdSelectors = [
-        'message-content .markdown',
-        '.model-response-text .markdown',
-        '.response-container .markdown',
-        '[data-message-author-role=\"model\"] .markdown-main-panel',
-        '.response-content',
-        '.markdown'
-      ];
-
-      var responses = null;
-      for (var j = 0; j < mdSelectors.length; j++) {
-        responses = document.querySelectorAll(mdSelectors[j]);
-        if (responses.length > 0) break;
-      }
-
-      if (responses && responses.length > 0) {
-        return responses[responses.length - 1].innerText;
-      }
-
-      return '';
+      if (!text) return '';
+      // Base64-encode to preserve escape sequences through the AppleScript bridge
+      return btoa(unescape(encodeURIComponent(text)));
     })();
   "
   return jsResult
 end tell
 ASCRIPT
 )
+
+# Decode the base64 result
+if [ -n "$RESULT_B64" ]; then
+  RESULT=$(printf '%s' "$RESULT_B64" | base64 --decode 2>/dev/null || echo "")
+else
+  RESULT=""
+fi
 
 if [ -z "$RESULT" ]; then
   echo ""
@@ -318,7 +329,7 @@ if [ -z "$RESULT" ]; then
 fi
 
 # Remove "Python" from the first line if present, then save to .py file
-echo "$RESULT" | sed '1{s/^Python$//;/^$/d;}' > "$TARGET_PY"
+printf '%s\n' "$RESULT" | sed '1{s/^Python$//;/^$/d;}' > "$TARGET_PY"
 
 echo ""
 echo "=== Saved to $TARGET_PY ==="

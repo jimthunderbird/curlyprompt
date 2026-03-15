@@ -1,0 +1,308 @@
+[1/5] Prompt copied to clipboard from inline -p argument
+       Target output file: gemini_output.py
+[2/5] Opening Gemini in Chrome...
+[3/5] Gemini loaded. Pasting prompt and submitting...
+[4/5] Prompt submitted. Waiting for response...
+[5/5] Capturing code block from response...
+
+=== Saved to gemini_output.py ===
+
+const fs = require('fs');
+
+class Converter {
+    static convertCurlyPromptToSKILL(source_prompt_file, target_md_file) {
+        const input = fs.readFileSync(source_prompt_file, 'utf8');
+        const skillMatch = input.match(/skill\s*\{([\s\S]*)\}/);
+        if (!skillMatch) return;
+
+        const skillContent = skillMatch[1];
+        let frontmatter = {};
+        let contentBody = "";
+
+        // Identify Blocks
+        const headerMatch = skillContent.match(/(?:header|head)\s*\{([\s\S]*?)\}\s*(?:body|content)\s*\{([\s\S]*)\}/);
+        if (headerMatch) {
+            frontmatter = this.parseFrontmatter(headerMatch[1]);
+            contentBody = headerMatch[2];
+        } else {
+            const splitIdx = skillContent.indexOf('content {') !== -1 ? skillContent.indexOf('content {') : skillContent.indexOf('body {');
+            if (splitIdx !== -1) {
+                frontmatter = this.parseFrontmatter(skillContent.substring(0, splitIdx));
+                const bodyPart = skillContent.substring(splitIdx);
+                const bodyMatch = bodyPart.match(/(?:body|content)\s*\{([\s\S]*)\}/);
+                contentBody = bodyMatch ? bodyMatch[1] : "";
+            }
+        }
+
+        let output = "---
+";
+        for (const [key, value] of Object.entries(frontmatter)) {
+            if (typeof value === 'object') {
+                output += `${key}:
+`;
+                for (const [subK, subV] of Object.entries(value)) {
+                    output += `  ${subK}: ${subV}
+`;
+                }
+            } else {
+                output += `${key}: ${value}
+`;
+            }
+        }
+        output += "---
+
+";
+
+        output += this.parseBody(contentBody);
+        fs.writeFileSync(target_md_file, output.trimEnd() + "
+");
+    }
+
+    static parseFrontmatter(text) {
+        const lines = text.split('
+');
+        const data = {};
+        let inMeta = false;
+        let metaObj = {};
+
+        for (let line of lines) {
+            line = line.trim();
+            if (!line || line === '}') {
+                if (line === '}' && inMeta) inMeta = false;
+                continue;
+            }
+            if (line.startsWith('meta')) {
+                inMeta = true;
+                data.meta = metaObj;
+                continue;
+            }
+
+            const colonIdx = line.indexOf(':');
+            if (colonIdx !== -1) {
+                const key = line.substring(0, colonIdx).trim();
+                const val = line.substring(colonIdx + 1).trim().replace(/"/g, '');
+                if (inMeta) metaObj[key] = val;
+                else data[key] = val;
+            }
+        }
+        return data;
+    }
+
+    static processFormatting(text) {
+        // 1. link{...}
+        text = text.replace(/link\s*\{display:"(.*?)"\s*,?\s*url:"(.*?)"\}/g, '[$1]($2)');
+        text = text.replace(/link\s*\{url:"(.*?)"\s*,?\s*display:"(.*?)"\}/g, '[$2]($1)');
+        // 2. link:
+        text = text.replace(/link:(.+?):(https?:\/\/\S+)/g, '[$1]($2)');
+        // 3. strong{...}
+        text = text.replace(/(?:strong|bold|b)\{(.*?)\}/g, '**$1**');
+        // 4. italic{...}
+        text = text.replace(/(?:italic|it|i)\{(.*?)\}/g, '*$1*');
+        // 5. code{...}
+        text = text.replace(/code\{(.*?)\}/g, '`$1`');
+        // 6. strong:
+        text = text.replace(/(?:strong|bold|b):(.*)$/g, '**$1**');
+        // 7. italic:
+        text = text.replace(/(?:italic|it|i):(.*)$/g, '*$1*');
+        // 8. code:
+        text = text.replace(/code:(.*)$/g, '`$1`');
+        return text;
+    }
+
+    static parseBody(content) {
+        let lines = content.split('
+');
+        let result = "";
+        let i = 0;
+
+        const getBlock = (startIdx, openBrace = '{', closeBrace = '}') => {
+            let depth = 0;
+            let blockLines = [];
+            for (let j = startIdx; j < lines.length; j++) {
+                let line = lines[j];
+                if (line.includes(openBrace)) depth += (line.split(openBrace).length - 1);
+                if (line.includes(closeBrace)) depth -= (line.split(closeBrace).length - 1);
+                blockLines.push(line);
+                if (depth <= 0) { i = j; break; }
+            }
+            return blockLines.slice(1, -1);
+        };
+
+        while (i < lines.length) {
+            let line = lines[i].trim();
+            if (!line || line === '}') { i++; continue; }
+
+            // Headers
+            let hMatch = line.match(/^(h[1-6]):(.*)/);
+            if (hMatch) {
+                let level = hMatch[1][1];
+                let title = hMatch[2].replace(/\{$/, '').trim();
+                result += "#".repeat(level) + " " + this.processFormatting(title) + "
+
+";
+            }
+            // p{...}
+            else if (line.match(/^p\s*\{(.*)\}/)) {
+                result += this.processFormatting(line.match(/^p\s*\{(.*)\}/)[1]) + "
+
+";
+            }
+            // p {
+            else if (line.match(/^p\s*\{/)) {
+                let pLines = getBlock(i);
+                pLines.forEach(l => { if(l.trim()) result += this.processFormatting(l.trim()) + "
+"; });
+                result += "
+";
+            }
+            // p:
+            else if (line.startsWith('p:')) {
+                result += this.processFormatting(line.substring(2).trim()) + "
+
+";
+            }
+            // ul { / ol {
+            else if (line.match(/^(ul|ol)\s*\{/)) {
+                let type = line.startsWith('ul') ? 'ul' : 'ol';
+                let listLines = getBlock(i);
+                let count = 1;
+                listLines.forEach(l => {
+                    if (l.trim().startsWith('li:')) {
+                        let text = this.processFormatting(l.trim().substring(3).trim());
+                        result += (type === 'ul' ? '- ' : `${count++}. `) + text + "
+";
+                    }
+                });
+                result += "
+";
+            }
+            // code blocks
+            else if (line.match(/^code(\.\w+)?\s*\{/)) {
+                let lang = line.match(/^code\.(\w+)/);
+                let langStr = lang ? lang[1] : "";
+                let codeLines = getBlock(i);
+                // Strip common indent
+                let minIndent = Infinity;
+                codeLines.filter(l => l.trim()).forEach(l => {
+                    let match = l.match(/^\s*/);
+                    if (match[0].length < minIndent) minIndent = match[0].length;
+                });
+                result += "```" + langStr + "
+";
+                codeLines.forEach(l => result += (l.length >= minIndent ? l.substring(minIndent) : l) + "
+");
+                result += "```
+
+";
+            }
+            // blockquote {
+            else if (line.match(/^(blockquote|bq)\s*\{/)) {
+                getBlock(i).forEach(l => { if(l.trim()) result += "> " + this.processFormatting(l.trim()) + "
+"; });
+                result += "
+";
+            }
+            // blockquote:
+            else if (line.match(/^(blockquote|bq):/)) {
+                result += "> " + this.processFormatting(line.substring(line.indexOf(':') + 1).trim()) + "
+
+";
+            }
+            // br:
+            else if (line === 'br:') {
+                result += "
+";
+            }
+            // hr
+            else if (line === 'hr') {
+                result += "---
+
+";
+            }
+            // img{...}
+            else if (line.match(/^img\s*\{/)) {
+                let src = line.match(/src:"(.*?)"/)[1];
+                let alt = line.match(/alt:"(.*?)"/)[1];
+                result += `![${alt}](${src})
+
+`;
+            }
+            // img:
+            else if (line.startsWith('img:')) {
+                let parts = line.substring(4).split(':');
+                result += `![${parts[0]}](${parts[1]})
+
+`;
+            }
+            // table {
+            else if (line.startsWith('table')) {
+                let tableLines = getBlock(i, '{', '}');
+                let rows = [];
+                for(let j=0; j<tableLines.length; j++) {
+                    if(tableLines[j].trim().startsWith('tr')) {
+                        let rowDepth = 0;
+                        let rowContent = [];
+                        for(let k=j; k<tableLines.length; k++) {
+                            let rL = tableLines[k];
+                            if(rL.includes('{')) rowDepth++;
+                            if(rL.includes('}')) rowDepth--;
+                            if(rL.trim().startsWith('td:') || rL.trim().startsWith('th:')) rowContent.push(this.processFormatting(rL.trim().substring(3).trim()));
+                            if(rowDepth <= 0 && k > j) { j = k; break; }
+                        }
+                        rows.push(rowContent);
+                    }
+                }
+                if(rows.length > 0) {
+                    result += "| " + rows[0].join(" | ") + " |
+";
+                    result += "| " + rows[0].map(() => "---").join(" | ") + " |
+";
+                    for(let r=1; r<rows.length; r++) result += "| " + rows[r].join(" | ") + " |
+";
+                    result += "
+";
+                }
+            }
+            // checklist {
+            else if (line.match(/^(checklist|cl)\s*\{/)) {
+                getBlock(i).forEach(l => {
+                    let tl = l.trim();
+                    if(!tl) return;
+                    let checked = tl.startsWith('item.checked:') || tl.startsWith('itm.c:');
+                    let txt = tl.substring(tl.indexOf(':') + 1).trim();
+                    result += `- [${checked ? 'x' : ' '}] ${this.processFormatting(txt)}
+`;
+                });
+                result += "
+";
+            }
+            // standalone li:
+            else if (line.startsWith('li:')) {
+                result += "- " + this.processFormatting(line.substring(3).trim()) + "
+";
+            }
+            // language specific code inline
+            else if (line.match(/^code\.(\w+):/)) {
+                let m = line.match(/^code\.(\w+):(.*)/);
+                result += "```" + m[1] + "
+" + m[2].trim() + "
+```
+
+";
+            }
+            // standalone code:
+            else if (line.startsWith('code:')) {
+                result += "`" + line.substring(5).trim() + "`
+
+";
+            }
+
+            i++;
+        }
+        return result;
+    }
+}
+
+if (process.argv.length >= 4) {
+    Converter.convertCurlyPromptToSKILL(process.argv[2], process.argv[3]);
+}
