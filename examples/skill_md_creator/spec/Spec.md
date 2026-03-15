@@ -1,6 +1,6 @@
-# Spec: CurlySkillConverter — Feature List
+# Spec: convert.js — Feature List
 
-`convert.js` is a Node.js CLI tool that converts CurlyPrompt DSL (`.prompt` files) into SKILL Markdown (`.md` files). Invocation: `node convert.js <source.prompt> <target.md>`.
+`convert.js` is a Node.js CLI tool that converts CurlyPrompt DSL (`.prompt` files) into SKILL Markdown (`.md` files). Invocation: `node convert.js <source.prompt> <target.md>`. The file defines a `Converter` class with a static method `convertCurlyPromptToSKILL(source_prompt_file, target_md_file)` that performs the conversion. The class is not exported.
 
 ---
 
@@ -70,7 +70,7 @@
 
 29. **Content block brace depth tracking** — When entering `content { }` or `body { }`, lines are collected using brace depth tracking (same rules as code blocks) to handle nested section braces.
 
-30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote {`/`bq {`, (10) `blockquote:`/`bq:`, (11) `br`, (12) `hr`, (13) `img{...}`, (14) `img:`, (15) `table {`, (16) `checklist {`/`cl {`, (17) `li:`, (18) `code:`.
+30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`/`code.<lang> {`, (9) `blockquote {`/`bq {`, (10) `blockquote:`/`bq:`, (11) `br:`, (12) `hr`, (13) `img{...}`, (14) `img:`, (15) `table {`, (16) `checklist {`/`cl {`, (17) `li:`, (18) `code.<lang>:TEXT`, (19) `code:`.
 
 31. **`include` frontmatter key** — `include: global-restriction.md` adds an include path to the frontmatter. Quotes stripped.
 
