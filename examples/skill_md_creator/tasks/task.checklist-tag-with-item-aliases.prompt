@@ -1,0 +1,26 @@
+add a new tag: checklist {
+  <input>
+  checklist {
+    item.checked:checked item 1
+    item.checked:checked item 2
+    item.checked:checked item 3
+    item:unchecked item 1
+    item:unchecked item 2
+    item:unchecked item 3
+    item:unchecked item 4
+  }
+  </input>
+  <output>
+  - [x] checked item 1
+  - [x] checked item 2
+  - [x] checked item 3
+  - [ ] uncheck item 1
+  - [ ] uncheck item 2
+  - [ ] uncheck item 3
+  - [ ] uncheck item 4
+  </output>
+
+  checklist has alias: cl
+  item.checked has alias: itm.c
+  item.unchecked has alias: itm.u
+}

@@ -1,0 +1,7 @@
+for the image one liner, we the spaces between img and the starting { irrelevant
+<input>
+img {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+img   {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
+</input>
+}

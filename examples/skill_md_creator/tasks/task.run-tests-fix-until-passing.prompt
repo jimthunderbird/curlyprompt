@@ -1,0 +1,14 @@
+perform a loop {
+  let result = sh run_tests.sh
+  if (result shows all tests passed) {
+    update ./Spec.md
+    apply logic.update_tutorial
+    examine ./init.prompt, mark all non-completed tasks as completed, like:
+    task (completed) {
+      <the task detail here>
+    }
+    break
+  } else {
+    update ./action.js and try to fix the issues
+  }
+}

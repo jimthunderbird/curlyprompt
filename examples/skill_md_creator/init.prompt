@@ -2,23 +2,22 @@ logic.update_tutorial {
   apply only most relevant updates to ./tutorial's index.html, do not change tutorial's UI/UX
 }
 
-logic.create_tests {
+logic.create_tests_for_task(task) {
   - find num of *.prompt file as {num_of_test_cases}
   - let test_number = {num_of_test_cases} + 1
-  - create tests/test_markdown_{test_number}.prompt as the source test prompt
-  - create tests/test_markdown_{test_number}.md as the target markdown file
+  - based on {task} {
+    - create tests/test_markdown_{test_number}.prompt as the source test prompt
+    - create tests/test_markdown_{test_number}.md as the target markdown file
+  }
 }
 
-logic.run_tests {
+logic.run_tests(task_prompt_file_name) {
   perform a loop {
     let result = sh run_tests.sh
     if (result shows all tests passed) {
       update ./Spec.md
       apply logic.update_tutorial
-      examine ./init.prompt, mark all non-completed tasks as completed, like:
-      task (completed) {
-        <the task detail here>
-      }
+      add task_prompt_file_name to ./completed_tasks.txt, if task_prompt_file_name already exists in ./completed_tasks.txt, update ./completed_tasks.tx, remove it and append it at the end of the list
       break
     } else {
       update ./action.js and try to fix the issues
@@ -26,254 +25,12 @@ logic.run_tests {
   }
 }
 
-run the following tasks, skip the task that is marked as completed, after the task is run {
-  in ./tests:
-  start logic.create_tests
-  start logic.run_test 
-}
-
-tasks {
-  task (completed) {
-    <input>
-    p {
-      this is a simple paragraph
-      this is a second line of the paragraph
-    }
-    </input>
-    <output>
-    this is a simple paragraph
-    this is a second line of the paragraph
-    </output>
-  }
-
-  task (completed) {
-    in addition to keywords like "name","description"..., add support for "include" 
-  }
-
-  task (completed) {
-    add support to keywords "meta"
-    <input>
-    skill {
-      name: Simple Skill
-      meta {
-        attr1: attribute 1
-        attr2: attribute 2
-        ...
-      }
-    } 
-    </input>
-    <output>
-    ---
-    name: "Simple Skill"
-    meta:
-    attr1: "attriute 1"
-    attr2: "attriute 2"
-    ...
-    ---
-    </output>
-    the meta can contain N attributes, like attr3, attr4...
-  }
-
-  task (completed) {
-    feature request {
-      support header and content section, example:
-      ./tests/test_markdown_35.prompt and ./tests/test_markdown_35.md
-      header can contain any nested attributes
-      body is basically an alias of content
-    }
-  }
-
-  task (completed) {
-    feature request {
-      for p, strong, italic, support "same line open and close" , example:
-      <input>
-      strong{this is very important}, rest of them are ok
-      </input>
-      <output>
-      **this is very important**, rest of them are ok
-      </output>
-    }
-  }
-
-  task (completed) {
-    feature request {
-      make head an alias of header
-    }
-  }
-
-  task (completed) {
-    feature request {
-      for image, we can specify the following in one line, remember, spacing inside does not matter, comma does not matter, if comma does not exist, as long as there is at least one space in between, it should be ok:
-      <input>
-      img{src:"http://www.dummyimage.com/dummy.jpg",alt:"dummy image"}
-      img{ src:"http://www.dummyimage.com/dummy.jpg" , alt:"dummy image"}
-      img{ src:"http://www.dummyimage.com/dummy.jpg" alt:"dummy image"}
-      img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
-      </input>
-    }
-  }
-
-  task.image_tag_format (completed) {
-    for the image one liner, we the spaces between img and the starting { irrelevant
-    <input>
-    img {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
-    img{  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
-    img   {  src:"http://www.dummyimage.com/dummy.jpg"   alt:"dummy image"}
-    </input>
-    }
-  }
-
-  task (completed) {
-    for links, also mimic task.image_tag_format
-  }
-
-  task (completed){
-    please add support to h4,h5,h6, same as h1
-  }
-
-  task (completed) {
-    please add support for using html tags such as table,tr,td to generate table in markdown.
-  }
-
-  task.bq (completed){
-    make bq the alias of blockquote
-  }
-
-  task (completed) {
-    apply logic.update_tutorial for task.bq change
-  }
-
-  task.code_inline_brace (completed) {
-    the code block should also support inline brace like strong
-  }
-
-  task (completed){
-    apply logic.update_tutorial for task.code_inline_brace
-  }
-
-  task (completed) {
-    in ./tutorial/index.html, section: Inline Code, it should show sample code for code block inline brace
-  }
-
-  task (completed) {
-    In Markdown, the structure is flat and linear. The h1 to h6 header doesn't "wrap" the text below it; it simply marks a point where a new section begins.
-
-    <existing>
-    h1:Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:step 1
-        li:step 2
-        li:step 3
-      }
-    }
-    </existing>
-    <expect>
-    h1:Instruction
-    p:this is a very strong:important instruction
-    ul {
-      li:step 1
-      li:step 2
-      li:step 3
-    }
-    </expect>
-  }
-
-  task (completed){
-    in ./tutorial/index.html, Header Section Braces, the code example shows:
-    h1:Instruction {
-      p:this is a very strong:important instruction
-      ul {
-        li:step 1
-        li:step 2
-        li:step 3
-      }
-    }
-
-    it should show as:
-    h1:Instruction
-    p:this is a very strong:important instruction
-    ul {
-      li:step 1
-      li:step 2
-      li:step 3
-    }
-  }
-
-  task (completed){
-    for link, it will be behaving the same as img tag, the spacing between the link and { and the attribute separator and spacing inside of link { } are as liberal as the img tag
-    }
-
-    task.tag_open_effect_until_end_of_current_line (completed) {
-      for all of the following tags: p,h1-h6,italic,strong,code, their behavior should be {
-        if i have strong:this is a paragraph, it will mean **this is a paragraph**
-        with strong:, we will "promote" the strong effect "all the way to the end of the current line"
-        in order to control which words should be marked as strong, we use strong{...} to group them
-        for example:
-        this is a strong{very important} message
-        please make sure the tutorial also reflect the logic mentioned above
-      }
-    }
-
-    task (completed) {
-      we should allow shortcuts: i for italic, b, or bold for strong
-    }
-
-    task (completed) {
-      markdown supports table header:
-      <markdown>
-      | Header 1 | Header 2 | Header 3 |
-      | --- | --- | --- |
-      | Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
-      | Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
-      </markdown>
-      add new tag th to make header in markdown
-    }
-
-    task (completed) {
-      for all tags, the spaces between the <tag_name> and the beginning { should not matter
-      }
-    }
-
-    task (completed) {
-      add a new tag: checklist {
-        <input>
-        checklist {
-          item.checked:checked item 1
-          item.checked:checked item 2
-          item.checked:checked item 3
-          item:unchecked item 1
-          item:unchecked item 2
-          item:unchecked item 3
-          item:unchecked item 4
-        }
-        </input>
-        <output>
-        - [x] checked item 1
-        - [x] checked item 2
-        - [x] checked item 3
-        - [ ] uncheck item 1
-        - [ ] uncheck item 2
-        - [ ] uncheck item 3
-        - [ ] uncheck item 4
-        </output>
-
-        checklist has alias: cl
-        item.checked has alias: itm.c
-        item.unchecked has alias: itm.u
-      }  
-    }
-
-    task (completed) {
-      blockquote can have multiple lines, please add support for:
-      blockquote {
-        ...
-      }
-      or
-      bq {
-        ...
-      }
-      the spacing should be very liberal as other tags
-    }
+let task_prompt_file_names = (run cli: find tasks/ -type f -name "*.prompt" | sed -e 's/tasks\///g')
+for each task_prompt_file_name in task_prompt_file_names {
+  if task_prompt_file_name does not exist in completed_tasks.txt {
+    let task = read ./tasks/{task_prompt_file_name}
+    in ./tests:
+    start logic.create_tests_for_task(task)
+    start logic.run_tests(task_prompt_file_name)
   }
 }

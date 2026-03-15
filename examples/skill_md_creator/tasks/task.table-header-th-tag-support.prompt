@@ -1,0 +1,8 @@
+markdown supports table header:
+<markdown>
+| Header 1 | Header 2 | Header 3 |
+| --- | --- | --- |
+| Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
+| Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
+</markdown>
+add new tag th to make header in markdown

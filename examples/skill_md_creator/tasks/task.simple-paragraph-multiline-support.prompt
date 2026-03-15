@@ -1,0 +1,10 @@
+<input>
+p {
+  this is a simple paragraph
+  this is a second line of the paragraph
+}
+</input>
+<output>
+this is a simple paragraph
+this is a second line of the paragraph
+</output>

@@ -1,0 +1,21 @@
+add support to keywords "meta"
+<input>
+skill {
+  name: Simple Skill
+  meta {
+    attr1: attribute 1
+    attr2: attribute 2
+    ...
+  }
+}
+</input>
+<output>
+---
+name: "Simple Skill"
+meta:
+attr1: "attriute 1"
+attr2: "attriute 2"
+...
+---
+</output>
+the meta can contain N attributes, like attr3, attr4...

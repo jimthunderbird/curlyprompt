@@ -1,0 +1,3 @@
+feature request {
+  make head an alias of header
+}

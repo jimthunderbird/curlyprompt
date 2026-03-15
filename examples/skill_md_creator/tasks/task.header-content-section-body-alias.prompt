@@ -1,0 +1,6 @@
+feature request {
+  support header and content section, example:
+  ./tests/test_markdown_35.prompt and ./tests/test_markdown_35.md
+  header can contain any nested attributes
+  body is basically an alias of content
+}

@@ -1,0 +1,9 @@
+feature request {
+  for p, strong, italic, support "same line open and close" , example:
+  <input>
+  strong{this is very important}, rest of them are ok
+  </input>
+  <output>
+  **this is very important**, rest of them are ok
+  </output>
+}

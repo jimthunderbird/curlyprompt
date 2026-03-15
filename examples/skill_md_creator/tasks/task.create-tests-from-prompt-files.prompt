@@ -1,0 +1,4 @@
+- find num of *.prompt file as {num_of_test_cases}
+- let test_number = {num_of_test_cases} + 1
+- create tests/test_markdown_{test_number}.prompt as the source test prompt
+- create tests/test_markdown_{test_number}.md as the target markdown file
