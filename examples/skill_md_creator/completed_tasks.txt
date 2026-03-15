@@ -29,3 +29,4 @@ task.update-tutorial-for-bq-change.prompt
 task.update-tutorial-with-relevant-changes.prompt
 task.italic-can-have-alias-it.prompt
 task.support-html-line-break.prompt
+task.br-symbol-with-colon-only.prompt

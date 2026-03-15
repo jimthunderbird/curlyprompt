@@ -3,11 +3,11 @@ skill {
   description: "Test that br outputs a blank line instead of an HTML br tag"
   content {
     p:First paragraph
-    br
+    br:
     p:Second paragraph
     p {
       Line one
-      br
+      br:
       Line two
     }
   }

@@ -182,7 +182,7 @@ class Converter {
         while (i < lines.length) {
           let inner = lines[i].trim();
           if (inner === '}') break;
-          if (inner === 'br' || inner === 'br:') {
+          if (inner === 'br:') {
             output.push('');
           } else if (inner !== '') {
             let text = this.processFormatting(inner);
@@ -303,7 +303,7 @@ class Converter {
       }
 
       // Handle line breaks
-      if (line === 'br' || line === 'br:') {
+      if (line === 'br:') {
         output.push('');
         continue;
       }

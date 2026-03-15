@@ -1,0 +1,2 @@
+in the prompt file, the line break tag br: should ways have a colon, not like: br
+update all tests in ./tests to reflect this change as well

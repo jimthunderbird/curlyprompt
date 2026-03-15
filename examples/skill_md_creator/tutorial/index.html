@@ -1014,16 +1014,16 @@ Content in section two.</pre>
 
   <section id="br">
     <h2>Line Break</h2>
-    <p>A line that is exactly <code>br</code> or <code>br:</code> outputs a blank line in the Markdown, acting as a line break. No HTML <code>&lt;br&gt;</code> tag is used. Both forms are equivalent. Works both as a standalone content line and inside paragraph blocks.</p>
+    <p>A line that is exactly <code>br:</code> outputs a blank line in the Markdown, acting as a line break. No HTML <code>&lt;br&gt;</code> tag is used. The colon is required — <code>br</code> without a colon is not recognized. Works both as a standalone content line and inside paragraph blocks.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
         <pre><span class="el">p</span> {
   This is line one
-  <span class="el">br</span>
+  <span class="el">br:</span>
   This is line two
 }
-<span class="el">br</span>
+<span class="el">br:</span>
 <span class="el">p</span>:After break</pre>
       </div>
       <div class="example-col">

@@ -92,4 +92,4 @@
 
 40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.
 
-41. **Line break (`br` / `br:`)** — A line that is exactly `br` or `br:` outputs a blank line in the Markdown, acting as a line break. No HTML `<br>` tag is used; instead, a new blank line is emitted. Both forms are equivalent. Works both as a standalone content line and inside paragraph blocks (`p { }`). Processed before horizontal rules in the element dispatch order.
+41. **Line break (`br:`)** — A line that is exactly `br:` outputs a blank line in the Markdown, acting as a line break. No HTML `<br>` tag is used; instead, a new blank line is emitted. The colon is required — `br` without a colon is not recognized. Works both as a standalone content line and inside paragraph blocks (`p { }`). Processed before horizontal rules in the element dispatch order.
