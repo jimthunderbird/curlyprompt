@@ -292,6 +292,7 @@
   <div class="nav-group">Other Elements</div>
   <a href="#blockquote">Blockquote</a>
   <a href="#hr">Horizontal Rule</a>
+  <a href="#br">Line Break</a>
   <a href="#table">Table</a>
   <a href="#checklist">Checklist</a>
 
@@ -1007,6 +1008,33 @@ Content in section one.
 <span class="md"># Section Two</span>
 
 Content in section two.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="br">
+    <h2>Line Break</h2>
+    <p>A line that is exactly <code>br</code> or <code>br:</code> outputs <code>&lt;br&gt;</code> in the Markdown, acting like an HTML line break. Both forms are equivalent. Works both as a standalone content line and inside paragraph blocks.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">p</span> {
+  This is line one
+  <span class="el">br</span>
+  This is line two
+}
+<span class="el">br</span>
+<span class="el">p</span>:After break</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>This is line one
+&lt;br&gt;
+This is line two
+
+&lt;br&gt;
+
+After break</pre>
       </div>
     </div>
   </section>

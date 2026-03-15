@@ -70,7 +70,7 @@
 
 29. **Content block brace depth tracking** — When entering `content { }` or `body { }`, lines are collected using brace depth tracking (same rules as code blocks) to handle nested section braces.
 
-30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote:`/`bq:`, (10) `hr`, (11) `img:`, (12) `table {`, (13) `li:`, (14) `code:`.
+30. **Element processing dispatch order** — Lines are matched in priority order: (1) skip empty/`}` lines, (2) headers, (3) `p{...}`, (4) `p {`, (5) `p:`, (6) `ul {`, (7) `ol {`, (8) `code {`, (9) `blockquote {`/`bq {`, (10) `blockquote:`/`bq:`, (11) `br`, (12) `hr`, (13) `img{...}`, (14) `img:`, (15) `table {`, (16) `checklist {`/`cl {`, (17) `li:`, (18) `code:`.
 
 31. **`include` frontmatter key** — `include: global-restriction.md` adds an include path to the frontmatter. Quotes stripped.
 
@@ -91,3 +91,5 @@
 39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`it`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
 
 40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.
+
+41. **Line break (`br` / `br:`)** — A line that is exactly `br` or `br:` outputs `<br>` in the Markdown, acting like an HTML line break. Both forms are equivalent. Works both as a standalone content line (followed by a trailing blank line) and inside paragraph blocks (`p { }`). Processed before horizontal rules in the element dispatch order.

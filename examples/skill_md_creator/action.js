@@ -182,7 +182,9 @@ class Converter {
         while (i < lines.length) {
           let inner = lines[i].trim();
           if (inner === '}') break;
-          if (inner !== '') {
+          if (inner === 'br' || inner === 'br:') {
+            output.push('<br>');
+          } else if (inner !== '') {
             let text = this.processFormatting(inner);
             output.push(text);
           }
@@ -296,6 +298,13 @@ class Converter {
         let text = line.substring(prefix.length).trim();
         text = this.processFormatting(text);
         output.push('> ' + text);
+        output.push('');
+        continue;
+      }
+
+      // Handle line breaks
+      if (line === 'br' || line === 'br:') {
+        output.push('<br>');
         output.push('');
         continue;
       }
