@@ -27,3 +27,4 @@ task.tutorial-inline-code-sample-section.prompt
 task.update-tutorial-code-inline-brace.prompt
 task.update-tutorial-for-bq-change.prompt
 task.update-tutorial-with-relevant-changes.prompt
+task.italic-can-have-alias-it.prompt

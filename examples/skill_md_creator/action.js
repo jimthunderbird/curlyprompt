@@ -132,14 +132,14 @@ class Converter {
 
     // Process same-line open/close: strong{...}/bold{...}/b{...}, italic{...}/i{...}, code{...}
     text = text.replace(/(?:strong|bold|b)\s*\{([^}]+)\}/g, '**$1**');
-    text = text.replace(/(?:italic|i)\s*\{([^}]+)\}/g, '*$1*');
+    text = text.replace(/(?:italic|it|i)\s*\{([^}]+)\}/g, '*$1*');
     text = text.replace(/code\s*\{([^}]+)\}/g, '`$1`');
 
     // Process strong/bold/b: captures to end of line
     text = text.replace(/(?:strong|bold|b):(.+)$/, '**$1**');
 
     // Process italic/i: captures to end of line
-    text = text.replace(/(?:italic|i):(.+)$/, '*$1*');
+    text = text.replace(/(?:italic|it|i):(.+)$/, '*$1*');
 
     // Process inline code: captures to end of line
     text = text.replace(/code:\s*(.+)$/, '`$1`');

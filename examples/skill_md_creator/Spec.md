@@ -56,13 +56,13 @@
 
 23. **Inline `strong{...}` / `bold{...}` / `b{...}`** — `strong{important text}` becomes `**important text**`. Same-line brace form. `bold` and `b` are aliases for `strong`.
 
-24. **Inline `italic{...}` / `i{...}`** — `italic{key concept}` becomes `*key concept*`. Same-line brace form. `i` is an alias for `italic`.
+24. **Inline `italic{...}` / `it{...}` / `i{...}`** — `italic{key concept}` becomes `*key concept*`. Same-line brace form. `it` and `i` are aliases for `italic`.
 
 24b. **Inline `code{...}`** — `code{docker build}` becomes `` `docker build` ``. Same-line brace form, consistent with `strong{...}` and `italic{...}`.
 
 25. **End-of-line `strong:TEXT` / `bold:TEXT` / `b:TEXT`** — `strong:` captures everything from the colon to the end of the current line and wraps it in `**...**`. E.g., `strong:bold text and more` → `**bold text and more**`. `bold:` and `b:` are aliases. Use `strong{specific words}` (brace syntax) for fine-grained control over which words are bolded.
 
-26. **End-of-line `italic:TEXT` / `i:TEXT`** — Same mechanics as `strong:` but wraps in `*...*`. `italic:` captures to end of line. `i:` is an alias. Use `italic{specific words}` for fine-grained control.
+26. **End-of-line `italic:TEXT` / `it:TEXT` / `i:TEXT`** — Same mechanics as `strong:` but wraps in `*...*`. `italic:` captures to end of line. `it:` and `i:` are aliases. Use `italic{specific words}` for fine-grained control.
 
 27. **End-of-line `code:TEXT` (inline)** — Same mechanics but wraps in backticks. `code:` captures to end of line. Use `code{specific text}` for fine-grained control.
 
@@ -88,6 +88,6 @@
 
 38. **Zero dependencies** — Uses only the built-in `fs` module. No npm packages required.
 
-39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
+39. **Flexible spacing between tag names and `{`** — For all tags (`skill`, `header`/`head`, `content`/`body`, `meta`, `p`, `ul`, `ol`, `code`, `blockquote`/`bq`, `table`, `tr`, `strong`/`bold`/`b`, `italic`/`it`/`i`, `link`, `img`, `checklist`/`cl`), the amount of whitespace between the tag name and the opening `{` is irrelevant. `p{`, `p {`, `p   {` all work identically. This applies to both block-level tags and inline brace syntax.
 
 40. **Checklist (`checklist { }` / `cl { }`)** — Contains checklist items. `cl` is an alias for `checklist`. Inside the block, `item.checked:TEXT` or `itm.c:TEXT` produces `- [x] TEXT` (checked item). `item:TEXT`, `item.unchecked:TEXT`, or `itm.u:TEXT` produces `- [ ] TEXT` (unchecked item). Inline formatting is applied to item text. Trailing blank line after the list.
