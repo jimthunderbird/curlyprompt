@@ -1,8 +1,13 @@
 ---
+name: Italic Test
+description: Testing italic text rendering
+license: MIT
+version: 1.0
 ---
 
-this is a very **important** instruction
+# Using Italic Text
 
-Use **conventional commits** with format
+This is ***important*** and this is also *critical* information.
 
-- **Nullable**: disabled
+Combine **bold** with *italic* in one line.
+

@@ -1,7 +1,11 @@
 skill {
+  name: "Italic Test"
+  description: "Testing italic text rendering"
+  license: "MIT"
+  version: "1.0"
   content {
-    p:this is a very strong:important instruction
-    p:Use strong:conventional commits with format
-    li:strong:Nullable: disabled
+    h1:Using Italic Text
+    p:This is strong{italic{important}} and this is also italic{critical} information.
+    p:Combine strong{bold} with italic{italic} in one line.
   }
 }
