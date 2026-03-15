@@ -1,1 +1,3 @@
 if we have tag: br or br: in the prompt, it will act like html <br> tag and create new line in the corresponding markdown
+
+in the markdown, it should never have <br>, instead, it should be a brand new line, please update test 67

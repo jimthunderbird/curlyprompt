@@ -1014,7 +1014,7 @@ Content in section two.</pre>
 
   <section id="br">
     <h2>Line Break</h2>
-    <p>A line that is exactly <code>br</code> or <code>br:</code> outputs <code>&lt;br&gt;</code> in the Markdown, acting like an HTML line break. Both forms are equivalent. Works both as a standalone content line and inside paragraph blocks.</p>
+    <p>A line that is exactly <code>br</code> or <code>br:</code> outputs a blank line in the Markdown, acting as a line break. No HTML <code>&lt;br&gt;</code> tag is used. Both forms are equivalent. Works both as a standalone content line and inside paragraph blocks.</p>
     <div class="example">
       <div class="example-col">
         <span class="label">CurlyPrompt</span>
@@ -1029,10 +1029,9 @@ Content in section two.</pre>
       <div class="example-col">
         <span class="label">Markdown Output</span>
         <pre>This is line one
-&lt;br&gt;
+
 This is line two
 
-&lt;br&gt;
 
 After break</pre>
       </div>
