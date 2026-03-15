@@ -15,8 +15,6 @@ task.inline-brace-for-formatting-tags.prompt
 task.link-spacing-liberal-like-img.prompt
 task.links-mimic-image-tag-format.prompt
 task.multiline-blockquote-bq-support.prompt
-task.run-task-list-skip-completed.prompt
-task.run-tests-fix-until-passing.prompt
 task.shortcuts-i-italic-b-bold-strong.prompt
 task.simple-paragraph-multiline-support.prompt
 task.support-h4-h5-h6-header-tags.prompt
@@ -29,3 +27,4 @@ task.update-tutorial-for-bq-change.prompt
 task.italic-can-have-alias-it.prompt
 task.support-html-line-break.prompt
 task.br-symbol-with-colon-only.prompt
+task.code-block-language-tag.prompt

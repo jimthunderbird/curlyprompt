@@ -1,0 +1,22 @@
+add support for new tag:
+code.<langauage_name> 
+it will behavior like the code tag, except this time it can generate a codeblock for a specific language <langauage_name>
+example:
+<input>
+code.php {
+  echo "hello world";
+}
+</input>
+<output>
+```php
+echo "hello world"
+```
+</output>
+<input>
+code.bash:npm run build
+</input>
+<output>
+```bash
+npm run build
+```
+</output>

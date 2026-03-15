@@ -239,8 +239,10 @@ class Converter {
         continue;
       }
 
-      // Handle code blocks
-      if (/^code\s*\{/.test(line)) {
+      // Handle code blocks (with optional language: code { } or code.<lang> { })
+      let codeBlockMatch = line.match(/^code(?:\.(\w+))?\s*\{/);
+      if (codeBlockMatch) {
+        let lang = codeBlockMatch[1] || '';
         i++;
         let codeLines = [];
         let depth = 1;
@@ -267,7 +269,7 @@ class Converter {
           if (indent < minIndent) minIndent = indent;
         }
         if (minIndent === Infinity) minIndent = 0;
-        output.push('```');
+        output.push('```' + lang);
         for (let cl of codeLines) {
           output.push(cl.substring(minIndent));
         }
@@ -419,6 +421,18 @@ class Converter {
         let text = line.substring(3).trim();
         text = this.processFormatting(text);
         output.push('- ' + text);
+        continue;
+      }
+
+      // Handle standalone code.<lang>:TEXT (single-line language code block)
+      let codeLangInlineMatch = line.match(/^code\.(\w+):(.+)$/);
+      if (codeLangInlineMatch) {
+        let lang = codeLangInlineMatch[1];
+        let text = codeLangInlineMatch[2].trim();
+        output.push('```' + lang);
+        output.push(text);
+        output.push('```');
+        output.push('');
         continue;
       }
 

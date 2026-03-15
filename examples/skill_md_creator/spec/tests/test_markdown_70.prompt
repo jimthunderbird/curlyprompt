@@ -1,0 +1,19 @@
+skill {
+  name: "Code Language Test"
+  description: "Test code blocks with language specifier"
+  content {
+    h1:Code Language Examples
+
+    code.php {
+      echo "hello world";
+    }
+
+    code.bash:npm run build
+
+    code.javascript {
+      const x = 1;
+      const y = 2;
+      console.log(x + y);
+    }
+  }
+}

@@ -1,1 +1,0 @@
-I have a CurlyPrompt-to-SKILL-MD converter. Read the example in ./tests. Now, write a Python script using the Faker library to generate 5,000 unique, complex variations of this DSL and their corresponding Markdown outputs. Save them as a dataset.jsonl file formatted for fine-tuning.

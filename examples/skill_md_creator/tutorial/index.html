@@ -273,6 +273,7 @@
 
   <div class="nav-group">Code</div>
   <a href="#code-block">Code Block (code { })</a>
+  <a href="#code-lang">Language Code Block (code.&lt;lang&gt;)</a>
   <a href="#code-inline">Inline Code (code:)</a>
 
   <div class="nav-group">Media &amp; Links</div>
@@ -691,6 +692,39 @@ exports.up = function(knex) {
     table.string('name');
   });
 };
+```</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="code-lang">
+    <h2>Language Code Block (code.&lt;lang&gt;)</h2>
+    <p>Use <code>code.&lt;language&gt;</code> to generate a fenced code block with a language specifier. Supports both block and inline forms.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">code.php</span> {
+  echo "hello world";
+}</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>```php
+echo "hello world";
+```</pre>
+      </div>
+    </div>
+    <h3>Inline Form</h3>
+    <p>Use <code>code.&lt;lang&gt;:TEXT</code> for single-line language code blocks.</p>
+    <div class="example">
+      <div class="example-col">
+        <span class="label">CurlyPrompt</span>
+        <pre><span class="el">code.bash</span>:npm run build</pre>
+      </div>
+      <div class="example-col">
+        <span class="label">Markdown Output</span>
+        <pre>```bash
+npm run build
 ```</pre>
       </div>
     </div>

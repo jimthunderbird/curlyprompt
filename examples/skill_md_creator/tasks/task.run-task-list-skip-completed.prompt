@@ -1,3 +1,0 @@
-in ./tests:
-start logic.create_tests
-start logic.run_test
