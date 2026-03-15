@@ -2,6 +2,12 @@
 
 Reference for all sections covered in [`tutorial/index.html`](tutorial/index.html).
 
+## Usage
+
+```
+node spec/convert.js Skill.prompt SKILL.md
+```
+
 ## Table of Contents
 
 ### Structure
