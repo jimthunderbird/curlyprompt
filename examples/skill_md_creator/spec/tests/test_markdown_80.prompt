@@ -1,0 +1,15 @@
+skill {
+  name: "Headers Flat Test"
+  description: "Test flat linear headers with section braces"
+  content {
+    h1:Introduction {
+      p:This is the intro.
+      ul {
+        li:Point one
+        li:Point two
+      }
+    }
+    h2:Details
+    p:More details here.
+  }
+}

@@ -1,0 +1,11 @@
+skill {
+  header {
+    name: "Header Body Test"
+    description: "Test header/body section aliases"
+    version: "2.0"
+  }
+  body {
+    h1:Using Header and Body
+    p:This skill uses the header and body sections.
+  }
+}

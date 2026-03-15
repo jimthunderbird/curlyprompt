@@ -1,0 +1,10 @@
+skill {
+  name: "Tutorial Inline Code Test"
+  description: "Test inline code sample section functionality"
+  content {
+    h1:Inline Code Samples
+    p:Run code{npm install} to install.
+    p:Use code{docker build -t app .} to build.
+    code:standalone code line
+  }
+}

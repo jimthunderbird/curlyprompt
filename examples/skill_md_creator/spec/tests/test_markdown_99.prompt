@@ -1,0 +1,13 @@
+skill {
+  name: "Header Braces Code Test"
+  description: "Test tutorial header braces code example"
+  content {
+    h1:Instruction
+    p:This is a very strong:important instruction
+    ul {
+      li:step 1
+      li:step 2
+      li:step 3
+    }
+  }
+}

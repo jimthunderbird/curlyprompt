@@ -1,0 +1,9 @@
+skill {
+  name: "Link Brace Syntax Test"
+  description: "Test links mimic image tag format"
+  content {
+    h1:Link Formats
+    p:Click link{display:"Docs" url:"https://docs.example.com"} for documentation.
+    p:Or use link:Homepage:https://example.com for the colon syntax.
+  }
+}

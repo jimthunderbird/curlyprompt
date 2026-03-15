@@ -1,0 +1,24 @@
+skill {
+  name: "Table Test"
+  description: "Test HTML table tag markdown support"
+  content {
+    h1:Data Table
+    table {
+      tr {
+        td:Name
+        td:Age
+        td:Role
+      }
+      tr {
+        td:Alice
+        td:30
+        td:Engineer
+      }
+      tr {
+        td:Bob
+        td:25
+        td:Designer
+      }
+    }
+  }
+}

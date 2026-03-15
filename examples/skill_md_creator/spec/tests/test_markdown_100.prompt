@@ -1,0 +1,17 @@
+skill {
+  name: "Code Language Tag Test"
+  description: "Test code block language tag support"
+  content {
+    h1:Language Code Blocks
+    code.python {
+      def hello():
+          print("Hello World")
+    }
+    code.bash:echo "hello world"
+    code.javascript {
+      const greet = () => {
+        return "hi";
+      };
+    }
+  }
+}

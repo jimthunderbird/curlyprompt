@@ -1,0 +1,10 @@
+skill {
+  name: "BR Colon Only Test"
+  description: "Test br symbol requires colon"
+  content {
+    h1:BR Colon Test
+    p:Before break.
+    br:
+    p:After break with colon.
+  }
+}

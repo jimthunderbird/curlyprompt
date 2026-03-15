@@ -1,0 +1,12 @@
+skill {
+  name: "Test Creation Meta"
+  description: "Test for the create-tests-from-prompt-files task"
+  content {
+    h1:Test File Structure
+    p:Each test has a .prompt source and a .md expected output.
+    ul {
+      li:test_markdown_N.prompt is the source
+      li:test_markdown_N.md is the expected output
+    }
+  }
+}

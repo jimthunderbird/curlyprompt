@@ -27,7 +27,7 @@ logic.run_tests(task_prompt_file_name) {
   }
 }
 
-let task_prompt_file_names = (run cli: find tasks/spec -type f -name "*.prompt" -exec stat -f "%B %N" {} + | sort -n | sed -e 's/tasks\///g')
+let task_prompt_file_names = (run cli: find ./tasks -type f -name "*.prompt" -exec stat -f "%B %N" {} + | sort -n | sed -e 's/tasks\///g')
 for each task_prompt_file_name in task_prompt_file_names {
   if task_prompt_file_name does not exist in {completed_tasks_list} {
     let task = read ./tasks/{task_prompt_file_name}
