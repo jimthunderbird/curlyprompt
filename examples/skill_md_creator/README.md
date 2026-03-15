@@ -5,7 +5,7 @@ Reference for all sections covered in [`tutorial/index.html`](tutorial/index.htm
 ## Usage
 
 ```
-node spec/convert.js Skill.prompt SKILL.md
+node spec/convert.js SKILL.prompt SKILL.md
 ```
 
 ## Table of Contents
