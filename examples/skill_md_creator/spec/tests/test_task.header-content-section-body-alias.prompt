@@ -1,0 +1,10 @@
+skill {
+  header {
+    name: Header Body Test
+    version: 1.0
+  }
+  body {
+    h1:Welcome
+    p:Using header and body blocks
+  }
+}

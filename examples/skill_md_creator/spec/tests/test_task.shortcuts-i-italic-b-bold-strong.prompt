@@ -1,0 +1,8 @@
+skill {
+  name: Shortcuts Test
+  content {
+    p:Use b{bold text} and i{italic text} shortcuts
+    p:Or bold:the whole line is bold
+    p:And it:the whole line is italic
+  }
+}

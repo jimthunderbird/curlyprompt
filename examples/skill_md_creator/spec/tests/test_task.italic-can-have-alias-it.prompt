@@ -1,0 +1,7 @@
+skill {
+  name: Italic Alias
+  content {
+    p:This is it{emphasized} text
+    p:Also it:rest of line italic
+  }
+}

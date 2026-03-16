@@ -1,9 +1,0 @@
-skill {
-  name: "Code Inline Brace Test"
-  description: "Test code block inline brace support"
-  content {
-    h1:Code Examples
-    p:Use code{docker build} to build the image.
-    p:Run code{npm install} first then code{npm start} to launch.
-  }
-}

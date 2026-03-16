@@ -1,8 +1,0 @@
-skill {
-  name: "Test IT Alias"
-  description: "Test that it is an alias for italic"
-  content {
-    p:This has it:italic text here
-    p{This has it{inline italic} in the middle}
-  }
-}

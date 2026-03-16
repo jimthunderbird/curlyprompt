@@ -1,0 +1,7 @@
+skill {
+  name: Link Format
+  content {
+    p:Click link{display:"GitHub" url:"https://github.com"} for code
+    p:Or link:Google:https://google.com for search
+  }
+}

@@ -1,0 +1,22 @@
+skill {
+  name: Table Test
+  content {
+    table {
+      tr {
+        td:Name
+        td:Age
+        td:City
+      }
+      tr {
+        td:Alice
+        td:30
+        td:NYC
+      }
+      tr {
+        td:Bob
+        td:25
+        td:LA
+      }
+    }
+  }
+}

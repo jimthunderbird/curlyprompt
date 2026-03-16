@@ -1,0 +1,8 @@
+skill {
+  name: Image Oneliner
+  content {
+    img{src:"http://example.com/img.jpg",alt:"Example Image"}
+    img{ src:"http://example.com/img2.jpg" , alt:"Example 2"}
+    img{ src:"http://example.com/img3.jpg" alt:"Example 3"}
+  }
+}

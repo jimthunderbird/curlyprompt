@@ -1,9 +1,0 @@
-skill {
-  name: Inline Strong Test
-  description: Test same-line strong formatting
-  content {
-    h1:Important Notes
-    p:strong{this is very important}, rest of them are ok
-    p:please read the strong{critical section} before proceeding
-  }
-}

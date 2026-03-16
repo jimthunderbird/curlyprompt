@@ -1,0 +1,7 @@
+skill {
+  name: Link Spacing
+  content {
+    p:Visit link {display:"Google" url:"https://google.com"} today
+    p:Also link{display:"Bing" url:"https://bing.com"} works
+  }
+}

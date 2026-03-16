@@ -1,0 +1,15 @@
+skill {
+  name: Flexible Spacing
+  content {
+    p   {
+      Line with flexible spacing
+    }
+    ul     {
+      li:Item one
+    }
+    ol    {
+      li:First
+      li:Second
+    }
+  }
+}

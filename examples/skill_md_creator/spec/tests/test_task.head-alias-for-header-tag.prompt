@@ -1,0 +1,9 @@
+skill {
+  head {
+    name: Head Alias Test
+    description: Testing head alias
+  }
+  body {
+    p:Head alias works
+  }
+}

@@ -5,11 +5,10 @@ logic.update_tutorial {
 }
 
 logic.create_tests_for_task(task) {
-  - find num of *.prompt file as {num_of_test_cases}
-  - let test_number = {num_of_test_cases} + 1
+  - let test_name = {task.file_name without .prompt}
   - based on {task} {
-    - create tests/test_markdown_{test_number}.prompt as the source test prompt
-    - create tests/test_markdown_{test_number}.md as the target markdown file
+    - create tests/test_{test_name}.prompt as the source test prompt
+    - create tests/test_{test_name}.md as the target markdown file
   }
 }
 

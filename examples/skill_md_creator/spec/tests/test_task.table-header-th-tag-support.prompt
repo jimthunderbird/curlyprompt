@@ -1,0 +1,19 @@
+skill {
+  name: Table Header
+  content {
+    table {
+      tr {
+        th:Name
+        th:Score
+      }
+      tr {
+        td:Alice
+        td:95
+      }
+      tr {
+        td:Bob
+        td:87
+      }
+    }
+  }
+}

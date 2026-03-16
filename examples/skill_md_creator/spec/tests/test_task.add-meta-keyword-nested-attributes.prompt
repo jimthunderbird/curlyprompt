@@ -1,0 +1,10 @@
+skill {
+  name: Meta Test
+  meta {
+    author: John Doe
+    category: testing
+  }
+  content {
+    p:Testing meta block
+  }
+}

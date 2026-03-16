@@ -1,0 +1,11 @@
+skill {
+  name: All Headers
+  content {
+    h1:Header One
+    h2:Header Two
+    h3:Header Three
+    h4:Header Four
+    h5:Header Five
+    h6:Header Six
+  }
+}

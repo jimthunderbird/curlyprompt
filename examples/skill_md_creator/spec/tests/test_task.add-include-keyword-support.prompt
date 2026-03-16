@@ -1,0 +1,7 @@
+skill {
+  name: Include Test
+  include: global-restriction.md
+  content {
+    p:Testing include keyword
+  }
+}

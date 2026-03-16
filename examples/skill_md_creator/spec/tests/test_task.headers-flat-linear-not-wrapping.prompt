@@ -1,0 +1,8 @@
+skill {
+  name: Headers Flat
+  content {
+    h1:Instruction {
+      p:This is important
+    }
+  }
+}

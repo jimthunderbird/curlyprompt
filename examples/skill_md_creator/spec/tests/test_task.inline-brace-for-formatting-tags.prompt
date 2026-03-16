@@ -1,0 +1,7 @@
+skill {
+  name: Inline Brace Formatting
+  content {
+    p:This is strong{very important} and italic{key concept} text
+    p:Also code{npm install} works inline
+  }
+}

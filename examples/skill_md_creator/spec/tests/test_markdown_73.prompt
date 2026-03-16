@@ -1,9 +1,0 @@
-skill {
-  name: "BQ Alias Test"
-  description: "Test bq as alias for blockquote"
-  content {
-    h1:Blockquote Aliases
-    bq:This uses the bq alias for blockquote.
-    blockquote:This uses the full blockquote tag.
-  }
-}

@@ -1,0 +1,16 @@
+skill {
+  name: Checklist Test
+  content {
+    checklist {
+      item.checked:Buy groceries
+      item:Walk the dog
+      item.unchecked:Do laundry
+      itm.c:Read book
+      itm.u:Clean house
+    }
+    cl {
+      item.checked:Task done
+      item:Task pending
+    }
+  }
+}

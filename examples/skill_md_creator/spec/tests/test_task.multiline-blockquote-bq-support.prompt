@@ -1,0 +1,13 @@
+skill {
+  name: Multiline BQ
+  content {
+    blockquote {
+      Line one of quote
+      Line two of quote
+    }
+    bq {
+      Another quote line one
+      Another quote line two
+    }
+  }
+}

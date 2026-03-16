@@ -1,0 +1,8 @@
+skill {
+  name: Line Break
+  content {
+    p:Before break
+    br:
+    p:After break
+  }
+}

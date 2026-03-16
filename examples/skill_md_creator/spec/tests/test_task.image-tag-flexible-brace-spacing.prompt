@@ -1,0 +1,8 @@
+skill {
+  name: Image Spacing
+  content {
+    img {src:"http://example.com/a.jpg" alt:"Image A"}
+    img  {src:"http://example.com/b.jpg" alt:"Image B"}
+    img   {src:"http://example.com/c.jpg" alt:"Image C"}
+  }
+}

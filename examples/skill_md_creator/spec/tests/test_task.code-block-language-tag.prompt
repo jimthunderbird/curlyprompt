@@ -1,0 +1,11 @@
+skill {
+  name: Code Language
+  content {
+    code.javascript {
+      function hello() {
+        console.log("hello");
+      }
+    }
+    code.bash:npm run build
+  }
+}

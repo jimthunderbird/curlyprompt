@@ -1,0 +1,8 @@
+skill {
+  name: End Line Effect
+  content {
+    p:This is strong:all bold to end
+    p:This is italic:all italic to end
+    p:Or just strong{specific words} in middle
+  }
+}

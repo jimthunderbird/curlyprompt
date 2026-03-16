@@ -1,0 +1,6 @@
+skill {
+  name: Code Inline Brace
+  content {
+    p:Run code{docker build} to build the image
+  }
+}

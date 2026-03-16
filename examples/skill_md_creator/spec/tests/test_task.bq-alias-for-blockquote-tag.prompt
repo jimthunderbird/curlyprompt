@@ -1,0 +1,6 @@
+skill {
+  name: BQ Alias
+  content {
+    bq:This is a blockquote using bq alias
+  }
+}

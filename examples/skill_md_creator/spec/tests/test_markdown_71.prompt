@@ -1,9 +1,0 @@
-skill {
-  name: "Include Test"
-  description: "Test include keyword support"
-  include: "global-restriction.md"
-  content {
-    h1:Main Content
-    p:This skill includes an external file.
-  }
-}

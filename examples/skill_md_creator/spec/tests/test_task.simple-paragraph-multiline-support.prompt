@@ -1,0 +1,9 @@
+skill {
+  name: Paragraph Multi
+  content {
+    p {
+      This is a paragraph
+      This is the second line
+    }
+  }
+}

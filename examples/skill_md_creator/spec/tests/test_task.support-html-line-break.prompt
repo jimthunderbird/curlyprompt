@@ -1,0 +1,10 @@
+skill {
+  name: BR In Paragraph
+  content {
+    p {
+      First line
+      br:
+      Second line after break
+    }
+  }
+}
