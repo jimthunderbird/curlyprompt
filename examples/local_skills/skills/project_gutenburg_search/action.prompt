@@ -1,0 +1,5 @@
+call SKILL.main with json data {
+  keyword: the book title
+}
+example:
+print(SKILL.main({"keyword": "sherlock holmes"}))

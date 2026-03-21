@@ -1,0 +1,5 @@
+perform the following tasks related to ./final_action.py and ./SKILL.py, do not perform tasks are that completed, after a task is completed, in ./task.prompt, change task to "task (completed)"
+
+task (completed) {
+  in SKILL.py's main(payload) method, we should return a json string
+}
