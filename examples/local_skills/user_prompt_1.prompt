@@ -3,4 +3,4 @@ get top 5 news from cnn, for each news, create a 10 word summary of it, output t
   summary: {summary}
 }
 
-save the final json to summary.json
+search wikipedida for fermat's last theorem, show me one result only, show me the wiki page link

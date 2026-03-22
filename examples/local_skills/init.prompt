@@ -30,7 +30,8 @@ task.init_spec (completed) {
       tmp: remove the ending "/SKILL.md" from {file_path}
       tmp: remove the beginning "./" from {tmp}
       python_import_package: replace all "/" with "." in {tmp}
-      skill_file_content: replace "{skill_package_import}" with "from {python_import_package} import SKILL" 
+      skill_name: replace all "." with "_" in {python_import_package}
+      skill_file_content: replace "{skill_package_import}" with "from {python_import_package} import SKILL as {skill_name}" 
       final_prompt .= {skill_file_content} . "\n"
     }
     final_prompt .= "}\n"

@@ -89,7 +89,8 @@ for file_path in related_skill_file_paths:
         tmp = re.sub(r'/SKILL\.md$', '', file_path)
         tmp = re.sub(r'^\./', '', tmp)
         python_import_package = tmp.replace('/', '.')
-        skill_file_content = skill_file_content.replace('{skill_package_import}', f'from {python_import_package} import SKILL')
+        skill_name = python_import_package.replace('.', '_')
+        skill_file_content = skill_file_content.replace('{skill_package_import}', f'from {python_import_package} import SKILL as {skill_name}')
         final_prompt += skill_file_content + "\n"
 final_prompt += "}\n"
 final_prompt += f"task {{\n{input_prompt}\n}}\n"

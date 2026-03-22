@@ -18,7 +18,6 @@ def run(keyword, num_of_results=1):
             'format': 'json'
         })
         search_url = f"https://en.wikipedia.org/w/api.php?{search_params}"
-
         req = urllib.request.Request(search_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
