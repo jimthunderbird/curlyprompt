@@ -13,5 +13,5 @@ python agent.py "show me top 3 news from cnn"
 python agent.py "show me top 5 news from cnn, each with link and 30 words summary"
 ```
 ```bash
-python agent.py "search wikipedida for fermat's last therem, show me one result only, show me the wiki page link"
+python agent.py "search wikipedida for fermat's last theorem, show me one result only, show me the wiki page link"
 ```
