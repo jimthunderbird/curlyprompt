@@ -1,12 +1,7 @@
-transcript:get the transcript of youtube video https://www.youtube.com/shorts/_vE9m2aYESU
-word_count_for_salt: count how many times the word "salt" appear
-word_count_for_sodium: count how many times the word "sodium" appear
+top_news: get the top 3 news from cnn
 
-top_one_news: get the top one news from cnn
-
-output the following json {
-  transcript: {transcript}
-  word_count_for_salt: {word_count_for_salt}
-  word_count_for_sodium: {word_count_for_sodium}
-  top_cnn_news_url: {top_one_news.url}
+for each {news} in top_news {
+  output the following json {
+    url: {news.url}
+  }
 }

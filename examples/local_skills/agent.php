@@ -4,7 +4,7 @@
 // Local LLM config
 $llm_host = 'localhost';
 $llm_port = 11434;
-$llm_model = 'qwen3-coder:30b-determin';
+$llm_model = 'qwen3-coder:30b';
 
 // input_prompt: the first argument
 if ($argc < 2) {
