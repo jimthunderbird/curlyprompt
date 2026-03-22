@@ -53,16 +53,3 @@ def scrape_cnn_lite_article(url):
 
     except Exception as e:
         return {"error": str(e)}
-
-if __name__ == "__main__":
-    target_url = "[https://lite.cnn.com/2026/03/20/weather/hawaii-flooding-oahu-climate](https://lite.cnn.com/2026/03/20/weather/hawaii-flooding-oahu-climate)"
-    
-    data = scrape_cnn_lite_article(target_url)
-    
-    if "error" in data:
-        print(f"Error: {data['error']}")
-    else:
-        print(f"TITLE:  {data['headline']}")
-        print(f"BYLINE: {data['author']}")
-        print("-" * 30)
-        print(data['content'])
