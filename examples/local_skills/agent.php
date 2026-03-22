@@ -4,7 +4,7 @@
 // Local LLM config
 $llm_host = 'localhost';
 $llm_port = 11434;
-$llm_model = 'qwen3-coder:30b';
+$llm_model = 'qwen3-coder:30b-determin';
 
 // input_prompt: the first argument
 if ($argc < 2) {
@@ -32,7 +32,10 @@ $final_prompt = "contex {\n";
 foreach ($related_skill_file_paths as $file_path) {
     if (file_exists($file_path)) {
         $skill_file_content = file_get_contents($file_path);
-        $final_prompt .= $skill_file_content . "\n";
+        $tmp = preg_replace('#/SKILL\.md$#', '', $file_path);
+        $tmp = preg_replace('#^\\./#', '', $tmp);
+        $python_import_package = str_replace('/', '.', $tmp);
+        $final_prompt .= $skill_file_content . "\nREMEMBER: from {$python_import_package} import SKILL\n";
     }
 }
 $final_prompt .= "}\n";

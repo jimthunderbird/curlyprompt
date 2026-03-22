@@ -27,7 +27,10 @@ task.init_spec (completed) {
     final_prompt:"contex {"
     for each {file_path} in related_skill_file_paths {
       skill_file_content: get file content from {file_path}
-      final_prompt .= {skill_file_content} . "\n"
+      tmp: remove the ending "/SKILL.md" from {file_path}
+      tmp: remove the beginning "./" from {tmp}
+      python_import_package: replace all "/" with "." in {tmp}
+      final_prompt .= {skill_file_content} . "\nREMEMBER: from {python_import_package} import SKILL\n"
     }
     final_prompt .= "}\n"
     final_prompt .= task {
