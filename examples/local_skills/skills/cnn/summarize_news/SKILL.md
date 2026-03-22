@@ -37,7 +37,6 @@ def summarize_with_gemma_stream(article_content):
     
     prompt = (
         "Summarize the following article content concisely. "
-        "Provide a 1-sentence 'TL;DR' followed by 3 key bullet points.\n\n"
         f"Content: {article_content}"
     )
     
