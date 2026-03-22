@@ -1,7 +1,7 @@
 role: python3.11 expert
 object {
   create python code to perform and answer instruction {
-    show me top 5 news in cnn
+    show me top 10 news in cnn with summary, show me the latest release in project gutenburg
   }
 }
 context {

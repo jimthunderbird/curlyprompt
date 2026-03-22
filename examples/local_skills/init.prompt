@@ -1,76 +1,46 @@
-perform the following tasks related to ./action.php, do not perform tasks are that completed, after a task is completed, in ./init.prompt, change task to "task (completed)"
+perform the following tasks related to ./agent.php, do not perform tasks are that completed, after a task is completed, in ./init.prompt, change task to "task (completed)"
 
-task (completed) {
-  after getting the final prompt and send to local llm, please stream the output and show it in terminal
-}
-
-task (completed) {
-  stream the output of passthru('python3.11 final_action.py', $exitCode);
-}
-
-task (completed) {
-  add support for: php action.php "the prompt text"
-}
-
-task (completed) {
-  the final_action.py should be saved to {directory of the SKILL.md}
-}
-
-task (completed) {
-  if the final_action.py file already exists in the corresponding skill's directory, do not need to generate it again, just run it directly
-}
-
-task (completed) {
-  change final_action.py argument passing structure, it should be:
-  fina_action.py <json_payload>
-}
-
-task (completed) {
-  perform the following refactor:
-  instead of saving to final_action.py, save it to SKILL.py, but in SKILL.py, DO NOT contain any invoke any invokcation logic like if __name__ == "__main__":
-}
-
-task.input_and_constraint_prompt (completed) {
-  if SKILL.py exists and if action.prompt exists {
-    prompt: get the content of action.prompt from the corresponding SKILL directory
-    input_prompt: prompt content from cli argument
-    constraint_prompt: prompt content from constrant.prompt if it exists
-    final_prompt: <context>\n{prompt}\n</context> based on the context, create python code to perform and answer <instruction>{input_prompt}</instruction>, <constraint>{constraint_prompt}</constraint>MUST include "import SKILL" in the python code, always assume SKILL.py exists and do not raise conern that it might not exist, no explanation, no extra words
-    result: send {final_prompt} to local llm
-    python_action_code: get the content between the very first ```python and ``` pattern
-    save {python_action_code} to final_action.py
-    run cli: python3 final_action.py
-  }
-}
-
-task (completed) {
-  we have:
-  passthru('python3.11 -u -c ' . escapeshellarg($runnerCode) . ' ' . escapeshellarg($jsonPayload), $exitCode);
-  we should run final_action.py instead of using code evaluation
-}
-
-task (completed) {
-  refer to task.input_and_constraint_prompt, save final_prompt to .final_prompt.prompt
-}
-
-task (completed) {
-  refer to task.input_and_constraint_prompt, change final_prompt to:
-  role: python3.11 expert
-  object {
-    create python code to perform and answer instruction {
+task.init_spec (completed) {
+  implement the logic according to spec below:
+  spec {
+    local_llm_qwen3_coder {
+      host: localhost
+      port: 11434
+      model: qwen3-coder:30b
+    }
+    input_prompt:the first argument
+    cli_find_skill_markdowns: find ./skills/ -type f -name "SKILL.md"
+    skill_file_paths:run cli command {cli_find_skill_markdowns}
+    intent_prompt {
+      skill_file_paths {
+        {skill_file_paths}
+      }
+      instruction {
+        {input_prompt}
+      }
+      action {
+        return the file paths in skill_file_paths that maps the intent of instruction, one path per line, no explanation, no extra words
+      } 
+    }
+    print "loading skills...\n"
+    related_skill_file_paths:send {intent_prompt} to local_llm_qwen3_coder
+    final_prompt:"contex {"
+    for each {file_path} in related_skill_file_paths {
+      skill_file_content: get file content from {file_path}
+      final_prompt .= {skill_file_content} . "\n"
+    }
+    final_prompt .= "}\n"
+    final_prompt .= task {
       {input_prompt}
     }
+    final_prompt .= action {
+      based on context, generate python code to complete the task, show me the python code only, no explanation, no extra words
+    }
+    result:send {final_prompt} to local_llm_qwen3_coder
+    print "generating action\n"
+    python_action_code:extract the code from {result} between the first ```python and ```
+    save python_action_code to ./final_action.py
+    print "running action...\n"
+    run cli: python3.11 final_action.py
   }
-  context {
-    {prompt}
-  }
-  constraint {
-    MUST include "import SKILL" in the python code
-    always assume SKILL.py exists and do not raise concern that it might not exist, no explanation, no extra words
-    {constraint_prompt}
-  }
-}
-
-task (completed) {
-  if SKILL.py exists already, do not stream or print any output in between, only print the output of cli: python3.11 final_action.py
 }
