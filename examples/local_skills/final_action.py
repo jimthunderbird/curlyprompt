@@ -4,30 +4,24 @@ from skills.wikipedia.search import SKILL as skills_wikipedia_search
 from skills.wikipedia.read_article import SKILL as skills_wikipedia_read_article
 
 # Get top news from CNN
-number_of_news = 1
-top_news = skills_cnn_get_top_news.run(number_of_news)
+top_news = skills_cnn_get_top_news.run(1)
+news_list = []
 
-# Summarize each news article
-summaries = []
 for news in top_news:
     summary = skills_cnn_summarize_news_article.run(news['url'], 10)
-    summaries.append({
+    news_list.append({
         'url': news['url'],
         'summary': summary
     })
 
+print(news_list)
+
 # Search Wikipedia for Fermat's Last Theorem
-keyword = "Fermat's Last Theorem"
-num_of_results = 1
-wiki_search_result = skills_wikipedia_search.run(keyword, num_of_results)
+search_result = skills_wikipedia_search.run("Fermat's Last Theorem", 1)
+wiki_url = search_result[0]['url']
 
-# Get the Wikipedia article content
-article_url = wiki_search_result[0]['url']
-article_content = skills_wikipedia_read_article.run(article_url)
+# Read the article content
+article_content = skills_wikipedia_read_article.run(wiki_url)
 
-# Output results
-print(summaries)
-print({
-    'url': article_url,
-    'content': article_content
-})
+print(f"Wiki Page Link: {wiki_url}")
+print(f"Content: {article_content}")
