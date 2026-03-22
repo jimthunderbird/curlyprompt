@@ -2,7 +2,7 @@ top_news:show me top 2 news from cnn
 for each news in top_news {
   news_content:read news.url
   news_summary:create 40 words summary of {news_content} using very simple English words
-  output {
+  output with streaming {
     Title: news.title
     Summary: news_summary
   }
