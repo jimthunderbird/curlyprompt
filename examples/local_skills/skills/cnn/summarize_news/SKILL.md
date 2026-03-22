@@ -71,7 +71,3 @@ def summarize_with_gemma_stream(article_content, custom_summary_prompt = "Summar
                         print("\n\n--- Summary Complete ---")
     except Exception as e:
         print(f"\nLogic Error: {str(e)}")
-
-# Usage
-# article_text = "Your long article text here..."
-# summarize_with_gemma_stream(article_text)

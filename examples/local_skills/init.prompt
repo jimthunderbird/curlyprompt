@@ -34,7 +34,7 @@ task.init_spec (completed) {
       {input_prompt}
     }
     final_prompt .= action {
-      based on context, generate python code to complete the task, show me the python code only, no explanation, no extra words
+      learn from context, use context as example, generate python code to complete the task, show me the python code only, no explanation, no extra words
     }
     result:send {final_prompt} to local_llm with streaming
     print "generating action\n"

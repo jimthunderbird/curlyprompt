@@ -1,9 +1,3 @@
-top_news:show me top 2 news from cnn
-for each news in top_news {
-  news_content:read news.url
-  news_summary:create 60 words summary of news_content
-  output with streaming {
-    Title: news.title
-    Summary: news_summary
-  }
-}
+transcript:get the transcript of youtube video https://www.youtube.com/shorts/Y83wbleLeUA
+print transcript
+count how many times the word "salt" appear
