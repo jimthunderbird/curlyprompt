@@ -36,11 +36,11 @@ task.init_spec (completed) {
     final_prompt .= action {
       based on context, generate python code to complete the task, show me the python code only, no explanation, no extra words
     }
-    result:send {final_prompt} to local_llm_qwen3_coder
+    result:send {final_prompt} to local_llm_qwen3_coder with streaming
     print "generating action\n"
     python_action_code:extract the code from {result} between the first ```python and ```
     save python_action_code to ./final_action.py
     print "running action...\n"
-    run cli: python3.11 final_action.py
+    run cli: python3.11 final_action.py with output streaming
   }
 }

@@ -39,8 +39,8 @@ $final_prompt .= "}\n";
 $final_prompt .= "task {\n" . $input_prompt . "\n}\n";
 $final_prompt .= "action {\nbased on context, generate python code to complete the task, show me the python code only, no explanation, no extra words\n}\n";
 
-// Send final_prompt to local LLM
-$result = send_to_llm($llm_host, $llm_port, $llm_model, $final_prompt);
+// Send final_prompt to local LLM with streaming
+$result = send_to_llm_stream($llm_host, $llm_port, $llm_model, $final_prompt);
 
 echo "generating action\n";
 
@@ -61,6 +61,48 @@ echo "running action...\n";
 // Run cli: python3.11 final_action.py
 passthru('python3.11 final_action.py', $exit_code);
 exit($exit_code);
+
+/**
+ * Send a prompt to the local Ollama LLM with streaming and return the full response.
+ */
+function send_to_llm_stream($host, $port, $model, $prompt) {
+    $url = "http://{$host}:{$port}/api/generate";
+    $payload = json_encode([
+        'model' => $model,
+        'prompt' => $prompt,
+        'stream' => true,
+    ]);
+
+    $full_response = '';
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+    curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) use (&$full_response) {
+        foreach (explode("\n", $data) as $line) {
+            $line = trim($line);
+            if ($line === '') continue;
+            $json = json_decode($line, true);
+            if (isset($json['response'])) {
+                echo $json['response'];
+                $full_response .= $json['response'];
+            }
+        }
+        return strlen($data);
+    });
+
+    $success = curl_exec($ch);
+    if (curl_errno($ch)) {
+        echo "cURL error: " . curl_error($ch) . "\n";
+        curl_close($ch);
+        exit(1);
+    }
+    curl_close($ch);
+    echo "\n";
+
+    return $full_response;
+}
 
 /**
  * Send a prompt to the local Ollama LLM and return the response.

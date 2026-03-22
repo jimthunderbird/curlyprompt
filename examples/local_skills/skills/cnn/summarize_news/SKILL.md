@@ -28,7 +28,7 @@ The summarization flow follows these steps:
 ```python
 import requests
 
-def summarize_with_gemma(article_content):
+def summarize_with_gemma(article_content, num_of_words=100):
     """
     Summarizes article content using Gemma 3 via Ollama localhost.
     """
@@ -36,8 +36,7 @@ def summarize_with_gemma(article_content):
     
     # Define the summarization logic/constraints
     prompt = (
-        "Summarize the following article content. "
-        "Provide a 1-sentence 'TL;DR' followed by 3 key bullet points.\n\n"
+        "Summarize the following article content in {num_of_words} words. "
         f"Content: {article_content}"
     )
     
