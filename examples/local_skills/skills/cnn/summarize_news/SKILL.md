@@ -1,60 +1,72 @@
-# SKLL: Article Summarization Logic
+# SKLL: Article Summarization Logic (Streaming)
 
 ## Overview
-This skill leverages a local **Ollama** instance running the **Gemma 3** model to generate concise summaries of article content. By keeping the processing on `localhost`, it ensures data privacy and low-latency performance.
+This skill leverages a local **Ollama** instance running the **Gemma 3** model to generate real-time, streaming summaries of article content. Streaming allows for immediate visual feedback as the model processes the text on `localhost`.
 
 ---
 
 ## 1. Environment Requirements
 * **Local Host:** Ollama server running on port `11434`.
 * **Model:** `gemma3:latest` (Pull via `ollama pull gemma3`).
-* **Protocol:** REST API (HTTP POST).
+* **Protocol:** REST API (HTTP POST) with Chunked Transfer Encoding.
 
 ---
 
 ## 2. Process Logic
 
-The summarization flow follows these steps:
+The streaming flow follows these steps:
 
 1.  **Input Capture:** Receive the raw text string from the new article.
-2.  **Prompt Engineering:** Wrap the content in a directive that instructs Gemma 3 to act as a professional summarizer.
-3.  **Local Inference:** Send the payload to the Ollama `/api/generate` endpoint.
-4.  **Parsing:** Extract the text response from the JSON output.
+2.  **Prompt Engineering:** Instruct Gemma 3 to act as a professional summarizer.
+3.  **Stream Initiation:** Send the payload to the Ollama `/api/generate` endpoint with `"stream": true`.
+4.  **Iterative Decoding:** Iterate over the response chunks, parsing each JSON object and printing the `response` field immediately.
 
 ---
 
-## 3. Implementation (Python)
+## 3. Implementation (Python), must import json!
 
 ```python
 import requests
+import json
 
-def summarize_with_gemma(article_content, num_of_words=100):
+def summarize_with_gemma_stream(article_content):
     """
-    Summarizes article content using Gemma 3 via Ollama localhost.
+    Summarizes article content using Gemma 3 via Ollama with real-time streaming.
     """
     url = "http://localhost:11434/api/generate"
     
-    # Define the summarization logic/constraints
     prompt = (
-        "Summarize the following article content in {num_of_words} words. "
+        "Summarize the following article content concisely. "
+        "Provide a 1-sentence 'TL;DR' followed by 3 key bullet points.\n\n"
         f"Content: {article_content}"
     )
     
     payload = {
         "model": "gemma3:latest",
         "prompt": prompt,
-        "stream": False,
-        "options": {
-            "temperature": 0.3  # Lower temperature for factual consistency
-        }
+        "stream": True  # Enable streaming for immediate output
     }
 
     try:
-        response = requests.post(url, json=payload)
-        response.raise_for_status()
-        return response.json().get("response")
+        # Using context manager for the stream
+        with requests.post(url, json=payload, stream=True) as response:
+            response.raise_for_status()
+            
+            print("--- Summary Starting ---\n")
+            for line in response.iter_lines():
+                if line:
+                    # Parse the JSON chunk
+                    chunk = json.loads(line.decode('utf-8'))
+                    token = chunk.get("response", "")
+                    
+                    # Print token immediately without newline
+                    print(token, end="", flush=True)
+                    
+                    if chunk.get("done"):
+                        print("\n\n--- Summary Complete ---")
     except Exception as e:
-        return f"Logic Error: {str(e)}"
+        print(f"\nLogic Error: {str(e)}")
 
 # Usage
-# result = summarize_with_gemma("Your long article text here...")
+# article_text = "Your long article text here..."
+# summarize_with_gemma_stream(article_text)
