@@ -1,0 +1,9 @@
+top_news:show me top 10 news from cnn
+for each news in top_news related to Iran {
+  news_content:read news.url
+  news_summary:create 100 words summary of {news_content}
+  output {
+    Summary: news_summary
+    Link: news.url
+  }
+}

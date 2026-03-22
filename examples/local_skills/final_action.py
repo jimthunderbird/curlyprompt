@@ -2,6 +2,8 @@
 import urllib.request
 import re
 import sys
+import requests
+from bs4 import BeautifulSoup
 
 def fetch_cnn_lite_news(n=5):
     """
@@ -40,9 +42,6 @@ def scrape_cnn_lite_article(url):
     """
     Extracts structured news data from CNN Lite using specific CSS selectors.
     """
-    import requests
-    from bs4 import BeautifulSoup
-
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     }
@@ -85,19 +84,43 @@ def scrape_cnn_lite_article(url):
     except Exception as e:
         return {"error": str(e)}
 
-# Main execution
+def summarize_with_gemma(article_content):
+    """
+    Summarizes article content using Gemma 3 via Ollama localhost.
+    """
+    url = "http://localhost:11434/api/generate"
+    
+    # Define the summarization logic/constraints
+    prompt = (
+        "Summarize the following article content. "
+        "Provide a 1-sentence 'TL;DR' followed by 3 key bullet points.\n\n"
+        f"Content: {article_content}"
+    )
+    
+    payload = {
+        "model": "gemma3:latest",
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.3  # Lower temperature for factual consistency
+        }
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        return response.json().get("response")
+    except Exception as e:
+        return f"Logic Error: {str(e)}"
+
+# Main execution logic
 if __name__ == "__main__":
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 5
+    n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
     news_list = fetch_cnn_lite_news(n)
     
-    iran_news = []
-    for item in news_list:
-        if 'iran' in item['title'].lower():
-            article_data = scrape_cnn_lite_article(item['url'])
-            article_data['title'] = item['title']
-            iran_news.append(article_data)
-    
-    for article in iran_news:
-        print(f"Title: {article.get('headline', 'N/A')}")
-        print(f"Author: {article.get('author', 'N/A')}")
-        print(f"Content: {article.get('content', 'N/A')}\n")
+    for news in news_list:
+        if 'Iran' in news['title']:
+            content = scrape_cnn_lite_article(news['url'])
+            summary = summarize_with_gemma(content.get('content', ''))
+            print(f"Summary: {summary}")
+            print(f"Link: {news['url']}\n")
