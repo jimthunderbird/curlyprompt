@@ -89,10 +89,10 @@ for file_path in related_skill_file_paths:
         tmp = re.sub(r'/SKILL\.md$', '', file_path)
         tmp = re.sub(r'^\./', '', tmp)
         python_import_package = tmp.replace('/', '.')
-        final_prompt += skill_file_content + f"\nREMEMBER: from {python_import_package} import SKILL\n"
+        final_prompt += skill_file_content + f"\nALWAYS REMEMBER, in python code, use: from {python_import_package} import SKILL\n"
 final_prompt += "}\n"
 final_prompt += f"task {{\n{input_prompt}\n}}\n"
-final_prompt += "action {\nlearn from context, use context as example, generate python code to complete the task, show me the python code only, no explanation, no extra words\n}\n"
+final_prompt += "action {\nlearn from context, use context as example, generate python code to complete the task, show me the python code only, no explanation, no extra words\nin the python code, always remember from {python_import_package} import SKILL\n}\n"
 
 # Send final_prompt to local LLM with streaming
 result = send_to_llm_stream(llm_host, llm_port, llm_model, final_prompt)
