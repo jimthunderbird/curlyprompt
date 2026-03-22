@@ -3,18 +3,24 @@ from skills.cnn.summarize_news_article import SKILL as SUMMARIZE_SKILL
 import json
 
 # Get top 5 news
-top_news = SKILL.run(5)
+number_of_news = 5
+top_news = SKILL.run(number_of_news)
 
-# Create list to store results
+# Create summaries for each news
 results = []
-
-# Summarize each news article
 for news in top_news:
-    summary = SUMMARIZE_SKILL.run(news['url'], 40)
-    results.append({
-        "url": news['url'],
-        "summary": summary
-    })
+    try:
+        summary = SUMMARIZE_SKILL.run(news['url'], 10)
+        results.append({
+            "url": news['url'],
+            "summary": summary
+        })
+    except:
+        # If summarization fails, add basic info
+        results.append({
+            "url": news['url'],
+            "summary": "Summary not available"
+        })
 
 # Save to file
 with open('summary.json', 'w') as f:

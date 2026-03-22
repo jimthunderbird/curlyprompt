@@ -28,6 +28,7 @@ def run(url, num_of_words=100):
         prompt = (
             f"Summarize the following news article in approximately {num_of_words} words. "
             f"Focus on the key events and figures mentioned.\n\n"
+            f"No Explanation. No Extra Word.\n\n"
             f"Title: {title}\n"
             f"Content: {article_text}"
         )
