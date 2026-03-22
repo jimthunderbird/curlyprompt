@@ -1,6 +1,6 @@
-get top 5 news from cnn, for each news, create a 10 word summary of it, output the an array of json {
+get top 1 news from cnn, for each news, create a 10 word summary of it, output the an array of json {
   url: {news.url}
   summary: {summary}
 }
 
-search wikipedida for fermat's last theorem, show me one result only, show me the wiki page link
+search wikipedida for fermat's last theorem, show me one result only, show me the wiki page link and its content
