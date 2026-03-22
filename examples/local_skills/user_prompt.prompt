@@ -1,7 +1,11 @@
-top_news: get the top 3 news from cnn
+top_news: get the top 5 news from cnn
 
 for each {news} in top_news {
+  summary: summarize news article in 40 words
   output the following json {
     url: {news.url}
+    summary: {summary}
   }
 }
+
+save output json to summary.json
