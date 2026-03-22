@@ -1,12 +1,16 @@
 from skills.youtube.get_youtube_transcript import SKILL
+import re
 
-# Get transcript
 video_url = "https://www.youtube.com/shorts/Y83wbleLeUA"
 transcript = SKILL.get_transcript(video_url, langs=None)
 
-# Print transcript
-print(transcript)
+word_count_for_salt = len(re.findall(r'\bsalt\b', transcript.lower()))
+word_count_for_sodium = len(re.findall(r'\bsodium\b', transcript.lower()))
 
-# Count occurrences of "salt"
-salt_count = transcript.lower().count("salt")
-print(f"The word 'salt' appears {salt_count} times")
+output = {
+    "transcript": transcript,
+    "word_count_for_salt": word_count_for_salt,
+    "word_count_for_sodium": word_count_for_sodium
+}
+
+print(output)

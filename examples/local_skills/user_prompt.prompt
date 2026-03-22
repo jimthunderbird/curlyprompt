@@ -1,3 +1,9 @@
 transcript:get the transcript of youtube video https://www.youtube.com/shorts/Y83wbleLeUA
-print transcript
-count how many times the word "salt" appear
+word_count_for_salt: count how many times the word "salt" appear
+word_count_for_sodium: count how many times the word "sodium" appear
+
+output the following json {
+  transcript: {transcript}
+  word_count_for_salt: {word_count_for_salt}
+  word_count_for_sodium: {word_count_for_sodium}
+}
