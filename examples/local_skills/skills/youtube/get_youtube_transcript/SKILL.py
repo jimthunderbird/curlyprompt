@@ -2,7 +2,7 @@ import yt_dlp
 import sys
 import requests
 
-def get_transcript(video_url, langs=None):
+def run(video_url, langs=None):
     """
     Extracts transcript/subtitles from a YouTube video.
     langs: list of language codes in priority order (default: English)

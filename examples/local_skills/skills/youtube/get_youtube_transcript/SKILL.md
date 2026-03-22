@@ -7,4 +7,4 @@
 
 ```python
 from skills.youtube.get_youtube_transcript import SKILL
-transcript = SKILL.get_transcript(video_url, langs=None)
+transcript = SKILL.run(video_url, langs=None)
