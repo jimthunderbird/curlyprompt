@@ -1,20 +1,20 @@
-from skills.cnn.get_top_news import SKILL as get_top_news_skill
-from skills.cnn.summarize_news_article import SKILL as summarize_news_article_skill
+from skills.cnn.get_top_news import SKILL as news_skill
+from skills.cnn.summarize_news_article import SKILL as summary_skill
 import json
 
 # Get top 5 news
-top_news = get_top_news_skill.run(5)
+top_news = news_skill.run(5)
 
-# Create summary for each news
-summaries = []
+# Create array of JSON objects with url and summary
+result = []
 for news in top_news:
     url = news['url']
-    summary = summarize_news_article_skill.run(url, 10)
-    summaries.append({
-        "url": url,
-        "summary": summary
+    summary = summary_skill.run(url, 10)
+    result.append({
+        'url': url,
+        'summary': summary
     })
 
 # Save to file
 with open('summary.json', 'w') as f:
-    json.dump(summaries, f)
+    json.dump(result, f, indent=2)

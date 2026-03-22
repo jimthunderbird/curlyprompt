@@ -1,4 +1,4 @@
-perform the following tasks related to ./agent.php, do not perform tasks are that completed, after a task is completed, in ./init.prompt, change task to "task (completed)"
+perform the following tasks related to ./agent.py, do not perform tasks are that completed, after a task is completed, in ./init.prompt, change task to "task (completed)"
 
 task.init_spec (completed) {
   implement the logic according to spec below:
