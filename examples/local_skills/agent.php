@@ -4,7 +4,7 @@
 // Local LLM config
 $llm_host = 'localhost';
 $llm_port = 11434;
-$llm_model = 'qwen3-coder:30b';
+$llm_model = 'qwen3-coder:30b-determin';
 
 // input_prompt: the first argument
 if ($argc < 2) {
@@ -37,7 +37,7 @@ foreach ($related_skill_file_paths as $file_path) {
 }
 $final_prompt .= "}\n";
 $final_prompt .= "task {\n" . $input_prompt . "\n}\n";
-$final_prompt .= "action {\nuse context as examples, generate python code to complete the task, show me the python code only, no explanation, no extra words\n}\n";
+$final_prompt .= "action {\nbased on context, generate python code to complete the task, show me the python code only, no explanation, no extra words\n}\n";
 
 // Send final_prompt to local LLM with streaming
 $result = send_to_llm_stream($llm_host, $llm_port, $llm_model, $final_prompt);

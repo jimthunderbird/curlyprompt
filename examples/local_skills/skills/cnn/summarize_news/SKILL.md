@@ -29,14 +29,14 @@ The streaming flow follows these steps:
 import requests
 import json
 
-def summarize_with_gemma_stream(article_content):
+def summarize_with_gemma_stream(article_content, custom_summary_prompt = "Summarize the following article content concisely."):
     """
     Summarizes article content using Gemma 3 via Ollama with real-time streaming.
     """
     url = "http://localhost:11434/api/generate"
     
     prompt = (
-        "Summarize the following article content concisely. "
+        {custom_summary_prompt}
         f"Content: {article_content}"
     )
     

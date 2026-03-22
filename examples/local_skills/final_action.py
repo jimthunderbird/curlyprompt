@@ -77,16 +77,13 @@ def scrape_cnn_lite_article(url):
     except Exception as e:
         return {"error": str(e)}
 
-def summarize_with_gemma_stream(article_content):
+def summarize_with_gemma_stream(article_content, custom_summary_prompt="Summarize the following article content concisely."):
     """
     Summarizes article content using Gemma 3 via Ollama with real-time streaming.
     """
     url = "http://localhost:11434/api/generate"
     
-    prompt = (
-        "Summarize the following article content concisely. "
-        f"Content: {article_content}"
-    )
+    prompt = f"{custom_summary_prompt} Content: {article_content}"
     
     payload = {
         "model": "gemma3:latest",
@@ -111,7 +108,7 @@ def summarize_with_gemma_stream(article_content):
     except Exception as e:
         print(f"\nLogic Error: {str(e)}")
 
-# Main execution
+# Main Execution
 if __name__ == "__main__":
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 2
     
@@ -119,8 +116,10 @@ if __name__ == "__main__":
     
     for news in top_news:
         print(f"\nTitle: {news['title']}")
-        article_content = scrape_cnn_lite_article(news['url'])
-        if 'error' not in article_content:
-            summarize_with_gemma_stream(article_content['content'])
+        article_data = scrape_cnn_lite_article(news['url'])
+        
+        if "error" not in article_data:
+            content = article_data["content"]
+            summarize_with_gemma_stream(content, f"Create 40 words summary of {content} using very very simple English words")
         else:
-            print("Failed to fetch article content.")
+            print(f"Error fetching article: {article_data['error']}")

@@ -3,10 +3,10 @@ perform the following tasks related to ./agent.php, do not perform tasks are tha
 task.init_spec (completed) {
   implement the logic according to spec below:
   spec {
-    local_llm_qwen3_coder {
+    local_llm {
       host: localhost
       port: 11434
-      model: qwen3-coder:30b
+      model: qwen3-coder:30b-determin
     }
     input_prompt:the first argument
     cli_find_skill_markdowns: find ./skills/ -type f -name "SKILL.md"
@@ -23,7 +23,7 @@ task.init_spec (completed) {
       } 
     }
     print "loading skills...\n"
-    related_skill_file_paths:send {intent_prompt} to local_llm_qwen3_coder
+    related_skill_file_paths:send {intent_prompt} to local_llm
     final_prompt:"contex {"
     for each {file_path} in related_skill_file_paths {
       skill_file_content: get file content from {file_path}
@@ -36,7 +36,7 @@ task.init_spec (completed) {
     final_prompt .= action {
       based on context, generate python code to complete the task, show me the python code only, no explanation, no extra words
     }
-    result:send {final_prompt} to local_llm_qwen3_coder with streaming
+    result:send {final_prompt} to local_llm with streaming
     print "generating action\n"
     python_action_code:extract the code from {result} between the first ```python and ```
     save python_action_code to ./final_action.py
