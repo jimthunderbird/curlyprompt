@@ -92,7 +92,7 @@ def summarize_with_gemma(article_content, num_of_words=40):
     
     # Define the summarization logic/constraints
     prompt = (
-        f"Summarize the following article content in {num_of_words} words. "
+        f"Summarize the following article content in {num_of_words} words using very simple English. "
         f"Content: {article_content}"
     )
     
@@ -112,16 +112,14 @@ def summarize_with_gemma(article_content, num_of_words=40):
     except Exception as e:
         return f"Logic Error: {str(e)}"
 
-# Main Execution
+# Main execution logic
 if __name__ == "__main__":
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+    news_list = fetch_cnn_lite_news(n)
     
-    top_news = fetch_cnn_lite_news(n)
-    
-    for news in top_news:
-        article_content = scrape_cnn_lite_article(news['url'])
+    for item in news_list:
+        article_content = scrape_cnn_lite_article(item['url'])
         summary = summarize_with_gemma(article_content['content'], 40)
-        
-        print(f"Title: {news['title']}")
+        print(f"Title: {item['title']}")
         print(f"Summary: {summary}")
         print()
