@@ -77,13 +77,16 @@ def scrape_cnn_lite_article(url):
     except Exception as e:
         return {"error": str(e)}
 
-def summarize_with_gemma_stream(article_content, custom_summary_prompt="Summarize the following article content concisely."):
+def summarize_with_gemma_stream(article_content, word_limit=60):
     """
     Summarizes article content using Gemma 3 via Ollama with real-time streaming.
     """
     url = "http://localhost:11434/api/generate"
     
-    prompt = f"{custom_summary_prompt} Content: {article_content}"
+    prompt = (
+        f"Create {word_limit} words summary of {article_content} using very very simple English words, "
+        "return the summary only, no explanation, no extra words"
+    )
     
     payload = {
         "model": "gemma3:latest",
@@ -96,17 +99,22 @@ def summarize_with_gemma_stream(article_content, custom_summary_prompt="Summariz
             response.raise_for_status()
             
             print("--- Summary Starting ---\n")
+            summary = ""
             for line in response.iter_lines():
                 if line:
                     chunk = json.loads(line.decode('utf-8'))
                     token = chunk.get("response", "")
-                    
+                    summary += token
                     print(token, end="", flush=True)
                     
                     if chunk.get("done"):
                         print("\n\n--- Summary Complete ---")
+                        break
+            return summary
+            
     except Exception as e:
         print(f"\nLogic Error: {str(e)}")
+        return ""
 
 # Main Execution
 if __name__ == "__main__":
@@ -117,9 +125,8 @@ if __name__ == "__main__":
     for news in top_news:
         print(f"\nTitle: {news['title']}")
         article_data = scrape_cnn_lite_article(news['url'])
-        
         if "error" not in article_data:
-            content = article_data["content"]
-            summarize_with_gemma_stream(content, f"Create 40 words summary of {content} using very very simple English words")
+            summary = summarize_with_gemma_stream(article_data["content"], 60)
+            print(f"Summary: {summary}")
         else:
-            print(f"Error fetching article: {article_data['error']}")
+            print("Failed to fetch article content.")

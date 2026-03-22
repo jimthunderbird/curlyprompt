@@ -1,5 +1,11 @@
 # SKLL: Article Summarization Logic (Streaming)
 
+## Context Mapping
+- create summary using very simple English: send custom summary prompt "create N words summary of {news_content} using very very simple English words, return the summary only, no explanation, no extra words" to local llm
+
+## Constraint
+- must use import json in python
+
 ## Overview
 This skill leverages a local **Ollama** instance running the **Gemma 3** model to generate real-time, streaming summaries of article content. Streaming allows for immediate visual feedback as the model processes the text on `localhost`.
 
