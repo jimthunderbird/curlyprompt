@@ -1,4 +1,4 @@
-top_news:show me top 10 news from cnn
+top_news:show me top 2 news from cnn
 for each news in top_news {
   news_content:read news.url
   news_summary:create 40 words summary of {news_content}

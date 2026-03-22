@@ -5,20 +5,23 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 
-def fetch_cnn_lite_news(n=10):
+def fetch_cnn_lite_news(n=5):
     """
     Fetches the latest n news headlines and links from CNN Lite.
     """
     base_url = "https://lite.cnn.com"
     
     try:
+        # Pass a standard User-Agent to prevent basic bot-blocking
         req = urllib.request.Request(base_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             html = response.read().decode('utf-8')
         
+        # Regex captures the href path (group 1) and the headline text (group 2)
         pattern = r'<a href="(/20\d{2}[^"]*)">([^<]+)</a>'
         matches = re.findall(pattern, html)
         
+        # Format into a list of dictionaries with absolute URLs
         news_items = []
         for link, title in matches[:n]:
             news_items.append({
@@ -28,13 +31,16 @@ def fetch_cnn_lite_news(n=10):
             
         return news_items
         
+    except urllib.error.URLError as e:
+        print(f"Network error while fetching news: {e}")
+        return []
     except Exception as e:
-        print(f"Error fetching news: {e}")
+        print(f"An unexpected error occurred: {e}")
         return []
 
 def scrape_cnn_lite_article(url):
     """
-    Extracts structured news data from CNN Lite.
+    Extracts structured news data from CNN Lite using specific CSS selectors.
     """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -46,19 +52,24 @@ def scrape_cnn_lite_article(url):
         
         soup = BeautifulSoup(response.text, 'html.parser')
 
+        # 1. Target the main layout container
         container = soup.find('div', class_='layout-article-elevate__lite')
         
         if not container:
             return {"error": "Target container 'layout-article-elevate__lite' not found."}
 
+        # 2. Extract Headline (h2 class="headline")
         headline_element = container.find('h2', class_='headline')
         headline = headline_element.get_text(strip=True) if headline_element else "No Headline"
 
+        # 3. Extract Author Information (p class="byline--lite")
         byline_element = container.find('p', class_='byline--lite')
         author = byline_element.get_text(strip=True) if byline_element else "No Author Info"
 
+        # 4. Extract Article Details (article class="article--lite")
         article_wrapper = container.find('article', class_='article--lite')
         if article_wrapper:
+            # Join all paragraphs within the article tag
             paragraphs = [p.get_text(strip=True) for p in article_wrapper.find_all('p')]
             content = "\n\n".join(paragraphs)
         else:
@@ -73,15 +84,15 @@ def scrape_cnn_lite_article(url):
     except Exception as e:
         return {"error": str(e)}
 
-def summarize_with_gemma(article_content):
+def summarize_with_gemma(article_content, num_of_words=40):
     """
     Summarizes article content using Gemma 3 via Ollama localhost.
     """
     url = "http://localhost:11434/api/generate"
     
+    # Define the summarization logic/constraints
     prompt = (
-        "Summarize the following article content. "
-        "Provide a 1-sentence 'TL;DR' followed by 3 key bullet points.\n\n"
+        f"Summarize the following article content in {num_of_words} words. "
         f"Content: {article_content}"
     )
     
@@ -90,7 +101,7 @@ def summarize_with_gemma(article_content):
         "prompt": prompt,
         "stream": False,
         "options": {
-            "temperature": 0.3
+            "temperature": 0.3  # Lower temperature for factual consistency
         }
     }
 
@@ -103,13 +114,14 @@ def summarize_with_gemma(article_content):
 
 # Main Execution
 if __name__ == "__main__":
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
+    n = int(sys.argv[1]) if len(sys.argv) > 1 else 2
     
     top_news = fetch_cnn_lite_news(n)
     
     for news in top_news:
-        article_content = scrape_cnn_lite_article(news["url"])
-        summary = summarize_with_gemma(article_content.get("content", ""))
+        article_content = scrape_cnn_lite_article(news['url'])
+        summary = summarize_with_gemma(article_content['content'], 40)
         
         print(f"Title: {news['title']}")
-        print(f"Summary: {summary}\n")
+        print(f"Summary: {summary}")
+        print()
