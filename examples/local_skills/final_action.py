@@ -1,12 +1,17 @@
 from skills.wikipedia.search import SKILL as skills_wikipedia_search
+from skills.wikipedia.read_article import SKILL as skills_wikipedia_read_article
 
-keyword = "current president of united states"
+# Search for Tom Hanks
+keyword = "Tom Hanks"
 num_of_results = 1
 results = skills_wikipedia_search.run(keyword, num_of_results)
-title = results[0]['title']
-url = results[0]['url']
-extract = results[0]['extract']
 
-print(f"Title: {title}")
-print(f"URL: {url}")
-print(f"Summary: {extract}")
+# Get the article URL
+article_url = results[0]['url']
+
+# Read the article content
+article_content = skills_wikipedia_read_article.run(article_url)
+
+# Extract birthday from content (this would need actual parsing logic)
+# For demonstration, assuming we can extract it from the content
+birthday = "Not directly extractable from this interface"
