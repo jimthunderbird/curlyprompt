@@ -1,43 +1,49 @@
-python3.11 agent.py "show me top 5 news from cnn, each with link and 30 words summary"
-loading skills...
+py agent.py "given 4 numbers: 3,3,8,8, how to get 24"
 ```python
-from skills.cnn.get_top_news import SKILL
-from skills.cnn.summarize_news_article import SKILL as SUMMARIZE_SKILL
+from skills.math.middle_to_high_school_problem_solver import SKILL as skills_math_middle_to_high_school_problem_solver
 
-number_of_news = 5
-top_news = SKILL.run(number_of_news)
-
-for i, news in enumerate(top_news):
-    article_url = news['url']
-    summary = SUMMARIZE_SKILL.run(article_url, 30)
-    print(f"News {i+1}:")
-    print(f"Link: {article_url}")
-    print(f"Summary: {summary}")
-    print()
+problem = "using numbers 3, 3, 8, 8 each exactly once with basic operations, make 24"
+result = skills_math_middle_to_high_school_problem_solver.run(problem)
 ```
 generating action
 running action...
-Requesting a 30-word summary from Gemma 3...
-News 1:
-Link: https://lite.cnn.com/2026/03/22/sport/march-madness-second-round-sunday
-Summary: Purdue advanced to the Sweet 16 after a 79-69 win over Miami, with CJ Cox injuring his knee. Iowa State and Kansas also secured spots, alongside Florida and Arizona, while Minnesota upset Ole Miss in a women’s game.
+ To solve the problem of making 24 using the numbers 3, 3, 8, 8 exactly once with basic operations, we can follow these steps:
 
-Requesting a 30-word summary from Gemma 3...
-News 2:
-Link: https://lite.cnn.com/2026/03/22/us/chad-bianco-riverside-california-ballots
-Summary: Riverside County Sheriff Chad Bianco seized over 500,000 ballots, sparking controversy and Attorney General Rob Bonta’s condemnation, amid a vote count discrepancy investigation.
+1. Start by considering different combinations of the numbers and operations.
+2. Try to use the numbers in different orders and with different operations.
 
-Requesting a 30-word summary from Gemma 3...
-News 3:
-Link: https://lite.cnn.com/2026/03/21/americas/cuba-second-nationwide-blackout-latam-intl
-Summary: Cuba experienced a second nationwide blackout due to a thermoelectric plant failure, impacting 10 million people and disrupting vital services, amid ongoing fuel shortages.
+Let's try the following combination:
 
-Requesting a 30-word summary from Gemma 3...
-News 4:
-Link: https://lite.cnn.com/2026/03/22/americas/cuba-trump-us-deal-intl-latam
-Summary: Donald Trump seeks to end Fidel Castro’s revolution, demanding changes in Cuba’s leadership and threatening economic sanctions. Negotiations led by Marco Rubio and Miguel Diaz-Canel are underway, but Trump’s erratic statements and demands complicate any potential deal.
+\[
+(8 \div (3 - 8 \div 3)) \times 8
+\]
 
-Requesting a 30-word summary from Gemma 3...
-News 5:
-Link: https://lite.cnn.com/2026/03/22/politics/homan-ice-security-airports
-Summary: President Trump will deploy ICE agents to airports under Border Czar Homan to assist TSA amid staffing shortages and long security lines. Republicans and Vice President Vance support the move, while Democrats criticize it and TSA unions express safety concerns.
+First, we need to evaluate the expression inside the parentheses:
+
+\[
+8 \div 3 = \frac{8}{3}
+\]
+
+Next, we subtract this result from 3:
+
+\[
+3 - \frac{8}{3} = \frac{9}{3} - \frac{8}{3} = \frac{1}{3}
+\]
+
+Now, we divide 8 by this result:
+
+\[
+8 \div \frac{1}{3} = 8 \times 3 = 24
+\]
+
+Finally, we multiply by 8:
+
+\[
+24 \times 1 = 24
+\]
+
+Thus, the final answer is:
+
+\[
+\boxed{24}
+\]
