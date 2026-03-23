@@ -2,20 +2,18 @@ import urllib.request
 import urllib.parse
 import json
 
-def run(keyword, num_of_results=1):
+def search(keyword, num_of_results=1):
     """
     Searches Wikipedia for a keyword and returns page summaries.
     :param keyword: The search term to look up on Wikipedia.
     :param num_of_results: Number of results to return.
     """
-    keyword = keyword.lower()
     try:
-        # 1. Search for matching page titles
+        # Search for matching titles using opensearch
         search_params = urllib.parse.urlencode({
-            'action': 'query',
-            'list': 'search',
-            'srsearch': keyword,
-            'srlimit': num_of_results,
+            'action': 'opensearch',
+            'search': keyword,
+            'limit': num_of_results,
             'format': 'json'
         })
         search_url = f"https://en.wikipedia.org/w/api.php?{search_params}"
@@ -23,22 +21,20 @@ def run(keyword, num_of_results=1):
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
 
-        search_results = data.get('query', {}).get('search', [])
-        if not search_results:
+        titles = data[1] if len(data) > 1 else []
+        if not titles:
             return []
 
-        # 2. Fetch extracts for the found pages
-        titles = '|'.join(result['title'] for result in search_results)
+        # Fetch extracts using titles query as described in SKILL.md
         extract_params = urllib.parse.urlencode({
             'action': 'query',
-            'titles': titles,
+            'titles': '|'.join(titles),
             'prop': 'extracts',
             'exintro': True,
             'explaintext': True,
             'format': 'json'
         })
         extract_url = f"https://en.wikipedia.org/w/api.php?{extract_params}"
-
         req = urllib.request.Request(extract_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -48,17 +44,146 @@ def run(keyword, num_of_results=1):
         for page_id, page in pages.items():
             if page_id == '-1':
                 continue
+            title = page.get('title', '')
             results.append({
-                'title': page.get('title', ''),
-                'extract': page.get('extract', ''),
-                'url': f"https://en.wikipedia.org/?curid={page_id}"
+                'title': title,
+                'url': f"https://en.wikipedia.org/?curid={page_id}",
+                'extract': page.get('extract', '')
             })
 
         return results
 
-    except urllib.error.URLError as e:
-        print(f"Network error while searching Wikipedia: {e}")
-        return []
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"Error searching Wikipedia: {e}")
         return []
+
+
+def run(question, keyword, num_of_results=1):
+    """
+    Main entry point that implements the full SKILL.md logic.
+    - If question starts with what/when/how/who: search Wikipedia, read full content,
+      construct a fact-based prompt, and send to ollama gemma3:latest with streaming.
+    - Otherwise: just return search results (title, url, extract).
+    """
+    results = search(keyword, num_of_results)
+    if not results:
+        print("No Wikipedia results found.")
+        return results
+
+    if is_question(question):
+        # Read full content from the first result's URL
+        content = read_content_from_url(results[0]['url'])
+
+        # Construct the prompt
+        prompt = (
+            f"forget about your previous knowledge, based only on the following facts, "
+            f"answer the question: {question}\n"
+            f"facts {{\n"
+            f"  {content}\n"
+            f"}}"
+        )
+
+        # Send to ollama with streaming
+        send_to_ollama(prompt)
+    else:
+        # Just return the search results
+        for r in results:
+            print(f"Title: {r['title']}")
+            print(f"URL: {r['url']}")
+            print(f"Extract: {r['extract']}")
+            print()
+
+    return results
+
+
+def read_content_from_url(url):
+    """
+    Reads the plain text content from a Wikipedia page URL.
+    """
+    try:
+        # Extract page title or curid from the URL and use the API to get full text
+        parsed = urllib.parse.urlparse(url)
+        params = urllib.parse.parse_qs(parsed.query)
+
+        query_params = {
+            'action': 'query',
+            'prop': 'extracts',
+            'explaintext': True,
+            'format': 'json'
+        }
+
+        if 'curid' in params:
+            query_params['pageids'] = params['curid'][0]
+        elif 'title' in params:
+            query_params['titles'] = params['title'][0]
+        else:
+            # Try to get title from path
+            path = parsed.path
+            if '/wiki/' in path:
+                title = path.split('/wiki/')[-1]
+                query_params['titles'] = urllib.parse.unquote(title)
+            else:
+                return ''
+
+        api_url = f"https://en.wikipedia.org/w/api.php?{urllib.parse.urlencode(query_params)}"
+        req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode('utf-8'))
+
+        pages = data.get('query', {}).get('pages', {})
+        for page_id, page in pages.items():
+            if page_id == '-1':
+                continue
+            return page.get('extract', '')
+
+        return ''
+
+    except Exception as e:
+        print(f"Error reading content from URL: {e}")
+        return ''
+
+
+def send_to_ollama(prompt, model="gemma3:latest"):
+    """
+    Sends a prompt to ollama and streams the response.
+    """
+    try:
+        payload = json.dumps({
+            "model": model,
+            "prompt": prompt,
+            "stream": True
+        }).encode('utf-8')
+
+        req = urllib.request.Request(
+            "http://localhost:11434/api/generate",
+            data=payload,
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+
+        with urllib.request.urlopen(req) as response:
+            full_response = ""
+            for line in response:
+                chunk = json.loads(line.decode('utf-8'))
+                token = chunk.get('response', '')
+                if token:
+                    print(token, end='', flush=True)
+                    full_response += token
+                if chunk.get('done', False):
+                    break
+            print()  # newline after streaming
+            return full_response
+
+    except Exception as e:
+        print(f"Error communicating with ollama: {e}")
+        return ''
+
+
+def is_question(text):
+    """
+    Checks if the user's question starts with what, when, how, or who.
+    """
+    lower = text.strip().lower()
+    return lower.startswith(("what", "when", "how", "who"))
+
+
