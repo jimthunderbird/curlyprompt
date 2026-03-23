@@ -1,0 +1,5 @@
+generate SKILL.py based on SKILL.md
+
+constraint {
+  it should use ollama local model mightykatun/qwen2.5-math:7b, with streaming
+}

@@ -2,7 +2,7 @@
 descriptoin: given 2 pieces of contents, content_1 and content_2, write a creative story covering both content_1 and content_2, with certain word limit
 ---
 
-    ## Script And Usage
+## Script And Usage
 
 ```python
 {skill_package_import}
