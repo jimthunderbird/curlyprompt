@@ -70,15 +70,18 @@ def _solve(chunks, target=TARGET):
     return sorted(solutions)
 
 
-def run(numbers):
+def run(numbers, num_of_solutions=1):
     """
     Given four numbers, finds all ways to combine them using +, -, *, / to get exactly 24.
     :param numbers: A list of four numbers to use in the Game of 24.
+    :param num_of_solutions: Number of solutions to return (default 1). Use -1 or None for all.
     """
     chunks = [Chunk(n) for n in numbers]
     solutions = _solve(chunks)
 
     if solutions:
+        if num_of_solutions is not None and num_of_solutions > 0:
+            solutions = solutions[:num_of_solutions]
         print(f"Found {len(solutions)} solution(s) for {numbers}:")
         for s in solutions:
             print(f"  {s} = 24")

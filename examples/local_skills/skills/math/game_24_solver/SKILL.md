@@ -7,5 +7,6 @@ description: The Game of 24 is a classic arithmetical puzzle where the goal is t
 ```python
 {skill_package_import}
 numbers = [1,2,3,4]
-result = {skill_name}.run(numbers)
+num_of_solutions = 1
+result = {skill_name}.run(numbers, num_of_solutions)
 ```
