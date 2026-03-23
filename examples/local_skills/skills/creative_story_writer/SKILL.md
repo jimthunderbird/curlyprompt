@@ -11,5 +11,5 @@ content_2 = "this is story 2"
 content_3 = "this is story 3"
 word_limit = 100
 constraint = "use shakespear tone"
-result = {skill_name}.run({content_1}, {content_2}, {content_3}, word_limit, constraint)
+{skill_name}.run({content_1}, {content_2}, {content_3}, word_limit, constraint), call only, do not print result
 ```

@@ -6,6 +6,7 @@ def run(*contents, word_limit=100, constraint=None):
     :param contents: Variable number of content pieces to incorporate.
     :param word_limit: Maximum word count for the story.
     :param constraint: Optional style or tone constraint (e.g., "use shakespear tone").
+    :return: None
     """
     if not contents:
         raise ValueError("At least one content piece is required.")
@@ -35,9 +36,8 @@ def run(*contents, word_limit=100, constraint=None):
         result.append(token)
     print()
 
-    return ''.join(result)
+    return None
 
 # Example Usage
 if __name__ == "__main__":
-    story = run("this is story 1", "this is story 2", "this is story 3", word_limit=100, constraint="use shakespear tone")
-    print(story)
+    run("this is story 1", "this is story 2", "this is story 3", word_limit=100, constraint="use shakespear tone")
