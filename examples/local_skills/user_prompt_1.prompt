@@ -1,8 +1,8 @@
-summary:get top 1 news from cnn, for each news, create a 200 word summary of it
+summary:get top 1 news from cnn, create a 100 word summary of it
 
 wiki_article_content:search wikipedida for fermat's last theorem, show me 1 result, get its content
 
-new_story: write a 100 words story combining {wiki_article_content} and the {summary} 
+new_story: write a 50 words story combining {wiki_article_content} and the {summary} 
 
 print "news from cnn: {summary}\n"
 print "new story: {new_story}\n"
