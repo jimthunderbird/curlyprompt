@@ -1,22 +1,25 @@
 import urllib.request
 import urllib.parse
 import re
+import sys
 
 def run(article_url):
     """
     Given a Wikipedia article URL, fetches and returns its content as plain text.
-    :param article_url: Full URL to a Wikipedia article (e.g. https://en.wikipedia.org/wiki/Salt).
+    :param article_url: Full URL to a Wikipedia article (e.g. https://en.wikipedia.org/?curid=25284).
     """
     try:
-        # Extract the article title from the URL
+        # Extract the page ID from the URL
         parsed = urllib.parse.urlparse(article_url)
-        path = parsed.path
-        title = path.split('/wiki/')[-1]
+        query_params = urllib.parse.parse_qs(parsed.query)
+        curid = query_params.get('curid', [None])[0]
+        if not curid:
+            return "Invalid URL: expected ?curid= parameter."
 
         # Use the Wikipedia API to get plain text content
         params = urllib.parse.urlencode({
             'action': 'query',
-            'titles': urllib.parse.unquote(title),
+            'pageids': curid,
             'prop': 'extracts',
             'explaintext': True,
             'format': 'json'

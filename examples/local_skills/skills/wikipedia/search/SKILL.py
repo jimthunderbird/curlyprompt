@@ -8,6 +8,7 @@ def run(keyword, num_of_results=1):
     :param keyword: The search term to look up on Wikipedia.
     :param num_of_results: Number of results to return.
     """
+    keyword = keyword.lower()
     try:
         # 1. Search for matching page titles
         search_params = urllib.parse.urlencode({
@@ -50,7 +51,7 @@ def run(keyword, num_of_results=1):
             results.append({
                 'title': page.get('title', ''),
                 'extract': page.get('extract', ''),
-                'url': f"https://en.wikipedia.org/wiki/{urllib.parse.quote(page.get('title', '').replace(' ', '_'))}"
+                'url': f"https://en.wikipedia.org/?curid={page_id}"
             })
 
         return results

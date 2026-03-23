@@ -1,5 +1,10 @@
-from skills.math.game_24_solver import SKILL as skills_math_game_24_solver
-numbers = [1,4,5,9]
-num_of_solutions = 10
-result = skills_math_game_24_solver.run(numbers, num_of_solutions)
-print(result)
+from skills.wikipedia.search import SKILL as skills_wikipedia_search
+keyword = "PHP"
+num_of_results = 1
+results = skills_wikipedia_search.run(keyword, num_of_results)
+title = results[0]['title']
+url = results[0]['url']
+extract = results[0]['extract']
+print(f"Title: {title}")
+print(f"URL: {url}")
+print(f"Extract: {extract}")
