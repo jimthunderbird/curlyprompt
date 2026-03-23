@@ -16,5 +16,5 @@ python agent.py "show me top 5 news from cnn, each with link and 30 words summar
 python agent.py "search wikipedida for fermat's last theorem, show me one result only, show me the wiki page link"
 ```
 ```bash
-py agent.py "given 4 numbers: 1,4,5,9, show me how to get 24"
+python agent.py "given 4 numbers: 1,4,5,9, show me how to get 24"
 ```
