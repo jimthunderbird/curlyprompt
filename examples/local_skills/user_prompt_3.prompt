@@ -1,6 +1,4 @@
 content_1: search wiki on gutenburg, summarize in 50 words
 content_2: search wiki on guitar, summarize in 50 words
 content_3: search wiki on salt, sumarize in 50 words
-story: based on {content_1},{content_2},{content_3},make a story in 100 words
-
-output {story}
+based on content_1,content_2,content_3,make a story in 20 words, remember to use very very simple english

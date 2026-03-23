@@ -1,28 +1,43 @@
 import ollama
 
-def run(content_1, content_2, word_limit=100):
+def run(*contents, word_limit=100, constraint=None):
     """
-    Given 2 pieces of content, writes a creative story covering both.
-    :param content_1: The first piece of content to incorporate.
-    :param content_2: The second piece of content to incorporate.
+    Given multiple pieces of content, writes a creative story covering all of them.
+    :param contents: Variable number of content pieces to incorporate.
     :param word_limit: Maximum word count for the story.
+    :param constraint: Optional style or tone constraint (e.g., "use shakespear tone").
     """
+    if not contents:
+        raise ValueError("At least one content piece is required.")
+
+    content_sections = "\n\n".join(
+        f"Content {i+1}:\n{c}" for i, c in enumerate(contents)
+    )
+    constraint_instruction = f" Constraint: {constraint}." if constraint else ""
     prompt = (
-        "Write a creative short story that weaves together the following two pieces of content "
-        f"into a single cohesive narrative. Keep the story within {word_limit} words.\n\n"
-        f"Content 1:\n{content_1}\n\n"
-        f"Content 2:\n{content_2}\n\n"
-        "The story should be engaging, imaginative, and naturally incorporate elements from both contents."
+        f"Write a creative short story that weaves together the following {len(contents)} "
+        f"piece(s) of content into a single cohesive narrative. "
+        f"Keep the story within {word_limit} words.{constraint_instruction}\n\n"
+        f"{content_sections}\n\n"
+        "The story should be engaging, imaginative, and naturally incorporate elements from all contents."
     )
 
-    response = ollama.chat(
+    stream = ollama.chat(
         model='gemma3:latest',
-        messages=[{'role': 'user', 'content': prompt}]
+        messages=[{'role': 'user', 'content': prompt}],
+        stream=True
     )
 
-    return response['message']['content']
+    result = []
+    for chunk in stream:
+        token = chunk['message']['content']
+        print(token, end='', flush=True)
+        result.append(token)
+    print()
+
+    return ''.join(result)
 
 # Example Usage
 if __name__ == "__main__":
-    story = run("this is story 1", "this is story 2", 100)
+    story = run("this is story 1", "this is story 2", "this is story 3", word_limit=100, constraint="use shakespear tone")
     print(story)
