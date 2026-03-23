@@ -1,5 +1,5 @@
 ---
-descriptoin: given 2 pieces of contents, content_1 and content_2,...,content_N, write a creative story covering both content_1 and content_2, with certain word limit
+descriptoin: given N pieces of contents, content_1 and content_2,...,content_N, write a creative story with certain word limit and constraint
 ---
 
 ## Script And Usage
