@@ -26,6 +26,7 @@ spec {
     - actor
     - hexagon
     - decision
+    - textbox
   }
   right_column: present a canvas that i can drag element from left_column to so that i can draw digram
   behavior {
@@ -72,6 +73,9 @@ spec {
     }
     completed {
       when the we group the elements, if it included the l-shape connector arrows, when we want press delete, all the grouped elements, together with the l-shape connectors, should be deleted
+    }
+    completed {
+      when textbox is dropped to canvas, it shows "undefined"!
     }
   }
 }

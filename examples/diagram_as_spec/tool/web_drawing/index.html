@@ -303,6 +303,11 @@
     <span>Decision</span>
   </div>
 
+  <div class="palette-item" draggable="true" data-shape="textbox">
+    <svg viewBox="0 0 48 32"><rect x="2" y="2" width="44" height="28" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="4,2"/><text x="24" y="18" text-anchor="middle" font-size="10" fill="#333">Text</text></svg>
+    <span>Textbox</span>
+  </div>
+
   </div><!-- end palette-grid -->
 </div>
 
@@ -335,6 +340,7 @@ const defaultSizes = {
   'actor':        { w: 80, h: 120 },
   'hexagon':      { w: 120, h: 80 },
   'decision':     { w: 120, h: 80 },
+  'textbox':      { w: 140, h: 60 },
   'connector-elbow': { w: 100, h: 100 }
 };
 
@@ -434,6 +440,8 @@ function buildSVG(shape, w, h) {
     }
     case 'decision':
       return s + `<polygon points="${w/2},2 ${w-2},${h/2} ${w/2},${h-2} 2,${h/2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    case 'textbox':
+      return s + `<rect x="2" y="2" width="${w-4}" height="${h-4}" fill="#fff" stroke="#999" stroke-width="1" stroke-dasharray="4,2"/></svg>`;
     case 'connector-elbow': {
       // Generic L-shaped connector when resized - goes right then down
       const tipLen = 14, tipW = 6;
@@ -443,6 +451,8 @@ function buildSVG(shape, w, h) {
       return s + `<polyline points="4,10 ${mx},${my} ${mx},${arrowBaseY}" fill="none" stroke="#333" stroke-width="2.5"/>` +
         `<polygon points="${ex},${ey} ${ex-tipW},${arrowBaseY} ${ex+tipW},${arrowBaseY}" fill="#333"/></svg>`;
     }
+    default:
+      return s + `<rect x="2" y="2" width="${w-4}" height="${h-4}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
   }
 }
 
