@@ -21,6 +21,10 @@ spec {
     - 45 degree arrow pointing to bottom left
     - double pointing arrow
     - rouned border rectangle
+    - cylinder
+    - parallelogram
+    - actor
+    - hexagon
   }
   right_column: present a canvas that i can drag element from left_column to so that i can draw digram
   behavior {
@@ -43,7 +47,12 @@ spec {
     - remove "Group Selected" and "Ungroup" menu items
   }
   feedback {
-    - when 45 degree arrows are dropped between 2 elements, the arrow should auto fit between the 2 elements!
-      - the arrow is outside of the second element, it should be fitted inside the 2 elements!
+    completed { 
+      when 45 degree arrows are dropped between 2 elements, the arrow should auto fit between the 2 elements!
+      the arrow is outside of the second element, it should be fitted inside the 2 elements!
+    }
+    completed {
+      pay attention to additional elements in left_column
+    }
   }
 }

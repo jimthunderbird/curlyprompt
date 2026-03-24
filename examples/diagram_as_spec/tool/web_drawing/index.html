@@ -229,6 +229,26 @@
     <svg viewBox="0 0 48 32"><rect x="2" y="2" width="44" height="28" rx="8" ry="8" fill="none" stroke="#333" stroke-width="2"/></svg>
     <span>Rounded Rect</span>
   </div>
+
+  <div class="palette-item" draggable="true" data-shape="cylinder">
+    <svg viewBox="0 0 48 36"><ellipse cx="24" cy="6" rx="20" ry="6" fill="none" stroke="#333" stroke-width="2"/><line x1="4" y1="6" x2="4" y2="30" stroke="#333" stroke-width="2"/><line x1="44" y1="6" x2="44" y2="30" stroke="#333" stroke-width="2"/><path d="M4,30 Q24,42 44,30" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Cylinder</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="parallelogram">
+    <svg viewBox="0 0 48 32"><polygon points="12,2 46,2 36,30 2,30" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Parallelogram</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="actor">
+    <svg viewBox="0 0 48 40"><circle cx="24" cy="8" r="6" fill="none" stroke="#333" stroke-width="2"/><line x1="24" y1="14" x2="24" y2="28" stroke="#333" stroke-width="2"/><line x1="12" y1="20" x2="36" y2="20" stroke="#333" stroke-width="2"/><line x1="24" y1="28" x2="14" y2="38" stroke="#333" stroke-width="2"/><line x1="24" y1="28" x2="34" y2="38" stroke="#333" stroke-width="2"/></svg>
+    <span>Actor</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="hexagon">
+    <svg viewBox="0 0 48 32"><polygon points="12,2 36,2 46,16 36,30 12,30 2,16" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Hexagon</span>
+  </div>
 </div>
 
 <div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div></div></div>
@@ -253,7 +273,11 @@ const defaultSizes = {
   'arrow-bottom-right':{ w: 100, h: 100 },
   'arrow-bottom-left': { w: 100, h: 100 },
   'arrow-double': { w: 120, h: 40 },
-  'rounded-rect': { w: 120, h: 80 }
+  'rounded-rect': { w: 120, h: 80 },
+  'cylinder':     { w: 100, h: 120 },
+  'parallelogram':{ w: 140, h: 80 },
+  'actor':        { w: 80, h: 120 },
+  'hexagon':      { w: 120, h: 80 }
 };
 
 function buildSVG(shape, w, h) {
@@ -319,6 +343,37 @@ function buildSVG(shape, w, h) {
       return s + `<line x1="20" y1="${h/2}" x2="${w-20}" y2="${h/2}" stroke="#333" stroke-width="3"/><polygon points="20,${h/2-8} 0,${h/2} 20,${h/2+8}" fill="#333"/><polygon points="${w-20},${h/2-8} ${w},${h/2} ${w-20},${h/2+8}" fill="#333"/></svg>`;
     case 'rounded-rect':
       return s + `<rect x="2" y="2" width="${w-4}" height="${h-4}" rx="16" ry="16" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    case 'cylinder': {
+      const ry = Math.min(h * 0.12, 20);
+      return s + `<ellipse cx="${w/2}" cy="${ry+2}" rx="${w/2-2}" ry="${ry}" fill="#e8f0fe" stroke="#333" stroke-width="2"/>` +
+        `<line x1="2" y1="${ry+2}" x2="2" y2="${h-ry-2}" stroke="#333" stroke-width="2"/>` +
+        `<line x1="${w-2}" y1="${ry+2}" x2="${w-2}" y2="${h-ry-2}" stroke="#333" stroke-width="2"/>` +
+        `<path d="M2,${h-ry-2} Q${w/2},${h+ry-2} ${w-2},${h-ry-2}" fill="none" stroke="#333" stroke-width="2"/>` +
+        `<path d="M2,${ry+2} Q${w/2},${2*ry+4} ${w-2},${ry+2}" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/></svg>`;
+    }
+    case 'parallelogram': {
+      const skew = w * 0.18;
+      return s + `<polygon points="${skew},2 ${w-2},2 ${w-skew},${h-2} 2,${h-2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    }
+    case 'actor': {
+      const cx = w/2, headR = Math.min(w, h) * 0.15;
+      const headCy = headR + 2;
+      const bodyTop = headCy + headR;
+      const bodyBot = h * 0.65;
+      const armY = bodyTop + (bodyBot - bodyTop) * 0.3;
+      const armSpan = w * 0.4;
+      const legBot = h - 2;
+      const legSpan = w * 0.3;
+      return s + `<circle cx="${cx}" cy="${headCy}" r="${headR}" fill="#e8f0fe" stroke="#333" stroke-width="2"/>` +
+        `<line x1="${cx}" y1="${bodyTop}" x2="${cx}" y2="${bodyBot}" stroke="#333" stroke-width="2"/>` +
+        `<line x1="${cx-armSpan}" y1="${armY}" x2="${cx+armSpan}" y2="${armY}" stroke="#333" stroke-width="2"/>` +
+        `<line x1="${cx}" y1="${bodyBot}" x2="${cx-legSpan}" y2="${legBot}" stroke="#333" stroke-width="2"/>` +
+        `<line x1="${cx}" y1="${bodyBot}" x2="${cx+legSpan}" y2="${legBot}" stroke="#333" stroke-width="2"/></svg>`;
+    }
+    case 'hexagon': {
+      const inset = w * 0.22;
+      return s + `<polygon points="${inset},2 ${w-inset},2 ${w-2},${h/2} ${w-inset},${h-2} ${inset},${h-2} 2,${h/2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    }
   }
 }
 
@@ -418,29 +473,72 @@ function autoSizeArrow(shape, dropX, dropY) {
   }
 
   if (shape === 'arrow-top-right' || shape === 'arrow-top-left' || shape === 'arrow-bottom-right' || shape === 'arrow-bottom-left') {
-    // Diagonal arrows: fit into the gap rectangle between two elements
-    // Determine spatial arrangement based on actual positions
-    const leftEl = a.cx < b.cx ? a : b;
-    const rightEl = a.cx < b.cx ? b : a;
-    const topEl = a.cy < b.cy ? a : b;
-    const bottomEl = a.cy < b.cy ? b : a;
-    const leftIsTop = (leftEl === topEl);
+    // Diagonal arrows: determine which element the arrow points FROM and TO
+    // based on arrow direction and element positions
+    let fromEl, toEl;
 
+    if (shape === 'arrow-top-right') {
+      // Points from bottom-left toward top-right
+      // "from" = element closer to bottom-left, "to" = element closer to top-right
+      fromEl = (a.cx + a.cy * 0.5 < b.cx + b.cy * 0.5) ? b : a; // higher cy+lower cx = bottom-left
+      toEl = (fromEl === a) ? b : a;
+      // Actually: arrow goes from bottom-left to top-right
+      // from = element that is more bottom-left, to = element that is more top-right
+      const scoreA = -a.cx + a.cy; // higher = more bottom-left
+      const scoreB = -b.cx + b.cy;
+      fromEl = scoreA > scoreB ? a : b;
+      toEl = fromEl === a ? b : a;
+    } else if (shape === 'arrow-top-left') {
+      // Points from bottom-right toward top-left
+      const scoreA = a.cx + a.cy; // higher = more bottom-right
+      const scoreB = b.cx + b.cy;
+      fromEl = scoreA > scoreB ? a : b;
+      toEl = fromEl === a ? b : a;
+    } else if (shape === 'arrow-bottom-right') {
+      // Points from top-left toward bottom-right
+      const scoreA = a.cx + a.cy; // lower = more top-left
+      const scoreB = b.cx + b.cy;
+      fromEl = scoreA < scoreB ? a : b;
+      toEl = fromEl === a ? b : a;
+    } else { // arrow-bottom-left
+      // Points from top-right toward bottom-left
+      const scoreA = -a.cx + a.cy; // lower = more top-right
+      const scoreB = -b.cx + b.cy;
+      fromEl = scoreA < scoreB ? a : b;
+      toEl = fromEl === a ? b : a;
+    }
+
+    // Compute arrow bounding box that fits between the two element edges
     let arrowX, arrowY, arrowW, arrowH;
 
-    if (leftIsTop) {
-      // Elements arranged: top-left / bottom-right
-      arrowX = leftEl.x + leftEl.w + gap;
-      arrowY = leftEl.y + leftEl.h + gap;
-      arrowW = Math.max(30, rightEl.x - gap - arrowX);
-      arrowH = Math.max(30, bottomEl.y - gap - arrowY);
-    } else {
-      // Elements arranged: bottom-left / top-right
-      arrowX = leftEl.x + leftEl.w + gap;
-      arrowY = rightEl.y + rightEl.h + gap;
-      arrowW = Math.max(30, rightEl.x - gap - arrowX);
-      arrowH = Math.max(30, leftEl.y - gap - arrowY);
+    if (shape === 'arrow-top-right') {
+      // Arrow goes from near fromEl (bottom-left) to near toEl (top-right)
+      arrowX = fromEl.x + fromEl.w; // right edge of from element
+      arrowY = toEl.y + toEl.h;     // bottom edge of to element
+      arrowW = toEl.x - arrowX;     // to left edge of to element
+      arrowH = fromEl.y - arrowY;   // to top edge of from element
+    } else if (shape === 'arrow-top-left') {
+      // Arrow goes from near fromEl (bottom-right) to near toEl (top-left)
+      arrowX = toEl.x + toEl.w;     // right edge of to element
+      arrowY = toEl.y + toEl.h;     // bottom edge of to element
+      arrowW = fromEl.x - arrowX;   // to left edge of from element
+      arrowH = fromEl.y - arrowY;   // to top edge of from element
+    } else if (shape === 'arrow-bottom-right') {
+      // Arrow goes from near fromEl (top-left) to near toEl (bottom-right)
+      arrowX = fromEl.x + fromEl.w; // right edge of from element
+      arrowY = fromEl.y + fromEl.h; // bottom edge of from element
+      arrowW = toEl.x - arrowX;     // to left edge of to element
+      arrowH = toEl.y - arrowY;     // to top edge of to element
+    } else { // arrow-bottom-left
+      // Arrow goes from near fromEl (top-right) to near toEl (bottom-left)
+      arrowX = toEl.x + toEl.w;     // right edge of to element
+      arrowY = fromEl.y + fromEl.h; // bottom edge of from element
+      arrowW = fromEl.x - arrowX;   // to left edge of from element
+      arrowH = toEl.y - arrowY;     // to top edge of to element
     }
+
+    // If elements overlap or are too close, skip auto-fitting
+    if (arrowW < 10 || arrowH < 10) return null;
 
     return { x: arrowX, y: arrowY, w: arrowW, h: arrowH };
   }
