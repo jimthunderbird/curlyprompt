@@ -6,6 +6,8 @@ class IndexController extends Controller
 {
     public function __invoke()
     {
-        return view('index');
+        $loggedIn = auth()->check();
+
+        return view('index', ['loggedIn' => $loggedIn]);
     }
 }

@@ -6,6 +6,10 @@
     <title>Laravel App</title>
 </head>
 <body>
-    Hello
+    @if($loggedIn)
+        <p>You are logged in</p>
+    @else
+        <p>You are not logged in</p>
+    @endif
 </body>
 </html>
