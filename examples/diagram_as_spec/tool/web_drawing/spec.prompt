@@ -26,5 +26,13 @@ spec {
     - when right click on the canvas in the right column, shows a popup menu, with the following menu items {
       - Save: when clicked, it will save all elmenets in the canvas into ./spec.svg
     }
+    - the canvas should have horiazontal and vertical scroll bar so that we can scroll to view elements that are not in the viewport
+    - the horiazontal and vertical scroll bars should always show up in the canvas
+    - allow grouping elements and drag together, allow user to drag with a selection reactangle to group elements, then move the selection altogether
+    - the element grouping behavior {
+      when dragging start, a selection rectangle starts showing with dot border, as the selection rectangle covering the elements to select, the elements will have the border highlighted
+      when dragging stop, the selection rectange will still show with the selected elements
+      we then can drag the selection rectange and move all grouped selected elements together
+    }
   }
 }

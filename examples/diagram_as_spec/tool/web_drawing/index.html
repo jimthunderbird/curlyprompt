@@ -44,12 +44,27 @@
   #canvas-area {
     flex: 1;
     position: relative;
-    overflow: hidden;
+    overflow: scroll;
     background: #fff;
+    scrollbar-gutter: stable;
+  }
+  /* Force scrollbars to always be visible (macOS hides them by default) */
+  #canvas-area::-webkit-scrollbar { width: 14px; height: 14px; display: block; }
+  #canvas-area::-webkit-scrollbar-track { background: #f1f1f1; }
+  #canvas-area::-webkit-scrollbar-thumb { background: #aaa; border-radius: 7px; border: 2px solid #f1f1f1; }
+  #canvas-area::-webkit-scrollbar-thumb:hover { background: #888; }
+  #canvas-area::-webkit-scrollbar-corner { background: #f1f1f1; }
+  #canvas-area.drag-over { background-color: #f5f8ff; }
+
+  #canvas-inner {
+    position: relative;
+    min-width: 3000px;
+    min-height: 3000px;
+    width: 100%;
+    height: 100%;
     background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
     background-size: 20px 20px;
   }
-  #canvas-area.drag-over { background-color: #f5f8ff; }
 
   .canvas-element {
     position: absolute;
@@ -88,6 +103,25 @@
   }
   .canvas-element:hover svg { filter: drop-shadow(0 0 4px rgba(59,130,246,0.5)); }
   .canvas-element.selected svg { filter: drop-shadow(0 0 4px rgba(59,130,246,0.7)); }
+  .canvas-element.multi-selected svg { filter: drop-shadow(0 0 4px rgba(34,197,94,0.7)); }
+  .canvas-element.grouped { outline: 2px dashed rgba(59,130,246,0.3); outline-offset: 2px; }
+
+  /* Selection rectangle */
+  #selection-rect {
+    display: none;
+    position: absolute;
+    border: 2px dashed #3b82f6;
+    background: rgba(59,130,246,0.08);
+    z-index: 50;
+    cursor: move;
+  }
+  #selection-rect.drawing {
+    pointer-events: none;
+  }
+  #selection-rect.persistent {
+    pointer-events: auto;
+    cursor: move;
+  }
 
   /* Context Menu */
   #context-menu {
@@ -197,14 +231,17 @@
   </div>
 </div>
 
-<div id="canvas-area"></div>
+<div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div></div></div>
 
 <div id="context-menu">
+  <div class="menu-item" id="menu-group">Group Selected</div>
+  <div class="menu-item" id="menu-ungroup">Ungroup</div>
   <div class="menu-item" id="menu-save">Save</div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas-area');
+const canvasArea = document.getElementById('canvas-area');
+const canvas = document.getElementById('canvas-inner');
 
 const defaultSizes = {
   'rectangle':    { w: 120, h: 80 },
@@ -295,24 +332,24 @@ document.querySelectorAll('.palette-item').forEach(item => {
   });
 });
 
-canvas.addEventListener('dragover', e => {
+canvasArea.addEventListener('dragover', e => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'copy';
-  canvas.classList.add('drag-over');
+  canvasArea.classList.add('drag-over');
 });
 
-canvas.addEventListener('dragleave', () => canvas.classList.remove('drag-over'));
+canvasArea.addEventListener('dragleave', () => canvasArea.classList.remove('drag-over'));
 
-canvas.addEventListener('drop', e => {
+canvasArea.addEventListener('drop', e => {
   e.preventDefault();
-  canvas.classList.remove('drag-over');
+  canvasArea.classList.remove('drag-over');
   const shape = e.dataTransfer.getData('text/plain');
   if (!defaultSizes[shape]) return;
 
-  const rect = canvas.getBoundingClientRect();
+  const rect = canvasArea.getBoundingClientRect();
   const size = defaultSizes[shape];
-  const x = e.clientX - rect.left - size.w / 2;
-  const y = e.clientY - rect.top - size.h / 2;
+  const x = e.clientX - rect.left + canvasArea.scrollLeft - size.w / 2;
+  const y = e.clientY - rect.top + canvasArea.scrollTop - size.h / 2;
   createCanvasElement(shape, x, y, size.w, size.h);
 });
 
@@ -351,24 +388,45 @@ function createCanvasElement(shape, x, y, w, h) {
 // --- Drag elements on canvas ---
 function makeDraggable(el) {
   let offsetX, offsetY, dragging = false;
+  let groupOffsets = [];
 
   el.addEventListener('pointerdown', e => {
     if (e.target.classList.contains('resize-handle')) return;
+    // Skip if multi-selected group drag will handle it
+    if (el.classList.contains('multi-selected') && document.querySelectorAll('.canvas-element.multi-selected').length >= 2) return;
     e.preventDefault();
     dragging = true;
-    offsetX = e.clientX - el.offsetLeft;
-    offsetY = e.clientY - el.offsetTop;
+    const rect = canvasArea.getBoundingClientRect();
+    offsetX = e.clientX - rect.left + canvasArea.scrollLeft - el.offsetLeft;
+    offsetY = e.clientY - rect.top + canvasArea.scrollTop - el.offsetTop;
     el.setPointerCapture(e.pointerId);
     selectElement(el);
+
+    // If this element is in a group, prepare to move siblings
+    groupOffsets = [];
+    if (el.dataset.group) {
+      document.querySelectorAll(`.canvas-element[data-group="${el.dataset.group}"]`).forEach(s => {
+        if (s !== el) {
+          groupOffsets.push({ el: s, dx: s.offsetLeft - el.offsetLeft, dy: s.offsetTop - el.offsetTop });
+        }
+      });
+    }
   });
 
   el.addEventListener('pointermove', e => {
     if (!dragging) return;
-    el.style.left = (e.clientX - offsetX) + 'px';
-    el.style.top = (e.clientY - offsetY) + 'px';
+    const rect = canvasArea.getBoundingClientRect();
+    const newX = e.clientX - rect.left + canvasArea.scrollLeft - offsetX;
+    const newY = e.clientY - rect.top + canvasArea.scrollTop - offsetY;
+    el.style.left = newX + 'px';
+    el.style.top = newY + 'px';
+    groupOffsets.forEach(o => {
+      o.el.style.left = (newX + o.dx) + 'px';
+      o.el.style.top = (newY + o.dy) + 'px';
+    });
   });
 
-  el.addEventListener('pointerup', () => { dragging = false; });
+  el.addEventListener('pointerup', () => { dragging = false; groupOffsets = []; });
 
   // Delete on keyboard
   el.setAttribute('tabindex', '0');
@@ -469,17 +527,235 @@ function makeEditable(el) {
   });
 }
 
-// Deselect on canvas click
-canvas.addEventListener('click', e => {
-  if (e.target === canvas) {
-    document.querySelectorAll('.canvas-element.selected').forEach(s => s.classList.remove('selected'));
+// Deselect on canvas click (handled by pointerdown on canvas which calls clearSelection)
+
+// --- Selection Rectangle ---
+const selRect = document.getElementById('selection-rect');
+let selStartX, selStartY, selecting = false;
+
+function clearSelection() {
+  selRect.style.display = 'none';
+  selRect.classList.remove('persistent', 'drawing');
+  document.querySelectorAll('.canvas-element.multi-selected').forEach(s => s.classList.remove('multi-selected'));
+}
+
+canvas.addEventListener('pointerdown', e => {
+  if (e.target !== canvas) return;
+
+  // Clear previous selection
+  clearSelection();
+  document.querySelectorAll('.canvas-element.selected').forEach(s => s.classList.remove('selected'));
+
+  selecting = true;
+  const rect = canvasArea.getBoundingClientRect();
+  selStartX = e.clientX - rect.left + canvasArea.scrollLeft;
+  selStartY = e.clientY - rect.top + canvasArea.scrollTop;
+  selRect.style.left = selStartX + 'px';
+  selRect.style.top = selStartY + 'px';
+  selRect.style.width = '0px';
+  selRect.style.height = '0px';
+  selRect.style.display = 'block';
+  selRect.classList.add('drawing');
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!selecting) return;
+  const rect = canvasArea.getBoundingClientRect();
+  const curX = e.clientX - rect.left + canvasArea.scrollLeft;
+  const curY = e.clientY - rect.top + canvasArea.scrollTop;
+  const x = Math.min(selStartX, curX);
+  const y = Math.min(selStartY, curY);
+  const w = Math.abs(curX - selStartX);
+  const h = Math.abs(curY - selStartY);
+  selRect.style.left = x + 'px';
+  selRect.style.top = y + 'px';
+  selRect.style.width = w + 'px';
+  selRect.style.height = h + 'px';
+
+  // Highlight elements as the selection rectangle covers them
+  const sx = x, sy = y, sw = w, sh = h;
+  document.querySelectorAll('.canvas-element').forEach(el => {
+    const ex = el.offsetLeft, ey = el.offsetTop;
+    const ew = parseInt(el.dataset.w), eh = parseInt(el.dataset.h);
+    if (ex + ew > sx && ex < sx + sw && ey + eh > sy && ey < sy + sh) {
+      el.classList.add('multi-selected');
+    } else {
+      el.classList.remove('multi-selected');
+    }
+  });
+});
+
+canvas.addEventListener('pointerup', e => {
+  if (!selecting) return;
+  selecting = false;
+
+  const sw = parseInt(selRect.style.width);
+  const sh = parseInt(selRect.style.height);
+
+  if (sw < 5 && sh < 5) {
+    // Tiny drag = click, hide selection rect
+    clearSelection();
+    return;
   }
+
+  const selectedEls = document.querySelectorAll('.canvas-element.multi-selected');
+  if (selectedEls.length === 0) {
+    clearSelection();
+    return;
+  }
+
+  // Keep selection rect visible and make it draggable
+  selRect.classList.remove('drawing');
+  selRect.classList.add('persistent');
+});
+
+// --- Drag the persistent selection rectangle to move grouped elements ---
+(function() {
+  let groupDragging = false;
+  let groupOffsets = [];
+  let groupAnchorX, groupAnchorY;
+  let selRectStartX, selRectStartY;
+
+  selRect.addEventListener('pointerdown', e => {
+    if (!selRect.classList.contains('persistent')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    groupDragging = true;
+
+    const rect = canvasArea.getBoundingClientRect();
+    groupAnchorX = e.clientX - rect.left + canvasArea.scrollLeft;
+    groupAnchorY = e.clientY - rect.top + canvasArea.scrollTop;
+    selRectStartX = selRect.offsetLeft;
+    selRectStartY = selRect.offsetTop;
+
+    groupOffsets = [];
+    document.querySelectorAll('.canvas-element.multi-selected').forEach(s => {
+      groupOffsets.push({ el: s, startX: s.offsetLeft, startY: s.offsetTop });
+    });
+
+    selRect.setPointerCapture(e.pointerId);
+  });
+
+  selRect.addEventListener('pointermove', e => {
+    if (!groupDragging) return;
+    const r = canvasArea.getBoundingClientRect();
+    const cx = e.clientX - r.left + canvasArea.scrollLeft;
+    const cy = e.clientY - r.top + canvasArea.scrollTop;
+    const dx = cx - groupAnchorX;
+    const dy = cy - groupAnchorY;
+
+    // Move the selection rectangle
+    selRect.style.left = (selRectStartX + dx) + 'px';
+    selRect.style.top = (selRectStartY + dy) + 'px';
+
+    // Move all selected elements
+    groupOffsets.forEach(o => {
+      o.el.style.left = (o.startX + dx) + 'px';
+      o.el.style.top = (o.startY + dy) + 'px';
+    });
+  });
+
+  selRect.addEventListener('pointerup', () => {
+    groupDragging = false;
+    groupOffsets = [];
+  });
+})();
+
+// Also allow dragging multi-selected elements by clicking on any one of them
+(function() {
+  let groupDragging = false;
+  let groupOffsets = [];
+  let groupAnchorX, groupAnchorY;
+  let selRectStartX, selRectStartY;
+
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest('.canvas-element');
+    if (!el || !el.classList.contains('multi-selected')) return;
+    if (e.target.classList.contains('resize-handle')) return;
+
+    const selected = document.querySelectorAll('.canvas-element.multi-selected');
+    if (selected.length < 2) return;
+
+    e.preventDefault();
+    groupDragging = true;
+    const rect = canvasArea.getBoundingClientRect();
+    groupAnchorX = e.clientX - rect.left + canvasArea.scrollLeft;
+    groupAnchorY = e.clientY - rect.top + canvasArea.scrollTop;
+
+    groupOffsets = [];
+    selected.forEach(s => {
+      groupOffsets.push({ el: s, startX: s.offsetLeft, startY: s.offsetTop });
+    });
+
+    // Also track the selection rect position
+    if (selRect.classList.contains('persistent')) {
+      selRectStartX = selRect.offsetLeft;
+      selRectStartY = selRect.offsetTop;
+    }
+
+    el.setPointerCapture(e.pointerId);
+
+    function onMove(ev) {
+      if (!groupDragging) return;
+      const r = canvasArea.getBoundingClientRect();
+      const cx = ev.clientX - r.left + canvasArea.scrollLeft;
+      const cy = ev.clientY - r.top + canvasArea.scrollTop;
+      const dx = cx - groupAnchorX;
+      const dy = cy - groupAnchorY;
+      groupOffsets.forEach(o => {
+        o.el.style.left = (o.startX + dx) + 'px';
+        o.el.style.top = (o.startY + dy) + 'px';
+      });
+      // Move selection rect too
+      if (selRect.classList.contains('persistent')) {
+        selRect.style.left = (selRectStartX + dx) + 'px';
+        selRect.style.top = (selRectStartY + dy) + 'px';
+      }
+    }
+
+    function onUp() {
+      groupDragging = false;
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+    }
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  }, true);
+})();
+
+// --- Group / Ungroup ---
+document.getElementById('menu-group').addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+  const selected = document.querySelectorAll('.canvas-element.multi-selected');
+  if (selected.length < 2) { alert('Select at least 2 elements first.'); return; }
+  const groupId = 'group-' + Date.now();
+  selected.forEach(el => {
+    el.dataset.group = groupId;
+    el.classList.add('grouped');
+    el.classList.remove('multi-selected');
+  });
+});
+
+document.getElementById('menu-ungroup').addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+  const selected = document.querySelectorAll('.canvas-element.selected, .canvas-element.multi-selected');
+  selected.forEach(el => {
+    if (el.dataset.group) {
+      const groupId = el.dataset.group;
+      document.querySelectorAll(`.canvas-element[data-group="${groupId}"]`).forEach(g => {
+        delete g.dataset.group;
+        g.classList.remove('grouped');
+      });
+    }
+  });
 });
 
 // --- Context Menu ---
 const contextMenu = document.getElementById('context-menu');
 
-canvas.addEventListener('contextmenu', e => {
+canvasArea.addEventListener('contextmenu', e => {
   e.preventDefault();
   contextMenu.style.display = 'block';
   contextMenu.style.left = e.clientX + 'px';
