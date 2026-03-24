@@ -1,27 +1,30 @@
-from skills.wikipedia.search import SKILL as skills_wikipedia_search
-from skills.wikipedia.read_article import SKILL as skills_wikipedia_read_article
-from skills.creative_story_writer import SKILL as skills_creative_story_writer
+from skills.cnn.get_top_news import SKILL as skills_cnn_get_top_news
+from skills.cnn.summarize_news_article import SKILL as skills_cnn_summarize_news_article
 
-# Step 1: Search and summarize content_1 (Gutenberg)
-keyword1 = "Gutenberg"
-num_of_results = 1
-results1 = skills_wikipedia_search.run(keyword1, keyword1, num_of_results)
-url1 = results1[0]['url']
-content1 = skills_wikipedia_read_article.run(url1)
+# Get top 3 news articles
+number_of_news = 3
+top_news = skills_cnn_get_top_news.run(number_of_news)
 
-# Step 2: Search and summarize content_2 (Guitar)
-keyword2 = "Guitar"
-num_of_results = 1
-results2 = skills_wikipedia_search.run(keyword2, keyword2, num_of_results)
-url2 = results2[0]['url']
-content2 = skills_wikipedia_read_article.run(url2)
+# Filter news related to Iran and summarize
+filtered_news = []
+for article in top_news:
+    if 'iran' in article['title'].lower():
+        try:
+            summary = skills_cnn_summarize_news_article.run(article['url'], 50)
+            filtered_news.append({
+                'title': article['title'],
+                'url': article['url'],
+                'summary': summary
+            })
+            if len(filtered_news) >= 3:
+                break
+        except:
+            continue
 
-# Step 3: Search and summarize content_3 (Salt)
-keyword3 = "Salt"
-num_of_results = 1
-results3 = skills_wikipedia_search.run(keyword3, keyword3, num_of_results)
-url3 = results3[0]['url']
-content3 = skills_wikipedia_read_article.run(url3)
-
-# Step 4: Write a creative story using the three contents
-skills_creative_story_writer.run(content1, content2, content3, 20, "simple english")
+# Display results
+for i, news in enumerate(filtered_news, 1):
+    print(f"News {i}:")
+    print(f"Title: {news['title']}")
+    print(f"URL: {news['url']}")
+    print(f"Summary: {news['summary']}")
+    print()
