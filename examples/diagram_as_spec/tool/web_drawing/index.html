@@ -834,6 +834,29 @@ function exportToSVG() {
 function escapeXml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+// --- Delete grouped/multi-selected elements with Delete key ---
+document.addEventListener('keydown', e => {
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    // Don't interfere with text inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    const multiSelected = document.querySelectorAll('.canvas-element.multi-selected');
+    if (multiSelected.length > 0) {
+      e.preventDefault();
+      multiSelected.forEach(el => el.remove());
+      clearSelection();
+      return;
+    }
+
+    // Also delete single selected element
+    const selected = document.querySelector('.canvas-element.selected');
+    if (selected) {
+      e.preventDefault();
+      selected.remove();
+    }
+  }
+});
 </script>
 </body>
 </html>

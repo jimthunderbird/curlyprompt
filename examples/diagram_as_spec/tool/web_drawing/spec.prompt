@@ -34,5 +34,6 @@ spec {
       when dragging stop, the selection rectange will still show with the selected elements
       we then can drag the selection rectange and move all grouped selected elements together
     }
+    - when elements are grouped and user presses the delete key, it should delete all grouped elements
   }
 }
