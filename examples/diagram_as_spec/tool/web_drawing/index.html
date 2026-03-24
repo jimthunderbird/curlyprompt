@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagram Drawing Tool</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; display: flex; background: #f0f2f5; }
+
+  /* Left Panel */
+  #palette {
+    width: 220px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  #palette h2 { font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+  .palette-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: grab;
+    background: #fafafa;
+    transition: background 0.15s, box-shadow 0.15s;
+    user-select: none;
+  }
+  .palette-item:hover { background: #eef2ff; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .palette-item:active { cursor: grabbing; }
+
+  .palette-item svg { width: 48px; height: 32px; flex-shrink: 0; }
+  .palette-item span { font-size: 13px; color: #333; }
+
+  /* Right Panel - Canvas */
+  #canvas-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  #canvas-area.drag-over { background-color: #f5f8ff; }
+
+  .canvas-element {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+  }
+  .canvas-element svg { display: block; pointer-events: none; }
+  .canvas-element .shape-text {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    padding: 8px;
+    word-wrap: break-word;
+    overflow: hidden;
+  }
+  .canvas-element .shape-text-input {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #3b82f6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    outline: none;
+    background: #fff;
+    z-index: 20;
+    min-width: 60px;
+    max-width: 90%;
+  }
+  .canvas-element:hover svg { filter: drop-shadow(0 0 4px rgba(59,130,246,0.5)); }
+  .canvas-element.selected svg { filter: drop-shadow(0 0 4px rgba(59,130,246,0.7)); }
+
+  /* Context Menu */
+  #context-menu {
+    display: none;
+    position: fixed;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 140px;
+    padding: 4px 0;
+  }
+  #context-menu .menu-item {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+  }
+  #context-menu .menu-item:hover {
+    background: #eef2ff;
+  }
+
+  /* Resize handles */
+  .canvas-element .resize-handle {
+    display: none;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #3b82f6;
+    border: 1px solid #fff;
+    border-radius: 2px;
+    z-index: 10;
+  }
+  .canvas-element.selected .resize-handle { display: block; }
+
+  .resize-handle.nw { top: -5px; left: -5px; cursor: nw-resize; }
+  .resize-handle.ne { top: -5px; right: -5px; cursor: ne-resize; }
+  .resize-handle.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+  .resize-handle.se { bottom: -5px; right: -5px; cursor: se-resize; }
+</style>
+</head>
+<body>
+
+<div id="palette">
+  <h2>Shapes</h2>
+
+  <div class="palette-item" draggable="true" data-shape="rectangle">
+    <svg viewBox="0 0 48 32"><rect x="2" y="2" width="44" height="28" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Rectangle</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="oval">
+    <svg viewBox="0 0 48 32"><ellipse cx="24" cy="16" rx="22" ry="14" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Oval</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-right">
+    <svg viewBox="0 0 48 32"><line x1="4" y1="16" x2="38" y2="16" stroke="#333" stroke-width="2"/><polygon points="38,10 48,16 38,22" fill="#333"/></svg>
+    <span>Arrow Right</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-left">
+    <svg viewBox="0 0 48 32"><line x1="10" y1="16" x2="44" y2="16" stroke="#333" stroke-width="2"/><polygon points="10,10 0,16 10,22" fill="#333"/></svg>
+    <span>Arrow Left</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-up">
+    <svg viewBox="0 0 48 32"><line x1="24" y1="28" x2="24" y2="8" stroke="#333" stroke-width="2"/><polygon points="18,8 24,0 30,8" fill="#333"/></svg>
+    <span>Arrow Up</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-down">
+    <svg viewBox="0 0 48 32"><line x1="24" y1="4" x2="24" y2="24" stroke="#333" stroke-width="2"/><polygon points="18,24 24,32 30,24" fill="#333"/></svg>
+    <span>Arrow Down</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-top-right">
+    <svg viewBox="0 0 48 32"><line x1="6" y1="28" x2="38" y2="4" stroke="#333" stroke-width="2"/><polygon points="32,0 44,2 36,12" fill="#333"/></svg>
+    <span>Arrow Top Right</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-top-left">
+    <svg viewBox="0 0 48 32"><line x1="42" y1="28" x2="10" y2="4" stroke="#333" stroke-width="2"/><polygon points="16,0 4,2 12,12" fill="#333"/></svg>
+    <span>Arrow Top Left</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-bottom-right">
+    <svg viewBox="0 0 48 32"><line x1="6" y1="4" x2="38" y2="28" stroke="#333" stroke-width="2"/><polygon points="36,20 44,30 32,32" fill="#333"/></svg>
+    <span>Arrow Bottom Right</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-bottom-left">
+    <svg viewBox="0 0 48 32"><line x1="42" y1="4" x2="10" y2="28" stroke="#333" stroke-width="2"/><polygon points="12,20 4,30 16,32" fill="#333"/></svg>
+    <span>Arrow Bottom Left</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="arrow-double">
+    <svg viewBox="0 0 48 32"><line x1="10" y1="16" x2="38" y2="16" stroke="#333" stroke-width="2"/><polygon points="10,10 0,16 10,22" fill="#333"/><polygon points="38,10 48,16 38,22" fill="#333"/></svg>
+    <span>Double Arrow</span>
+  </div>
+
+  <div class="palette-item" draggable="true" data-shape="rounded-rect">
+    <svg viewBox="0 0 48 32"><rect x="2" y="2" width="44" height="28" rx="8" ry="8" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Rounded Rect</span>
+  </div>
+</div>
+
+<div id="canvas-area"></div>
+
+<div id="context-menu">
+  <div class="menu-item" id="menu-save">Save</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas-area');
+
+const defaultSizes = {
+  'rectangle':    { w: 120, h: 80 },
+  'oval':         { w: 120, h: 80 },
+  'arrow-right':  { w: 120, h: 40 },
+  'arrow-left':   { w: 120, h: 40 },
+  'arrow-up':     { w: 40, h: 120 },
+  'arrow-down':   { w: 40, h: 120 },
+  'arrow-top-right':   { w: 100, h: 100 },
+  'arrow-top-left':    { w: 100, h: 100 },
+  'arrow-bottom-right':{ w: 100, h: 100 },
+  'arrow-bottom-left': { w: 100, h: 100 },
+  'arrow-double': { w: 120, h: 40 },
+  'rounded-rect': { w: 120, h: 80 }
+};
+
+function buildSVG(shape, w, h) {
+  const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`;
+  switch (shape) {
+    case 'rectangle':
+      return s + `<rect x="2" y="2" width="${w-4}" height="${h-4}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    case 'oval':
+      return s + `<ellipse cx="${w/2}" cy="${h/2}" rx="${w/2-2}" ry="${h/2-2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    case 'arrow-right':
+      return s + `<line x1="4" y1="${h/2}" x2="${w-20}" y2="${h/2}" stroke="#333" stroke-width="3"/><polygon points="${w-20},${h/2-8} ${w},${h/2} ${w-20},${h/2+8}" fill="#333"/></svg>`;
+    case 'arrow-left':
+      return s + `<line x1="20" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="#333" stroke-width="3"/><polygon points="20,${h/2-8} 0,${h/2} 20,${h/2+8}" fill="#333"/></svg>`;
+    case 'arrow-up':
+      return s + `<line x1="${w/2}" y1="${h-4}" x2="${w/2}" y2="20" stroke="#333" stroke-width="3"/><polygon points="${w/2-8},20 ${w/2},0 ${w/2+8},20" fill="#333"/></svg>`;
+    case 'arrow-down':
+      return s + `<line x1="${w/2}" y1="4" x2="${w/2}" y2="${h-20}" stroke="#333" stroke-width="3"/><polygon points="${w/2-8},${h-20} ${w/2},${h} ${w/2+8},${h-20}" fill="#333"/></svg>`;
+    case 'arrow-top-right': {
+      const ax = w - 4, ay = 4;
+      const bx = 4, by = h - 4;
+      const dx = ax - bx, dy = ay - by;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const ux = dx/len, uy = dy/len;
+      const px = -uy, py = ux;
+      const tipLen = 14, tipW = 6;
+      const tx = ax - ux*tipLen, ty = ay - uy*tipLen;
+      return s + `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#333" stroke-width="3"/><polygon points="${ax},${ay} ${tx+px*tipW},${ty+py*tipW} ${tx-px*tipW},${ty-py*tipW}" fill="#333"/></svg>`;
+    }
+    case 'arrow-top-left': {
+      const ax = 4, ay = 4;
+      const bx = w - 4, by = h - 4;
+      const dx = ax - bx, dy = ay - by;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const ux = dx/len, uy = dy/len;
+      const px = -uy, py = ux;
+      const tipLen = 14, tipW = 6;
+      const tx = ax - ux*tipLen, ty = ay - uy*tipLen;
+      return s + `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#333" stroke-width="3"/><polygon points="${ax},${ay} ${tx+px*tipW},${ty+py*tipW} ${tx-px*tipW},${ty-py*tipW}" fill="#333"/></svg>`;
+    }
+    case 'arrow-bottom-right': {
+      const ax = w - 4, ay = h - 4;
+      const bx = 4, by = 4;
+      const dx = ax - bx, dy = ay - by;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const ux = dx/len, uy = dy/len;
+      const px = -uy, py = ux;
+      const tipLen = 14, tipW = 6;
+      const tx = ax - ux*tipLen, ty = ay - uy*tipLen;
+      return s + `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#333" stroke-width="3"/><polygon points="${ax},${ay} ${tx+px*tipW},${ty+py*tipW} ${tx-px*tipW},${ty-py*tipW}" fill="#333"/></svg>`;
+    }
+    case 'arrow-bottom-left': {
+      const ax = 4, ay = h - 4;
+      const bx = w - 4, by = 4;
+      const dx = ax - bx, dy = ay - by;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const ux = dx/len, uy = dy/len;
+      const px = -uy, py = ux;
+      const tipLen = 14, tipW = 6;
+      const tx = ax - ux*tipLen, ty = ay - uy*tipLen;
+      return s + `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#333" stroke-width="3"/><polygon points="${ax},${ay} ${tx+px*tipW},${ty+py*tipW} ${tx-px*tipW},${ty-py*tipW}" fill="#333"/></svg>`;
+    }
+    case 'arrow-double':
+      return s + `<line x1="20" y1="${h/2}" x2="${w-20}" y2="${h/2}" stroke="#333" stroke-width="3"/><polygon points="20,${h/2-8} 0,${h/2} 20,${h/2+8}" fill="#333"/><polygon points="${w-20},${h/2-8} ${w},${h/2} ${w-20},${h/2+8}" fill="#333"/></svg>`;
+    case 'rounded-rect':
+      return s + `<rect x="2" y="2" width="${w-4}" height="${h-4}" rx="16" ry="16" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+  }
+}
+
+// --- Drag from palette ---
+document.querySelectorAll('.palette-item').forEach(item => {
+  item.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', item.dataset.shape);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+});
+
+canvas.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  canvas.classList.add('drag-over');
+});
+
+canvas.addEventListener('dragleave', () => canvas.classList.remove('drag-over'));
+
+canvas.addEventListener('drop', e => {
+  e.preventDefault();
+  canvas.classList.remove('drag-over');
+  const shape = e.dataTransfer.getData('text/plain');
+  if (!defaultSizes[shape]) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const size = defaultSizes[shape];
+  const x = e.clientX - rect.left - size.w / 2;
+  const y = e.clientY - rect.top - size.h / 2;
+  createCanvasElement(shape, x, y, size.w, size.h);
+});
+
+function createCanvasElement(shape, x, y, w, h) {
+  const el = document.createElement('div');
+  el.className = 'canvas-element';
+  el.innerHTML = buildSVG(shape, w, h);
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.dataset.shape = shape;
+  el.dataset.w = w;
+  el.dataset.h = h;
+
+  // Add resize handles
+  ['nw','ne','sw','se'].forEach(pos => {
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle ' + pos;
+    handle.dataset.handle = pos;
+    el.appendChild(handle);
+  });
+
+  // Add text overlay for non-arrow shapes
+  const isArrow = shape.startsWith('arrow-');
+  if (!isArrow) {
+    const textDiv = document.createElement('div');
+    textDiv.className = 'shape-text';
+    el.appendChild(textDiv);
+  }
+
+  canvas.appendChild(el);
+  makeDraggable(el);
+  makeResizable(el);
+  if (!isArrow) makeEditable(el);
+}
+
+// --- Drag elements on canvas ---
+function makeDraggable(el) {
+  let offsetX, offsetY, dragging = false;
+
+  el.addEventListener('pointerdown', e => {
+    if (e.target.classList.contains('resize-handle')) return;
+    e.preventDefault();
+    dragging = true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+    el.setPointerCapture(e.pointerId);
+    selectElement(el);
+  });
+
+  el.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    el.style.left = (e.clientX - offsetX) + 'px';
+    el.style.top = (e.clientY - offsetY) + 'px';
+  });
+
+  el.addEventListener('pointerup', () => { dragging = false; });
+
+  // Delete on keyboard
+  el.setAttribute('tabindex', '0');
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      el.remove();
+    }
+  });
+
+  el.addEventListener('click', () => el.focus());
+}
+
+// --- Resize elements ---
+function makeResizable(el) {
+  el.querySelectorAll('.resize-handle').forEach(handle => {
+    let startX, startY, startW, startH, startLeft, startTop, resizing = false;
+
+    handle.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      resizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startW = parseInt(el.dataset.w);
+      startH = parseInt(el.dataset.h);
+      startLeft = el.offsetLeft;
+      startTop = el.offsetTop;
+      handle.setPointerCapture(e.pointerId);
+    });
+
+    handle.addEventListener('pointermove', e => {
+      if (!resizing) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const pos = handle.dataset.handle;
+      let newW = startW, newH = startH, newLeft = startLeft, newTop = startTop;
+
+      if (pos.includes('e')) newW = Math.max(20, startW + dx);
+      if (pos.includes('w')) { newW = Math.max(20, startW - dx); newLeft = startLeft + dx; }
+      if (pos.includes('s')) newH = Math.max(20, startH + dy);
+      if (pos.includes('n')) { newH = Math.max(20, startH - dy); newTop = startTop + dy; }
+
+      // Clamp position if size hit minimum
+      if (newW === 20 && pos.includes('w')) newLeft = startLeft + startW - 20;
+      if (newH === 20 && pos.includes('n')) newTop = startTop + startH - 20;
+
+      el.dataset.w = newW;
+      el.dataset.h = newH;
+      el.style.left = newLeft + 'px';
+      el.style.top = newTop + 'px';
+
+      const svg = el.querySelector('svg');
+      svg.outerHTML = buildSVG(el.dataset.shape, newW, newH);
+    });
+
+    handle.addEventListener('pointerup', () => { resizing = false; });
+  });
+}
+
+function selectElement(el) {
+  document.querySelectorAll('.canvas-element.selected').forEach(s => {
+    if (s !== el) s.classList.remove('selected');
+  });
+  el.classList.add('selected');
+}
+
+// --- Double-click to edit text on non-arrow shapes ---
+function makeEditable(el) {
+  el.addEventListener('dblclick', e => {
+    e.stopPropagation();
+    if (el.querySelector('.shape-text-input')) return;
+
+    const textDiv = el.querySelector('.shape-text');
+    const currentText = textDiv.textContent || '';
+    textDiv.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'shape-text-input';
+    input.value = currentText;
+    el.appendChild(input);
+    input.focus();
+    input.select();
+
+    function commitText() {
+      textDiv.textContent = input.value;
+      textDiv.style.display = 'flex';
+      input.remove();
+    }
+
+    input.addEventListener('blur', commitText);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { input.blur(); }
+      if (e.key === 'Escape') { input.value = currentText; input.blur(); }
+      e.stopPropagation();
+    });
+    input.addEventListener('pointerdown', e => e.stopPropagation());
+  });
+}
+
+// Deselect on canvas click
+canvas.addEventListener('click', e => {
+  if (e.target === canvas) {
+    document.querySelectorAll('.canvas-element.selected').forEach(s => s.classList.remove('selected'));
+  }
+});
+
+// --- Context Menu ---
+const contextMenu = document.getElementById('context-menu');
+
+canvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  contextMenu.style.display = 'block';
+  contextMenu.style.left = e.clientX + 'px';
+  contextMenu.style.top = e.clientY + 'px';
+});
+
+document.addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+});
+
+document.getElementById('menu-save').addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+  exportToSVG();
+});
+
+function exportToSVG() {
+  const elements = canvas.querySelectorAll('.canvas-element');
+  if (elements.length === 0) { alert('Canvas is empty.'); return; }
+
+  // Compute bounding box
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  elements.forEach(el => {
+    const x = el.offsetLeft;
+    const y = el.offsetTop;
+    const w = parseInt(el.dataset.w);
+    const h = parseInt(el.dataset.h);
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x + w);
+    maxY = Math.max(maxY, y + h);
+  });
+
+  const pad = 20;
+  const svgW = maxX - minX + pad * 2;
+  const svgH = maxY - minY + pad * 2;
+
+  let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">\n`;
+  svgContent += `  <rect width="100%" height="100%" fill="white"/>\n`;
+
+  elements.forEach(el => {
+    const x = el.offsetLeft - minX + pad;
+    const y = el.offsetTop - minY + pad;
+    const w = parseInt(el.dataset.w);
+    const h = parseInt(el.dataset.h);
+    const shape = el.dataset.shape;
+
+    // Get inner SVG content (strip outer <svg> tags)
+    const innerSVG = buildSVG(shape, w, h)
+      .replace(/<svg[^>]*>/, '')
+      .replace(/<\/svg>/, '');
+
+    svgContent += `  <g transform="translate(${x},${y})">\n`;
+    svgContent += `    ${innerSVG}\n`;
+
+    // Add text if present
+    const textDiv = el.querySelector('.shape-text');
+    if (textDiv && textDiv.textContent.trim()) {
+      const text = textDiv.textContent.trim();
+      svgContent += `    <text x="${w/2}" y="${h/2}" text-anchor="middle" dominant-baseline="central" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" fill="#333">${escapeXml(text)}</text>\n`;
+    }
+
+    svgContent += `  </g>\n`;
+  });
+
+  svgContent += `</svg>`;
+
+  // Download as spec.svg
+  const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'spec.svg';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function escapeXml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>

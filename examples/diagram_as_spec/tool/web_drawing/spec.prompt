@@ -1,0 +1,30 @@
+role: HTML/CSS/Javscript Expert
+
+obective: create a single web application based on spec, update spec.entrypoint if it exists
+
+spec {
+  entrypoint: ./index.html
+  layout: two column layout
+  left_column: present a list of draggable elments that can be used to draw architectural diagrams {
+    - rectangle
+    - oval
+    - right pointing arrow
+    - left pointing arrow
+    - up pointing arrow
+    - down pointing arrow
+    - 45 degree arrow pointing to top right
+    - 45 degree arrow pointing to top left
+    - 45 degree arrow pointing to bottom right
+    - 45 degree arrow pointing to bottom left
+    - double pointing arrow
+    - rouned border rectangle
+  }
+  right_column: present a canvas that i can drag element from left_column to so that i can draw digram 
+  behavior {
+    - all elements specified in left_column should be allowed to enlarge or shrink
+    - when double click on all non-arrow shapes, allow user to enter text that will be aligned to the center of the shape
+    - when right click on the canvas in the right column, shows a popup menu, with the following menu items {
+      - Save: when clicked, it will save all elmenets in the canvas into ./spec.svg
+    }
+  }
+}
