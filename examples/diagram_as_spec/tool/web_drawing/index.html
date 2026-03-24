@@ -1463,6 +1463,174 @@ function createConnectorArrow(fromEl, corner, toEl) {
   makeDraggable(el);
   makeResizable(el);
 }
+
+// --- Undo / Redo system ---
+const undoStack = [];
+const redoStack = [];
+const MAX_UNDO = 100;
+
+function captureState() {
+  const elements = canvas.querySelectorAll('.canvas-element');
+  const state = [];
+  elements.forEach(el => {
+    const obj = {
+      elId: el.dataset.elId,
+      shape: el.dataset.shape,
+      x: el.offsetLeft,
+      y: el.offsetTop,
+      w: parseInt(el.dataset.w),
+      h: parseInt(el.dataset.h),
+      fromId: el.dataset.fromId || null,
+      toId: el.dataset.toId || null,
+      text: '',
+      svgHTML: ''
+    };
+    const textDiv = el.querySelector('.shape-text');
+    if (textDiv) obj.text = textDiv.textContent || '';
+    // For connector-elbow, save the actual SVG since buildSVG won't reproduce the exact route
+    if (el.dataset.shape === 'connector-elbow') {
+      const svgEl = el.querySelector('svg');
+      if (svgEl) obj.svgHTML = svgEl.outerHTML;
+    }
+    state.push(obj);
+  });
+  return { elements: state, counter: _elementIdCounter };
+}
+
+function restoreState(state) {
+  // Remove all current elements
+  canvas.querySelectorAll('.canvas-element').forEach(el => el.remove());
+  _elementIdCounter = state.counter;
+
+  state.elements.forEach(obj => {
+    const el = document.createElement('div');
+    el.className = 'canvas-element';
+    el.dataset.elId = obj.elId;
+    el.dataset.shape = obj.shape;
+    el.dataset.w = obj.w;
+    el.dataset.h = obj.h;
+    el.style.left = obj.x + 'px';
+    el.style.top = obj.y + 'px';
+    if (obj.fromId) el.dataset.fromId = obj.fromId;
+    if (obj.toId) el.dataset.toId = obj.toId;
+
+    if (obj.shape === 'connector-elbow' && obj.svgHTML) {
+      el.innerHTML = obj.svgHTML;
+    } else {
+      el.innerHTML = buildSVG(obj.shape, obj.w, obj.h);
+    }
+
+    // Add resize handles
+    ['nw','ne','sw','se'].forEach(pos => {
+      const handle = document.createElement('div');
+      handle.className = 'resize-handle ' + pos;
+      handle.dataset.handle = pos;
+      el.appendChild(handle);
+    });
+
+    const isArrow = obj.shape.startsWith('arrow-');
+    if (!isArrow && obj.shape !== 'connector-elbow') {
+      const textDiv = document.createElement('div');
+      textDiv.className = 'shape-text';
+      textDiv.textContent = obj.text || '';
+      el.appendChild(textDiv);
+    }
+
+    // Decision corner handles
+    if (obj.shape === 'decision') {
+      ['top', 'right', 'bottom', 'left-handle'].forEach(pos => {
+        const handle = document.createElement('div');
+        handle.className = 'decision-corner-handle ' + pos;
+        handle.dataset.corner = pos.replace('-handle', '');
+        const dot = document.createElement('div');
+        dot.className = 'handle-dot';
+        handle.appendChild(dot);
+        el.appendChild(handle);
+      });
+      addDecisionStubs(el, obj.w, obj.h);
+      setupDecisionConnectors(el);
+    }
+
+    canvas.appendChild(el);
+    makeDraggable(el);
+    makeResizable(el);
+    if (!isArrow && obj.shape !== 'connector-elbow') makeEditable(el);
+  });
+
+  clearSelection();
+}
+
+function pushUndo() {
+  undoStack.push(captureState());
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+  redoStack.length = 0; // clear redo on new action
+}
+
+// Save initial state
+undoStack.push(captureState());
+
+// Override createCanvasElement to push undo
+const _origCreateCanvasElement = createCanvasElement;
+// We'll use a MutationObserver approach instead - track meaningful changes
+
+// Push undo state on drops
+const origDrop = canvasArea.ondrop; // won't work, let's use a different approach
+
+// Use a debounced observer to capture state after DOM changes
+let _undoTimer = null;
+function scheduleUndoCapture() {
+  clearTimeout(_undoTimer);
+  _undoTimer = setTimeout(() => {
+    const current = captureState();
+    const last = undoStack[undoStack.length - 1];
+    // Only push if state actually changed
+    if (JSON.stringify(current) !== JSON.stringify(last)) {
+      undoStack.push(current);
+      if (undoStack.length > MAX_UNDO) undoStack.shift();
+      redoStack.length = 0;
+    }
+  }, 300);
+}
+
+// Observe canvas for child additions/removals and attribute changes
+const _undoObserver = new MutationObserver(() => scheduleUndoCapture());
+_undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
+
+// Cmd+Z undo, Cmd+R redo
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+    e.preventDefault();
+    if (undoStack.length > 1) {
+      // Flush any pending capture first
+      clearTimeout(_undoTimer);
+      const current = captureState();
+      const last = undoStack[undoStack.length - 1];
+      if (JSON.stringify(current) !== JSON.stringify(last)) {
+        undoStack.push(current);
+      }
+      const popped = undoStack.pop();
+      redoStack.push(popped);
+      const prev = undoStack[undoStack.length - 1];
+      _undoObserver.disconnect();
+      restoreState(prev);
+      _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
+    }
+  }
+
+  if ((e.metaKey || e.ctrlKey) && e.key === 'r') {
+    e.preventDefault();
+    if (redoStack.length > 0) {
+      clearTimeout(_undoTimer);
+      const next = redoStack.pop();
+      undoStack.push(next);
+      _undoObserver.disconnect();
+      restoreState(next);
+      _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
+    }
+  }
+});
 </script>
 </body>
 </html>

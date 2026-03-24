@@ -52,6 +52,8 @@ spec {
     - decision_element_behavior: for the decision element {
       when hover on its 4 corner, an arrow with dot line will show up, when user starts dragging towards a target element, the arrow will automatically created, connecting the decision element and the target element, when user dropped on the target element, the dot arrow should turn into a corresponding single direction arrow that fits nicely between the 2 connected elements
     }
+    - shortcut_command_z_undo: when pressing cmd + z, it should undo my changes
+    - shortcut_command_r_redo: when pressing cmd + r, it should redo my changes
   }
   feedback {
     completed { 
@@ -67,7 +69,7 @@ spec {
     completed {
       in spec.behavior.- decision_element_behavior, the connection arrow should be a turning arrow, similar to ./screenshot/if_else_flow.jpg
     }
-    {
+    completed {
       when the we group the elements, if it included the l-shape connector arrows, when we want press delete, all the grouped elements, together with the l-shape connectors, should be deleted
     }
   }
