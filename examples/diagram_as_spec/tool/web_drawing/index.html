@@ -300,7 +300,7 @@
   </div>
 </div>
 
-<div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div><svg id="connector-preview" xmlns="http://www.w3.org/2000/svg"><line stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,4"/><polygon fill="#3b82f6"/></svg></div></div>
+<div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div><svg id="connector-preview" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,4"/><polygon fill="#3b82f6"/></svg></div></div>
 
 <div id="context-menu">
   <div class="menu-item" id="menu-save">Save</div>
@@ -309,6 +309,7 @@
 <script>
 const canvasArea = document.getElementById('canvas-area');
 const canvas = document.getElementById('canvas-inner');
+let _elementIdCounter = 0;
 
 const defaultSizes = {
   'rectangle':    { w: 120, h: 80 },
@@ -327,7 +328,8 @@ const defaultSizes = {
   'parallelogram':{ w: 140, h: 80 },
   'actor':        { w: 80, h: 120 },
   'hexagon':      { w: 120, h: 80 },
-  'decision':     { w: 120, h: 80 }
+  'decision':     { w: 120, h: 80 },
+  'connector-elbow': { w: 100, h: 100 }
 };
 
 function buildSVG(shape, w, h) {
@@ -426,6 +428,15 @@ function buildSVG(shape, w, h) {
     }
     case 'decision':
       return s + `<polygon points="${w/2},2 ${w-2},${h/2} ${w/2},${h-2} 2,${h/2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
+    case 'connector-elbow': {
+      // Generic L-shaped connector when resized - goes right then down
+      const tipLen = 14, tipW = 6;
+      const mx = w - 10, my = 10; // turn point at top-right area
+      const ex = w - 10, ey = h - 4;
+      const arrowBaseY = ey - tipLen;
+      return s + `<polyline points="4,10 ${mx},${my} ${mx},${arrowBaseY}" fill="none" stroke="#333" stroke-width="2.5"/>` +
+        `<polygon points="${ex},${ey} ${ex-tipW},${arrowBaseY} ${ex+tipW},${arrowBaseY}" fill="#333"/></svg>`;
+    }
   }
 }
 
@@ -472,7 +483,7 @@ canvasArea.addEventListener('drop', e => {
 
 // Auto-size arrow to connect two nearby elements when dropped between them
 function autoSizeArrow(shape, dropX, dropY) {
-  const elements = Array.from(canvas.querySelectorAll('.canvas-element')).filter(el => !el.dataset.shape.startsWith('arrow-'));
+  const elements = Array.from(canvas.querySelectorAll('.canvas-element')).filter(el => !el.dataset.shape.startsWith('arrow-') && el.dataset.shape !== 'connector-elbow');
   if (elements.length < 2) return null;
 
   // Get bounding boxes
@@ -601,6 +612,7 @@ function autoSizeArrow(shape, dropX, dropY) {
 function createCanvasElement(shape, x, y, w, h) {
   const el = document.createElement('div');
   el.className = 'canvas-element';
+  el.dataset.elId = String(++_elementIdCounter);
   el.innerHTML = buildSVG(shape, w, h);
   el.style.left = x + 'px';
   el.style.top = y + 'px';
@@ -693,7 +705,16 @@ function makeDraggable(el) {
   el.setAttribute('tabindex', '0');
   el.addEventListener('keydown', e => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
+      const deletedId = el.dataset.elId;
       el.remove();
+      // Also remove any connector-elbow elements connected to this element
+      if (deletedId) {
+        document.querySelectorAll('.canvas-element[data-shape="connector-elbow"]').forEach(c => {
+          if (c.dataset.fromId === deletedId || c.dataset.toId === deletedId) {
+            c.remove();
+          }
+        });
+      }
     }
   });
 
@@ -1071,9 +1092,16 @@ function exportToSVG() {
     const shape = el.dataset.shape;
 
     // Get inner SVG content (strip outer <svg> tags)
-    const innerSVG = buildSVG(shape, w, h)
-      .replace(/<svg[^>]*>/, '')
-      .replace(/<\/svg>/, '');
+    let innerSVG;
+    if (shape === 'connector-elbow') {
+      // For elbow connectors, extract the actual SVG content from the element
+      const svgEl = el.querySelector('svg');
+      innerSVG = svgEl ? svgEl.innerHTML : '';
+    } else {
+      innerSVG = buildSVG(shape, w, h)
+        .replace(/<svg[^>]*>/, '')
+        .replace(/<\/svg>/, '');
+    }
 
     svgContent += `  <g transform="translate(${x},${y})">\n`;
     svgContent += `    ${innerSVG}\n`;
@@ -1113,7 +1141,20 @@ document.addEventListener('keydown', e => {
     const multiSelected = document.querySelectorAll('.canvas-element.multi-selected');
     if (multiSelected.length > 0) {
       e.preventDefault();
+      // Collect IDs of all elements being deleted
+      const deletedIds = new Set();
+      multiSelected.forEach(el => {
+        if (el.dataset.elId) deletedIds.add(el.dataset.elId);
+      });
       multiSelected.forEach(el => el.remove());
+      // Also remove any connector-elbow elements connected to deleted elements
+      if (deletedIds.size > 0) {
+        document.querySelectorAll('.canvas-element[data-shape="connector-elbow"]').forEach(c => {
+          if (deletedIds.has(c.dataset.fromId) || deletedIds.has(c.dataset.toId)) {
+            c.remove();
+          }
+        });
+      }
       clearSelection();
       return;
     }
@@ -1122,7 +1163,16 @@ document.addEventListener('keydown', e => {
     const selected = document.querySelector('.canvas-element.selected');
     if (selected) {
       e.preventDefault();
+      const deletedId = selected.dataset.elId;
       selected.remove();
+      // Also remove any connector-elbow elements connected to deleted element
+      if (deletedId) {
+        document.querySelectorAll('.canvas-element[data-shape="connector-elbow"]').forEach(c => {
+          if (c.dataset.fromId === deletedId || c.dataset.toId === deletedId) {
+            c.remove();
+          }
+        });
+      }
     }
   }
 
@@ -1213,9 +1263,23 @@ function addDecisionStubs(el, w, h) {
 }
 
 // --- Decision element corner connector dragging ---
+function computeElbowRoute(corner, sx, sy, ex, ey) {
+  // For left/right corners: go horizontal first, then vertical
+  // For top/bottom corners: go vertical first, then horizontal
+  let turnX, turnY;
+  if (corner === 'left' || corner === 'right') {
+    turnX = ex;
+    turnY = sy;
+  } else {
+    turnX = sx;
+    turnY = ey;
+  }
+  return [{ x: sx, y: sy }, { x: turnX, y: turnY }, { x: ex, y: ey }];
+}
+
 function setupDecisionConnectors(decisionEl) {
   const preview = document.getElementById('connector-preview');
-  const previewLine = preview.querySelector('line');
+  const previewPolyline = preview.querySelector('polyline');
   const previewArrow = preview.querySelector('polygon');
 
   decisionEl.querySelectorAll('.decision-corner-handle').forEach(handle => {
@@ -1258,20 +1322,24 @@ function setupDecisionConnectors(decisionEl) {
       const ex = e.clientX - rect.left + canvasArea.scrollLeft;
       const ey = e.clientY - rect.top + canvasArea.scrollTop;
 
-      // Draw dashed line with arrowhead
-      const dx = ex - sx, dy = ey - sy;
+      // Compute elbow route
+      const route = computeElbowRoute(corner, sx, sy, ex, ey);
+
+      // Arrowhead on last segment
+      const last = route[route.length - 1];
+      const prev = route[route.length - 2];
+      const dx = last.x - prev.x, dy = last.y - prev.y;
       const len = Math.sqrt(dx*dx + dy*dy);
       const ux = len > 0 ? dx/len : 0, uy = len > 0 ? dy/len : 0;
       const tipLen = 12, tipW = 5;
-      const tx = ex - ux*tipLen, ty = ey - uy*tipLen;
+      const arrowBase = { x: last.x - ux*tipLen, y: last.y - uy*tipLen };
       const px = -uy, py = ux;
 
-      previewLine.setAttribute('x1', sx);
-      previewLine.setAttribute('y1', sy);
-      previewLine.setAttribute('x2', tx);
-      previewLine.setAttribute('y2', ty);
+      // Update polyline (stop at arrowBase for last segment)
+      const polyPoints = route.slice(0, -1).map(p => `${p.x},${p.y}`).join(' ') + ` ${arrowBase.x},${arrowBase.y}`;
+      previewPolyline.setAttribute('points', polyPoints);
       previewArrow.setAttribute('points',
-        `${ex},${ey} ${tx+px*tipW},${ty+py*tipW} ${tx-px*tipW},${ty-py*tipW}`);
+        `${last.x},${last.y} ${arrowBase.x+px*tipW},${arrowBase.y+py*tipW} ${arrowBase.x-px*tipW},${arrowBase.y-py*tipW}`);
 
       // Highlight target element under cursor
       document.querySelectorAll('.canvas-element').forEach(el => el.classList.remove('connector-target'));
@@ -1316,6 +1384,7 @@ function createConnectorArrow(fromEl, corner, toEl) {
   const fx = fromEl.offsetLeft, fy = fromEl.offsetTop;
   const tw = parseInt(toEl.dataset.w), th = parseInt(toEl.dataset.h);
   const tx = toEl.offsetLeft, ty = toEl.offsetTop;
+  const tcx = tx + tw/2, tcy = ty + th/2;
 
   // Start point at the decision diamond corner
   let sx, sy;
@@ -1324,50 +1393,75 @@ function createConnectorArrow(fromEl, corner, toEl) {
   if (corner === 'bottom'){ sx = fx + fw/2; sy = fy + fh; }
   if (corner === 'left')  { sx = fx;        sy = fy + fh/2; }
 
-  // End point: nearest edge center of target
-  const tcx = tx + tw/2, tcy = ty + th/2;
-  const candidates = [
-    { x: tcx, y: ty, side: 'top' },
-    { x: tx + tw, y: tcy, side: 'right' },
-    { x: tcx, y: ty + th, side: 'bottom' },
-    { x: tx, y: tcy, side: 'left' }
-  ];
-  candidates.sort((a, b) => Math.hypot(a.x - sx, a.y - sy) - Math.hypot(b.x - sx, b.y - sy));
-  const endPt = candidates[0];
-
-  // Determine arrow type and bounding box
-  const dx = endPt.x - sx, dy = endPt.y - sy;
-  const absDx = Math.abs(dx), absDy = Math.abs(dy);
-
-  let shape, arrowX, arrowY, arrowW, arrowH;
-
-  if (absDx > absDy * 2) {
-    // Mostly horizontal - arrow fits exactly between start and end points
-    shape = dx > 0 ? 'arrow-right' : 'arrow-left';
-    arrowX = Math.min(sx, endPt.x);
-    arrowW = Math.max(30, absDx);
-    arrowH = defaultSizes[shape].h;
-    arrowY = (sy + endPt.y) / 2 - arrowH / 2;
-  } else if (absDy > absDx * 2) {
-    // Mostly vertical - arrow fits exactly between start and end points
-    shape = dy > 0 ? 'arrow-down' : 'arrow-up';
-    arrowY = Math.min(sy, endPt.y);
-    arrowH = Math.max(30, absDy);
-    arrowW = defaultSizes[shape].w;
-    arrowX = (sx + endPt.x) / 2 - arrowW / 2;
+  // End point: choose target edge based on elbow routing direction
+  let endPt;
+  if (corner === 'left' || corner === 'right') {
+    // Horizontal first, then vertical → connect to top or bottom of target
+    if (sy < tcy) {
+      endPt = { x: tcx, y: ty }; // target top
+    } else {
+      endPt = { x: tcx, y: ty + th }; // target bottom
+    }
   } else {
-    // Diagonal - arrow bounding box spans from start to end
-    if (dx > 0 && dy < 0) shape = 'arrow-top-right';
-    else if (dx < 0 && dy < 0) shape = 'arrow-top-left';
-    else if (dx > 0 && dy > 0) shape = 'arrow-bottom-right';
-    else shape = 'arrow-bottom-left';
-    arrowX = Math.min(sx, endPt.x);
-    arrowY = Math.min(sy, endPt.y);
-    arrowW = Math.max(30, absDx);
-    arrowH = Math.max(30, absDy);
+    // Vertical first, then horizontal → connect to left or right of target
+    if (sx < tcx) {
+      endPt = { x: tx, y: tcy }; // target left
+    } else {
+      endPt = { x: tx + tw, y: tcy }; // target right
+    }
   }
 
-  createCanvasElement(shape, arrowX, arrowY, arrowW, arrowH);
+  // Compute elbow route
+  const route = computeElbowRoute(corner, sx, sy, endPt.x, endPt.y);
+
+  // Compute bounding box with padding
+  const pad = 12;
+  const allX = route.map(p => p.x), allY = route.map(p => p.y);
+  const minX = Math.min(...allX) - pad, minY = Math.min(...allY) - pad;
+  const maxX = Math.max(...allX) + pad, maxY = Math.max(...allY) + pad;
+  const w = maxX - minX, h = maxY - minY;
+
+  // Convert to local coordinates
+  const lp = route.map(p => ({ x: p.x - minX, y: p.y - minY }));
+
+  // Arrowhead on last segment
+  const last = lp[lp.length - 1], prev = lp[lp.length - 2];
+  const dx = last.x - prev.x, dy = last.y - prev.y;
+  const segLen = Math.sqrt(dx*dx + dy*dy);
+  const ux = segLen > 0 ? dx/segLen : 0, uy = segLen > 0 ? dy/segLen : 0;
+  const tipLen = 14, tipW = 6;
+  const arrowBase = { x: last.x - ux*tipLen, y: last.y - uy*tipLen };
+  const px = -uy, py = ux;
+
+  const polyPoints = lp.slice(0, -1).map(p => `${p.x},${p.y}`).join(' ') + ` ${arrowBase.x},${arrowBase.y}`;
+  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">` +
+    `<polyline points="${polyPoints}" fill="none" stroke="#333" stroke-width="2.5"/>` +
+    `<polygon points="${last.x},${last.y} ${arrowBase.x+px*tipW},${arrowBase.y+py*tipW} ${arrowBase.x-px*tipW},${arrowBase.y-py*tipW}" fill="#333"/>` +
+    `</svg>`;
+
+  const el = document.createElement('div');
+  el.className = 'canvas-element';
+  el.dataset.elId = String(++_elementIdCounter);
+  el.innerHTML = svgContent;
+  el.style.left = minX + 'px';
+  el.style.top = minY + 'px';
+  el.dataset.shape = 'connector-elbow';
+  el.dataset.w = w;
+  el.dataset.h = h;
+  el.dataset.fromId = fromEl.dataset.elId;
+  el.dataset.toId = toEl.dataset.elId;
+
+  // Add resize handles
+  ['nw','ne','sw','se'].forEach(pos => {
+    const handleDiv = document.createElement('div');
+    handleDiv.className = 'resize-handle ' + pos;
+    handleDiv.dataset.handle = pos;
+    el.appendChild(handleDiv);
+  });
+
+  canvas.appendChild(el);
+  makeDraggable(el);
+  makeResizable(el);
 }
 </script>
 </body>

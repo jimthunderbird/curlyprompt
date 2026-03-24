@@ -61,8 +61,14 @@ spec {
     completed {
       pay attention to additional elements in left_column
     }
-    {
+    completed {
       pay attention to spec.behavior.- decision_element_behavior
+    }
+    completed {
+      in spec.behavior.- decision_element_behavior, the connection arrow should be a turning arrow, similar to ./screenshot/if_else_flow.jpg
+    }
+    {
+      when the we group the elements, if it included the l-shape connector arrows, when we want press delete, all the grouped elements, together with the l-shape connectors, should be deleted
     }
   }
 }
