@@ -1,0 +1,6 @@
+summary:top 1 news summary from cnn
+simple_words_summary:convert {summary} to very very simple words
+output "-----------------------------------"
+output {summary}
+output {simple_words_summary}
+output "-----------------------------------"
