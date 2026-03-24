@@ -46,6 +46,12 @@ spec {
     - when an element is selected and user presses up/down/left/right keys, the element should move accordingly, pixel by pixel
     - when arrow elements are dropped into the canvas and between 2 elements, auto calculate the size of the arrows based on the distance between the 2 elements so that the 2 elements are connected visually and nicely, this should also apply to all 45 degree arrows
     - remove "Group Selected" and "Ungroup" menu items
+    - for the actor element {
+      when click on it, the editing textbox should be positions in the bottom of the element shape, wit 3px top margin, align horiazontally
+    }
+    - decision_element_behavior: for the decision element {
+      when hover on its 4 corner, an arrow with dot line will show up, when user starts dragging towards a target element, the arrow will automatically created, connecting the decision element and the target element, when user dropped on the target element, the dot arrow should turn into a corresponding single direction arrow that fits nicely between the 2 connected elements
+    }
   }
   feedback {
     completed { 
@@ -54,6 +60,9 @@ spec {
     }
     completed {
       pay attention to additional elements in left_column
+    }
+    {
+      pay attention to spec.behavior.- decision_element_behavior
     }
   }
 }
