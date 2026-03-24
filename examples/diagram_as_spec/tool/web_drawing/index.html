@@ -234,8 +234,6 @@
 <div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div></div></div>
 
 <div id="context-menu">
-  <div class="menu-item" id="menu-group">Group Selected</div>
-  <div class="menu-item" id="menu-ungroup">Ungroup</div>
   <div class="menu-item" id="menu-save">Save</div>
 </div>
 
@@ -347,11 +345,108 @@ canvasArea.addEventListener('drop', e => {
   if (!defaultSizes[shape]) return;
 
   const rect = canvasArea.getBoundingClientRect();
+  const dropX = e.clientX - rect.left + canvasArea.scrollLeft;
+  const dropY = e.clientY - rect.top + canvasArea.scrollTop;
+
+  const isArrow = shape.startsWith('arrow-');
+  if (isArrow) {
+    const autoResult = autoSizeArrow(shape, dropX, dropY);
+    if (autoResult) {
+      createCanvasElement(shape, autoResult.x, autoResult.y, autoResult.w, autoResult.h);
+      return;
+    }
+  }
+
   const size = defaultSizes[shape];
-  const x = e.clientX - rect.left + canvasArea.scrollLeft - size.w / 2;
-  const y = e.clientY - rect.top + canvasArea.scrollTop - size.h / 2;
+  const x = dropX - size.w / 2;
+  const y = dropY - size.h / 2;
   createCanvasElement(shape, x, y, size.w, size.h);
 });
+
+// Auto-size arrow to connect two nearby elements when dropped between them
+function autoSizeArrow(shape, dropX, dropY) {
+  const elements = Array.from(canvas.querySelectorAll('.canvas-element')).filter(el => !el.dataset.shape.startsWith('arrow-'));
+  if (elements.length < 2) return null;
+
+  // Get bounding boxes
+  const boxes = elements.map(el => ({
+    el,
+    x: el.offsetLeft,
+    y: el.offsetTop,
+    w: parseInt(el.dataset.w),
+    h: parseInt(el.dataset.h),
+    cx: el.offsetLeft + parseInt(el.dataset.w) / 2,
+    cy: el.offsetTop + parseInt(el.dataset.h) / 2
+  }));
+
+  // Find the two closest non-arrow elements to the drop point
+  boxes.sort((a, b) => {
+    const da = Math.hypot(a.cx - dropX, a.cy - dropY);
+    const db = Math.hypot(b.cx - dropX, b.cy - dropY);
+    return da - db;
+  });
+
+  const a = boxes[0], b = boxes[1];
+  const maxDist = 600;
+  const distA = Math.hypot(a.cx - dropX, a.cy - dropY);
+  const distB = Math.hypot(b.cx - dropX, b.cy - dropY);
+  if (distA > maxDist || distB > maxDist) return null;
+
+  // Determine arrow direction and placement based on shape type
+  const gap = 4; // small gap from element edges
+
+  if (shape === 'arrow-right' || shape === 'arrow-left' || shape === 'arrow-double') {
+    // Horizontal arrow: connect left element's right edge to right element's left edge
+    const left = a.cx < b.cx ? a : b;
+    const right = a.cx < b.cx ? b : a;
+    const arrowX = left.x + left.w + gap;
+    const arrowW = Math.max(30, right.x - gap - arrowX);
+    const arrowH = defaultSizes[shape].h;
+    const arrowY = (left.cy + right.cy) / 2 - arrowH / 2;
+    return { x: arrowX, y: arrowY, w: arrowW, h: arrowH };
+  }
+
+  if (shape === 'arrow-up' || shape === 'arrow-down') {
+    // Vertical arrow: connect top element's bottom edge to bottom element's top edge
+    const top = a.cy < b.cy ? a : b;
+    const bottom = a.cy < b.cy ? b : a;
+    const arrowY = top.y + top.h + gap;
+    const arrowH = Math.max(30, bottom.y - gap - arrowY);
+    const arrowW = defaultSizes[shape].w;
+    const arrowX = (top.cx + bottom.cx) / 2 - arrowW / 2;
+    return { x: arrowX, y: arrowY, w: arrowW, h: arrowH };
+  }
+
+  if (shape === 'arrow-top-right' || shape === 'arrow-top-left' || shape === 'arrow-bottom-right' || shape === 'arrow-bottom-left') {
+    // Diagonal arrows: fit into the gap rectangle between two elements
+    // Determine spatial arrangement based on actual positions
+    const leftEl = a.cx < b.cx ? a : b;
+    const rightEl = a.cx < b.cx ? b : a;
+    const topEl = a.cy < b.cy ? a : b;
+    const bottomEl = a.cy < b.cy ? b : a;
+    const leftIsTop = (leftEl === topEl);
+
+    let arrowX, arrowY, arrowW, arrowH;
+
+    if (leftIsTop) {
+      // Elements arranged: top-left / bottom-right
+      arrowX = leftEl.x + leftEl.w + gap;
+      arrowY = leftEl.y + leftEl.h + gap;
+      arrowW = Math.max(30, rightEl.x - gap - arrowX);
+      arrowH = Math.max(30, bottomEl.y - gap - arrowY);
+    } else {
+      // Elements arranged: bottom-left / top-right
+      arrowX = leftEl.x + leftEl.w + gap;
+      arrowY = rightEl.y + rightEl.h + gap;
+      arrowW = Math.max(30, rightEl.x - gap - arrowX);
+      arrowH = Math.max(30, leftEl.y - gap - arrowY);
+    }
+
+    return { x: arrowX, y: arrowY, w: arrowW, h: arrowH };
+  }
+
+  return null;
+}
 
 function createCanvasElement(shape, x, y, w, h) {
   const el = document.createElement('div');
@@ -725,33 +820,6 @@ canvas.addEventListener('pointerup', e => {
   }, true);
 })();
 
-// --- Group / Ungroup ---
-document.getElementById('menu-group').addEventListener('click', () => {
-  contextMenu.style.display = 'none';
-  const selected = document.querySelectorAll('.canvas-element.multi-selected');
-  if (selected.length < 2) { alert('Select at least 2 elements first.'); return; }
-  const groupId = 'group-' + Date.now();
-  selected.forEach(el => {
-    el.dataset.group = groupId;
-    el.classList.add('grouped');
-    el.classList.remove('multi-selected');
-  });
-});
-
-document.getElementById('menu-ungroup').addEventListener('click', () => {
-  contextMenu.style.display = 'none';
-  const selected = document.querySelectorAll('.canvas-element.selected, .canvas-element.multi-selected');
-  selected.forEach(el => {
-    if (el.dataset.group) {
-      const groupId = el.dataset.group;
-      document.querySelectorAll(`.canvas-element[data-group="${groupId}"]`).forEach(g => {
-        delete g.dataset.group;
-        g.classList.remove('grouped');
-      });
-    }
-  });
-});
-
 // --- Context Menu ---
 const contextMenu = document.getElementById('context-menu');
 
@@ -836,11 +904,12 @@ function escapeXml(str) {
 }
 
 // --- Delete grouped/multi-selected elements with Delete key ---
+// --- Arrow key movement for selected elements ---
 document.addEventListener('keydown', e => {
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    // Don't interfere with text inputs
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  // Don't interfere with text inputs
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+  if (e.key === 'Delete' || e.key === 'Backspace') {
     const multiSelected = document.querySelectorAll('.canvas-element.multi-selected');
     if (multiSelected.length > 0) {
       e.preventDefault();
@@ -854,6 +923,32 @@ document.addEventListener('keydown', e => {
     if (selected) {
       e.preventDefault();
       selected.remove();
+    }
+  }
+
+  // Arrow key movement
+  const arrowKeys = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+  if (arrowKeys[e.key]) {
+    const [dx, dy] = arrowKeys[e.key];
+    const multiSelected = document.querySelectorAll('.canvas-element.multi-selected');
+    if (multiSelected.length > 0) {
+      e.preventDefault();
+      multiSelected.forEach(el => {
+        el.style.left = (el.offsetLeft + dx) + 'px';
+        el.style.top = (el.offsetTop + dy) + 'px';
+      });
+      // Move selection rect too
+      if (selRect.classList.contains('persistent')) {
+        selRect.style.left = (selRect.offsetLeft + dx) + 'px';
+        selRect.style.top = (selRect.offsetTop + dy) + 'px';
+      }
+      return;
+    }
+    const selected = document.querySelector('.canvas-element.selected');
+    if (selected) {
+      e.preventDefault();
+      selected.style.left = (selected.offsetLeft + dx) + 'px';
+      selected.style.top = (selected.offsetTop + dy) + 'px';
     }
   }
 });

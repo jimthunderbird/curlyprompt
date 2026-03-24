@@ -1,6 +1,9 @@
 role: HTML/CSS/Javscript Expert
 
-obective: create a single web application based on spec, update spec.entrypoint if it exists
+obective {
+  create a single web application based on spec, update spec.entrypoint if it exists
+  apply spec.feedback
+}
 
 spec {
   entrypoint: ./index.html
@@ -19,7 +22,7 @@ spec {
     - double pointing arrow
     - rouned border rectangle
   }
-  right_column: present a canvas that i can drag element from left_column to so that i can draw digram 
+  right_column: present a canvas that i can drag element from left_column to so that i can draw digram
   behavior {
     - all elements specified in left_column should be allowed to enlarge or shrink
     - when double click on all non-arrow shapes, allow user to enter text that will be aligned to the center of the shape
@@ -35,5 +38,12 @@ spec {
       we then can drag the selection rectange and move all grouped selected elements together
     }
     - when elements are grouped and user presses the delete key, it should delete all grouped elements
+    - when an element is selected and user presses up/down/left/right keys, the element should move accordingly, pixel by pixel
+    - when arrow elements are dropped into the canvas and between 2 elements, auto calculate the size of the arrows based on the distance between the 2 elements so that the 2 elements are connected visually and nicely, this should also apply to all 45 degree arrows
+    - remove "Group Selected" and "Ungroup" menu items
+  }
+  feedback {
+    - when 45 degree arrows are dropped between 2 elements, the arrow should auto fit between the 2 elements!
+      - the arrow is outside of the second element, it should be fitted inside the 2 elements!
   }
 }
