@@ -54,6 +54,7 @@ spec {
     }
     - shortcut_command_z_undo: when pressing cmd + z, it should undo my changes
     - shortcut_command_r_redo: when pressing cmd + r, it should redo my changes
+    - all elements in the left_column should be layed out in 2 columns so that we do not need to scroll down on single column
   }
   feedback {
     completed { 
