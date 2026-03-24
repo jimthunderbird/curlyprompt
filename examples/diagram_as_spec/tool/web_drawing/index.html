@@ -249,6 +249,11 @@
     <svg viewBox="0 0 48 32"><polygon points="12,2 36,2 46,16 36,30 12,30 2,16" fill="none" stroke="#333" stroke-width="2"/></svg>
     <span>Hexagon</span>
   </div>
+
+  <div class="palette-item" draggable="true" data-shape="decision">
+    <svg viewBox="0 0 48 32"><polygon points="24,2 46,16 24,30 2,16" fill="none" stroke="#333" stroke-width="2"/></svg>
+    <span>Decision</span>
+  </div>
 </div>
 
 <div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div></div></div>
@@ -277,7 +282,8 @@ const defaultSizes = {
   'cylinder':     { w: 100, h: 120 },
   'parallelogram':{ w: 140, h: 80 },
   'actor':        { w: 80, h: 120 },
-  'hexagon':      { w: 120, h: 80 }
+  'hexagon':      { w: 120, h: 80 },
+  'decision':     { w: 120, h: 80 }
 };
 
 function buildSVG(shape, w, h) {
@@ -374,6 +380,8 @@ function buildSVG(shape, w, h) {
       const inset = w * 0.22;
       return s + `<polygon points="${inset},2 ${w-inset},2 ${w-2},${h/2} ${w-inset},${h-2} ${inset},${h-2} 2,${h/2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
     }
+    case 'decision':
+      return s + `<polygon points="${w/2},2 ${w-2},${h/2} ${w/2},${h-2} 2,${h/2}" fill="#e8f0fe" stroke="#333" stroke-width="2"/></svg>`;
   }
 }
 

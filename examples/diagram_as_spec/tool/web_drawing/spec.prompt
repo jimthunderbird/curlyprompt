@@ -25,6 +25,7 @@ spec {
     - parallelogram
     - actor
     - hexagon
+    - decision
   }
   right_column: present a canvas that i can drag element from left_column to so that i can draw digram
   behavior {
