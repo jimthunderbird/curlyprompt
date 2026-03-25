@@ -32,8 +32,6 @@ for person in persons:
     - save the findings on {entity}_findings.txt
   based on the related *_findings.txt, use skills.research.find_answer_for_question_from_files
 
-- always search Wikipedia, read full content, and send to ollama regardless of whether it is a question or not
-```python
 {skill_package_import}
 question = "What is Quantum Computing"
 keyword = "Quantum Computing" //we should get the main entity from the question!
