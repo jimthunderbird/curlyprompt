@@ -78,7 +78,7 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
         # Construct the prompt
         prompt = (
             f"forget about your previous knowledge, based only on the following facts, "
-            f"answer the question: {question}\n"
+            f"extract the most related data to answer the following question: {question}\n"
             f"facts {{\n"
             f"  {content}\n"
             f"}}"
