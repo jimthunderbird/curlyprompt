@@ -1,19 +1,20 @@
-from skills.cnn.get_top_news import SKILL as skills_cnn_get_top_news
-from skills.cnn.summarize_news_article import SKILL as skills_cnn_summarize_news_article
+from skills.wikipedia.search import SKILL as skills_wikipedia_search
+from skills.wikipedia.read_article import SKILL as skills_wikipedia_read_article
 
-# Get top news
-number_of_news = 1
-top_news = skills_cnn_get_top_news.run(number_of_news)
-article_url = top_news[0]['url']
+question = "Who is Mark Zuckerberg"
+keyword = "Mark Zuckerberg"
+num_of_results = 1
+results = skills_wikipedia_search.run(question, keyword, num_of_results)
+title = results[0]['title']
+url = results[0]['url']
+extract = results[0]['extract']
 
-# Summarize article
-number_of_words = 50
-news_article_summary = skills_cnn_summarize_news_article.run(article_url, number_of_words)
+article_content = skills_wikipedia_read_article.run(url)
 
-# Convert to simple words
-simple_words_summary = news_article_summary.replace("important", "big").replace("people", "persons").replace("said", "told").replace("new", "fresh").replace("time", "hour").replace("way", "method").replace("help", "assist").replace("find", "discover").replace("work", "job").replace("life", "living")
-
-print("-----------------------------------")
-print(news_article_summary)
-print(simple_words_summary)
-print("-----------------------------------")
+from skills.creative_story_writer import SKILL as skills_creative_story_writer
+content_1 = article_content
+content_2 = "He is known for creating a social media platform"
+content_3 = "His story is one of ambition and innovation"
+word_limit = 100
+constraint = "use shakespear tone"
+skills_creative_story_writer.run({content_1}, {content_2}, {content_3}, word_limit, constraint)

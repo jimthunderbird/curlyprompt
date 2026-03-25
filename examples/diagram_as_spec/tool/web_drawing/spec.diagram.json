@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "counter": 5,
+  "counter": 11,
   "elements": [
     {
       "elId": "1",
@@ -61,6 +61,78 @@
       "toId": null,
       "text": "",
       "svgHTML": ""
+    },
+    {
+      "elId": "6",
+      "shape": "parallelogram",
+      "x": 618,
+      "y": 422,
+      "w": 140,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "7",
+      "shape": "decision",
+      "x": 622,
+      "y": 601,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "logged in",
+      "svgHTML": ""
+    },
+    {
+      "elId": "8",
+      "shape": "rounded-rect",
+      "x": 391,
+      "y": 720,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "9",
+      "shape": "rounded-rect",
+      "x": 935,
+      "y": 721,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "10",
+      "shape": "connector-elbow",
+      "x": 439,
+      "y": 629,
+      "w": 195,
+      "h": 103,
+      "fromId": "7",
+      "toId": "8",
+      "text": "",
+      "svgHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"195\" height=\"103\" viewBox=\"0 0 195 103\"><polyline points=\"183,12 12,12 12,77\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"></polyline><polygon points=\"12,91 6,77 18,77\" fill=\"#333\"></polygon></svg>"
+    },
+    {
+      "elId": "11",
+      "shape": "connector-elbow",
+      "x": 730,
+      "y": 629,
+      "w": 277,
+      "h": 104,
+      "fromId": "7",
+      "toId": "9",
+      "text": "",
+      "svgHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"277\" height=\"104\" viewBox=\"0 0 277 104\"><polyline points=\"12,12 265,12 265,78\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"></polyline><polygon points=\"265,92 259,78 271,78\" fill=\"#333\"></polygon></svg>"
     }
   ]
 }

@@ -1664,6 +1664,44 @@ function scheduleUndoCapture() {
 const _undoObserver = new MutationObserver(() => scheduleUndoCapture());
 _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
 
+// --- Cmd+C copy, Cmd+V paste ---
+let _clipboardElement = null;
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+    e.preventDefault();
+    const selected = document.querySelector('.canvas-element.selected');
+    if (selected) {
+      _clipboardElement = {
+        shape: selected.dataset.shape,
+        x: selected.offsetLeft,
+        y: selected.offsetTop,
+        w: parseInt(selected.dataset.w),
+        h: parseInt(selected.dataset.h),
+        text: selected.querySelector('.shape-text') ? selected.querySelector('.shape-text').textContent : ''
+      };
+    }
+  }
+
+  if ((e.metaKey || e.ctrlKey) && e.key === 'v') {
+    e.preventDefault();
+    if (_clipboardElement) {
+      const { shape, x, y, w, h, text } = _clipboardElement;
+      createCanvasElement(shape, x + 5, y + 5, w, h);
+      const newEl = canvas.lastElementChild;
+      if (text && newEl.querySelector('.shape-text')) {
+        newEl.querySelector('.shape-text').textContent = text;
+      }
+      selectElement(newEl);
+      newEl.focus();
+      // Update clipboard position so next paste offsets further
+      _clipboardElement.x = x + 5;
+      _clipboardElement.y = y + 5;
+    }
+  }
+});
+
 // Cmd+Z undo, Cmd+R redo
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
