@@ -89,7 +89,7 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
 
         # Save the result to file if save_to_file is specified
         if save_to_file and ollama_result:
-            with open(save_to_file, 'w', encoding='utf-8') as f:
+            with open(save_to_file, 'a', encoding='utf-8') as f:
                 f.write(ollama_result)
             print(f"Result saved to {save_to_file}")
     else:

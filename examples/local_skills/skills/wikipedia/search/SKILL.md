@@ -4,6 +4,28 @@ description: use wikipedia api like https://en.wikipedia.org/w/api.php?action=qu
 
 ## Logic and Script
 
+- if the user's question involves multiple persons:
+break the user's question into N small question, one for each person
+example: 
+- question: what is obama, warren buffett,donald trump, isaac newton's birthday and birth place
+- code:
+```python
+persons = ["obama", "warren buffett", "donald trump", "isaac newton"]
+save_to_file = "result.txt"
+# empty the file first
+with open(save_to_file, 'w', encoding='utf-8') as f:
+    pass  # 'pass' does nothing, resulting in an empty file
+
+results = []
+for person in persons:
+    keyword = person
+    question = f"what is {person}'s birthday and birth place"
+    num_of_results = 1
+    try:
+        # Run the skill for each person
+        skills_wikipedia_search.run(question, keyword, num_of_results)
+```
+
 - if user's question starts with "what","when","how","who"
 ```python
 {skill_package_import}
