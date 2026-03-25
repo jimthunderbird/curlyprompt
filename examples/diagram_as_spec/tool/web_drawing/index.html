@@ -1701,6 +1701,182 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// --- Vi key mappings: h/j/k/l movement, ye copy, p paste ---
+let _viLastKey = null;
+let _viLastKeyTime = 0;
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+  // Handle 'c' as first key of a two-key sequence (co, cr) — works even without selection
+  if (e.key === 'c') {
+    _viLastKey = 'c';
+    _viLastKeyTime = Date.now();
+    return;
+  }
+
+  // co = create an oval at center of canvas (no selection required)
+  if (e.key === 'o' && _viLastKey === 'c' && Date.now() - _viLastKeyTime < 1000) {
+    e.preventDefault();
+    const canvasArea = document.getElementById('canvas-area');
+    const size = defaultSizes['oval'];
+    const ox = canvasArea.scrollLeft + (canvasArea.clientWidth - size.w) / 2;
+    const oy = canvasArea.scrollTop + (canvasArea.clientHeight - size.h) / 2;
+    createCanvasElement('oval', ox, oy, size.w, size.h);
+    const newEl = canvas.lastElementChild;
+    selectElement(newEl);
+    newEl.focus();
+    _viLastKey = null;
+    return;
+  }
+
+  // cr = create a rectangle at center of canvas (no selection required)
+  if (e.key === 'r' && _viLastKey === 'c' && Date.now() - _viLastKeyTime < 1000) {
+    e.preventDefault();
+    const canvasArea2 = document.getElementById('canvas-area');
+    const size = defaultSizes['rectangle'];
+    const rx = canvasArea2.scrollLeft + (canvasArea2.clientWidth - size.w) / 2;
+    const ry = canvasArea2.scrollTop + (canvasArea2.clientHeight - size.h) / 2;
+    createCanvasElement('rectangle', rx, ry, size.w, size.h);
+    const newEl = canvas.lastElementChild;
+    selectElement(newEl);
+    newEl.focus();
+    _viLastKey = null;
+    return;
+  }
+
+  const selected = document.querySelector('.canvas-element.selected');
+  if (!selected) { _viLastKey = null; return; }
+
+  const viMoves = { k: [0, -5], j: [0, 5], l: [5, 0], h: [-5, 0] };
+  if (viMoves[e.key]) {
+    e.preventDefault();
+    const [dx, dy] = viMoves[e.key];
+    selected.style.left = (selected.offsetLeft + dx) + 'px';
+    selected.style.top = (selected.offsetTop + dy) + 'px';
+    _viLastKey = null;
+    return;
+  }
+
+  // i = start editing text in this element
+  if (e.key === 'i') {
+    e.preventDefault();
+    const isArrow = selected.dataset.shape.startsWith('arrow-');
+    if (!isArrow && selected.dataset.shape !== 'connector-elbow') {
+      // Trigger the same editing flow as double-click (or click for actor)
+      if (selected.dataset.shape === 'actor') {
+        selected.click();
+      } else {
+        selected.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+      }
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  // Escape = exit element text editing
+  if (e.key === 'Escape') {
+    const input = selected.querySelector('.shape-text-input');
+    if (input) {
+      input.blur();
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  // u = undo (vi style)
+  if (e.key === 'u') {
+    e.preventDefault();
+    if (undoStack.length > 1) {
+      clearTimeout(_undoTimer);
+      const current = captureState();
+      const last = undoStack[undoStack.length - 1];
+      if (JSON.stringify(current) !== JSON.stringify(last)) {
+        undoStack.push(current);
+      }
+      const popped = undoStack.pop();
+      redoStack.push(popped);
+      const prev = undoStack[undoStack.length - 1];
+      _undoObserver.disconnect();
+      restoreState(prev);
+      _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  // r = redo (vi style, only when not part of 'cr' combo)
+  if (e.key === 'r' && _viLastKey !== 'c') {
+    e.preventDefault();
+    if (redoStack.length > 0) {
+      clearTimeout(_undoTimer);
+      const next = redoStack.pop();
+      undoStack.push(next);
+      _undoObserver.disconnect();
+      restoreState(next);
+      _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  if (e.key === 'y' || e.key === 'd') {
+    _viLastKey = e.key;
+    _viLastKeyTime = Date.now();
+    return;
+  }
+
+  if (e.key === 'e' && _viLastKey === 'y' && Date.now() - _viLastKeyTime < 1000) {
+    // ye = copy element
+    e.preventDefault();
+    _clipboardElement = {
+      shape: selected.dataset.shape,
+      x: selected.offsetLeft,
+      y: selected.offsetTop,
+      w: parseInt(selected.dataset.w),
+      h: parseInt(selected.dataset.h),
+      text: selected.querySelector('.shape-text') ? selected.querySelector('.shape-text').textContent : ''
+    };
+    _viLastKey = null;
+    return;
+  }
+
+  if (e.key === 'e' && _viLastKey === 'd' && Date.now() - _viLastKeyTime < 1000) {
+    // de = delete element
+    e.preventDefault();
+    const deletedId = selected.dataset.elId;
+    selected.remove();
+    if (deletedId) {
+      document.querySelectorAll('.canvas-element[data-shape="connector-elbow"]').forEach(c => {
+        if (c.dataset.fromId === deletedId || c.dataset.toId === deletedId) {
+          c.remove();
+        }
+      });
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  if (e.key === 'p') {
+    e.preventDefault();
+    if (_clipboardElement) {
+      const { shape, x, y, w, h, text } = _clipboardElement;
+      createCanvasElement(shape, x + 10, y, w, h);
+      const newEl = canvas.lastElementChild;
+      if (text && newEl.querySelector('.shape-text')) {
+        newEl.querySelector('.shape-text').textContent = text;
+      }
+      selectElement(newEl);
+      newEl.focus();
+      _clipboardElement.x = x + 10;
+    }
+    _viLastKey = null;
+    return;
+  }
+
+  _viLastKey = null;
+});
+
 // Cmd+Z undo, Cmd+R redo
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;

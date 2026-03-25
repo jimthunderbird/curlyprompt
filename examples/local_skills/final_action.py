@@ -1,20 +1,16 @@
-from skills.wikipedia.search import SKILL as skills_wikipedia_search
-from skills.wikipedia.read_article import SKILL as skills_wikipedia_read_article
+from skills.cnn.get_top_news import SKILL as skills_cnn_get_top_news
+from skills.cnn.summarize_news_article import SKILL as skills_cnn_summarize_news_article
 
-question = "Who is Mark Zuckerberg"
-keyword = "Mark Zuckerberg"
-num_of_results = 1
-results = skills_wikipedia_search.run(question, keyword, num_of_results)
-title = results[0]['title']
-url = results[0]['url']
-extract = results[0]['extract']
+# Get top 4 news articles
+number_of_news = 4
+top_news = skills_cnn_get_top_news.run(number_of_news)
 
-article_content = skills_wikipedia_read_article.run(url)
+# Get the URL of the 4th news article
+fourth_news_url = top_news[3]['url']
 
-from skills.creative_story_writer import SKILL as skills_creative_story_writer
-content_1 = article_content
-content_2 = "He is known for creating a social media platform"
-content_3 = "His story is one of ambition and innovation"
-word_limit = 100
-constraint = "use shakespear tone"
-skills_creative_story_writer.run({content_1}, {content_2}, {content_3}, word_limit, constraint)
+# Summarize the 4th news article with 50 words
+number_of_words = 50
+news_article_summary = skills_cnn_summarize_news_article.run(fourth_news_url, number_of_words)
+
+print("URL of 4th news:", fourth_news_url)
+print("Summary of 4th news:", news_article_summary)

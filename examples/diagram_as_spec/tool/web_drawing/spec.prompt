@@ -59,6 +59,23 @@ spec {
     - shortcut_command_r_redo: when pressing cmd + r, it should redo my changes
     - all elements in the left_column should be layed out in 2 columns so that we do not need to scroll down on single column
     - element_copy: when an element on canvas is selected and user press "cmd" + "c", the element will be "copied", and if user press "cmd" + "v", a cloned element should appeared 10px to the right of the source element's location
+    - vi_key_mapping: create the following key-to-behavior {
+      when an element is selected {
+        press k: move element up, 5px at a time  
+        press j: move element down, 5px at a time
+        press l: move element to the right, 5px at a time
+        press h: move element to the left, 5px at a time
+        press ye: copy element
+        press p: create the clone of the source element
+        press de: delete an element 
+        press co: create an oval (drop element on canvas) at the center of the canvas and set focus on it
+        press cr: create a rectangle (drop element on canvas) at the center of the canvas and set focus on it
+        press u: undo
+        press r: redo
+        press i: start editing the text in this element
+        press "esc": exit the element text editing
+      }
+    }
   }
   feedback {
     completed { 
@@ -82,6 +99,9 @@ spec {
     }
     completed {
       pay attention to behavior.element_copy
+    }
+    completed {
+      currently only when an oval is created and selected, the key map "co" will take effect, the key map "co" should take effect without the oval is created, same as "cr" key map   
     }
   }
 }
