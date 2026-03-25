@@ -811,9 +811,8 @@ function makeEditable(el) {
     textDiv.style.top = 'auto';
     textDiv.style.bottom = '0';
     textDiv.style.height = 'auto';
-    textDiv.style.marginTop = '3px';
     textDiv.style.alignItems = 'flex-start';
-    textDiv.style.transform = 'translateY(100%)';
+    textDiv.style.transform = 'translateY(calc(100% + 3px))';
   }
 
   function startEditing(e) {
@@ -856,11 +855,7 @@ function makeEditable(el) {
     input.addEventListener('pointerdown', e => e.stopPropagation());
   }
 
-  if (isActor) {
-    el.addEventListener('click', startEditing);
-  } else {
-    el.addEventListener('dblclick', startEditing);
-  }
+  el.addEventListener('dblclick', startEditing);
 }
 
 // Deselect on canvas click (handled by pointerdown on canvas which calls clearSelection)
@@ -1707,24 +1702,191 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// --- Create arrow to neighbor (for carp/carn vi commands) ---
+function createArrowToNeighbor(selectedEl, direction) {
+  const allEls = Array.from(canvas.querySelectorAll('.canvas-element')).filter(el =>
+    el !== selectedEl && !el.dataset.shape.startsWith('arrow-') && el.dataset.shape !== 'connector-elbow'
+  );
+  if (allEls.length === 0) return;
+
+  const sx = selectedEl.offsetLeft, sy = selectedEl.offsetTop;
+  const sw = parseInt(selectedEl.dataset.w), sh = parseInt(selectedEl.dataset.h);
+  const scx = sx + sw / 2, scy = sy + sh / 2;
+
+  let target = null;
+
+  if (direction === 'previous') {
+    // Find the first element above or to the left
+    // Priority: directly above (closest by cy), then to the left (closest by cx)
+    const above = allEls.filter(el => {
+      const ecy = el.offsetTop + parseInt(el.dataset.h) / 2;
+      return ecy < scy;
+    }).sort((a, b) => {
+      const acY = a.offsetTop + parseInt(a.dataset.h) / 2;
+      const bcY = b.offsetTop + parseInt(b.dataset.h) / 2;
+      return bcY - acY; // closest above first
+    });
+    if (above.length > 0) {
+      target = above[0];
+    } else {
+      const left = allEls.filter(el => {
+        const ecx = el.offsetLeft + parseInt(el.dataset.w) / 2;
+        return ecx < scx;
+      }).sort((a, b) => {
+        const acX = a.offsetLeft + parseInt(a.dataset.w) / 2;
+        const bcX = b.offsetLeft + parseInt(b.dataset.w) / 2;
+        return bcX - acX; // closest left first
+      });
+      if (left.length > 0) target = left[0];
+    }
+  } else {
+    // "next": find the first element below or to the right
+    const below = allEls.filter(el => {
+      const ecy = el.offsetTop + parseInt(el.dataset.h) / 2;
+      return ecy > scy;
+    }).sort((a, b) => {
+      const acY = a.offsetTop + parseInt(a.dataset.h) / 2;
+      const bcY = b.offsetTop + parseInt(b.dataset.h) / 2;
+      return acY - bcY; // closest below first
+    });
+    if (below.length > 0) {
+      target = below[0];
+    } else {
+      const right = allEls.filter(el => {
+        const ecx = el.offsetLeft + parseInt(el.dataset.w) / 2;
+        return ecx > scx;
+      }).sort((a, b) => {
+        const acX = a.offsetLeft + parseInt(a.dataset.w) / 2;
+        const bcX = b.offsetLeft + parseInt(b.dataset.w) / 2;
+        return acX - bcX; // closest right first
+      });
+      if (right.length > 0) target = right[0];
+    }
+  }
+
+  if (!target) return;
+
+  const tw = parseInt(target.dataset.w), th = parseInt(target.dataset.h);
+  const tcx = target.offsetLeft + tw / 2, tcy = target.offsetTop + th / 2;
+
+  // Determine the best arrow type based on relative positions
+  const dx = tcx - scx, dy = tcy - scy;
+  const absDx = Math.abs(dx), absDy = Math.abs(dy);
+
+  let arrowShape;
+  if (absDy > absDx * 1.5) {
+    // Primarily vertical
+    arrowShape = dy < 0 ? 'arrow-up' : 'arrow-down';
+  } else if (absDx > absDy * 1.5) {
+    // Primarily horizontal
+    arrowShape = dx < 0 ? 'arrow-left' : 'arrow-right';
+  } else {
+    // Diagonal
+    if (dx > 0 && dy < 0) arrowShape = 'arrow-top-right';
+    else if (dx < 0 && dy < 0) arrowShape = 'arrow-top-left';
+    else if (dx > 0 && dy > 0) arrowShape = 'arrow-bottom-right';
+    else arrowShape = 'arrow-bottom-left';
+  }
+
+  // Use autoSizeArrow logic — place between the two elements
+  // Compute arrow position and size to fit between the two elements
+  const gap = 4;
+  let ax, ay, aw, ah;
+
+  if (arrowShape === 'arrow-right' || arrowShape === 'arrow-left') {
+    const leftEl = scx < tcx ? { x: sx, w: sw, cy: scy } : { x: target.offsetLeft, w: tw, cy: tcy };
+    const rightEl = scx < tcx ? { x: target.offsetLeft, w: tw, cy: tcy } : { x: sx, w: sw, cy: scy };
+    ax = leftEl.x + leftEl.w + gap;
+    aw = Math.max(30, rightEl.x - gap - ax);
+    ah = defaultSizes[arrowShape].h;
+    ay = (leftEl.cy + rightEl.cy) / 2 - ah / 2;
+  } else if (arrowShape === 'arrow-up' || arrowShape === 'arrow-down') {
+    const topEl = scy < tcy ? { y: sy, h: sh, cx: scx } : { y: target.offsetTop, h: th, cx: tcx };
+    const botEl = scy < tcy ? { y: target.offsetTop, h: th, cx: tcx } : { y: sy, h: sh, cx: scx };
+    ay = topEl.y + topEl.h + gap;
+    ah = Math.max(30, botEl.y - gap - ay);
+    aw = defaultSizes[arrowShape].w;
+    ax = (topEl.cx + botEl.cx) / 2 - aw / 2;
+  } else {
+    // Diagonal: use autoSizeArrow
+    const dropX = (scx + tcx) / 2, dropY = (scy + tcy) / 2;
+    const autoResult = autoSizeArrow(arrowShape, dropX, dropY);
+    if (autoResult) {
+      ax = autoResult.x; ay = autoResult.y; aw = autoResult.w; ah = autoResult.h;
+    } else {
+      const size = defaultSizes[arrowShape];
+      ax = Math.min(scx, tcx); ay = Math.min(scy, tcy);
+      aw = Math.max(size.w, absDx); ah = Math.max(size.h, absDy);
+    }
+  }
+
+  createCanvasElement(arrowShape, ax, ay, aw, ah);
+}
+
 // --- Vi key mappings: h/j/k/l movement, ye copy, p paste ---
-let _viLastKey = null;
+let _viKeySeq = '';
 let _viLastKeyTime = 0;
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-  // Handle 'c' as first key of a two-key sequence (co, cr) — works even without selection
-  if (e.key === 'c') {
-    _viLastKey = 'c';
-    _viLastKeyTime = Date.now();
+  const now = Date.now();
+  // Reset sequence if too much time has passed
+  if (now - _viLastKeyTime > 1000) _viKeySeq = '';
+  _viLastKeyTime = now;
+
+  // Build key sequence for multi-key combos
+  if (e.key === 'c' && (_viKeySeq === '' || _viKeySeq === 'ca')) {
+    _viKeySeq += 'c';
+    // Check for 'cac' completion
+    if (_viKeySeq === 'cac') {
+      e.preventDefault();
+      const size = defaultSizes['actor'];
+      const ax = canvasArea.scrollLeft + (canvasArea.clientWidth - size.w) / 2;
+      const ay = canvasArea.scrollTop + (canvasArea.clientHeight - size.h) / 2;
+      createCanvasElement('actor', ax, ay, size.w, size.h);
+      const newEl = canvas.lastElementChild;
+      selectElement(newEl);
+      newEl.focus();
+      _viKeySeq = '';
+      return;
+    }
+    return;
+  }
+
+  // 'a' after 'c' — could be start of 'cac' or 'carp'/'carn'
+  if (e.key === 'a' && _viKeySeq === 'c') {
+    _viKeySeq = 'ca';
+    return;
+  }
+
+  // 'r' after 'ca' — could be start of 'carp' or 'carn'
+  if (e.key === 'r' && _viKeySeq === 'ca') {
+    _viKeySeq = 'car';
+    return;
+  }
+
+  // carp = create arrow pointing to "previous" element
+  if (e.key === 'p' && _viKeySeq === 'car') {
+    e.preventDefault();
+    const sel = document.querySelector('.canvas-element.selected');
+    if (sel) createArrowToNeighbor(sel, 'previous');
+    _viKeySeq = '';
+    return;
+  }
+
+  // carn = create arrow pointing to "next" element
+  if (e.key === 'n' && _viKeySeq === 'car') {
+    e.preventDefault();
+    const sel = document.querySelector('.canvas-element.selected');
+    if (sel) createArrowToNeighbor(sel, 'next');
+    _viKeySeq = '';
     return;
   }
 
   // co = create an oval at center of canvas (no selection required)
-  if (e.key === 'o' && _viLastKey === 'c' && Date.now() - _viLastKeyTime < 1000) {
+  if (e.key === 'o' && _viKeySeq === 'c') {
     e.preventDefault();
-    const canvasArea = document.getElementById('canvas-area');
     const size = defaultSizes['oval'];
     const ox = canvasArea.scrollLeft + (canvasArea.clientWidth - size.w) / 2;
     const oy = canvasArea.scrollTop + (canvasArea.clientHeight - size.h) / 2;
@@ -1732,27 +1894,26 @@ document.addEventListener('keydown', e => {
     const newEl = canvas.lastElementChild;
     selectElement(newEl);
     newEl.focus();
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
   // cr = create a rectangle at center of canvas (no selection required)
-  if (e.key === 'r' && _viLastKey === 'c' && Date.now() - _viLastKeyTime < 1000) {
+  if (e.key === 'r' && _viKeySeq === 'c') {
     e.preventDefault();
-    const canvasArea2 = document.getElementById('canvas-area');
     const size = defaultSizes['rectangle'];
-    const rx = canvasArea2.scrollLeft + (canvasArea2.clientWidth - size.w) / 2;
-    const ry = canvasArea2.scrollTop + (canvasArea2.clientHeight - size.h) / 2;
+    const rx = canvasArea.scrollLeft + (canvasArea.clientWidth - size.w) / 2;
+    const ry = canvasArea.scrollTop + (canvasArea.clientHeight - size.h) / 2;
     createCanvasElement('rectangle', rx, ry, size.w, size.h);
     const newEl = canvas.lastElementChild;
     selectElement(newEl);
     newEl.focus();
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
   const selected = document.querySelector('.canvas-element.selected');
-  if (!selected) { _viLastKey = null; return; }
+  if (!selected) { _viKeySeq = ''; return; }
 
   const viMoves = { k: [0, -5], j: [0, 5], l: [5, 0], h: [-5, 0] };
   if (viMoves[e.key]) {
@@ -1760,7 +1921,7 @@ document.addEventListener('keydown', e => {
     const [dx, dy] = viMoves[e.key];
     selected.style.left = (selected.offsetLeft + dx) + 'px';
     selected.style.top = (selected.offsetTop + dy) + 'px';
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
@@ -1769,14 +1930,9 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     const isArrow = selected.dataset.shape.startsWith('arrow-');
     if (!isArrow && selected.dataset.shape !== 'connector-elbow') {
-      // Trigger the same editing flow as double-click (or click for actor)
-      if (selected.dataset.shape === 'actor') {
-        selected.click();
-      } else {
-        selected.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
-      }
+      selected.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
@@ -1786,7 +1942,7 @@ document.addEventListener('keydown', e => {
     if (input) {
       input.blur();
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
@@ -1807,12 +1963,12 @@ document.addEventListener('keydown', e => {
       restoreState(prev);
       _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
   // r = redo (vi style, only when not part of 'cr' combo)
-  if (e.key === 'r' && _viLastKey !== 'c') {
+  if (e.key === 'r' && _viKeySeq !== 'c') {
     e.preventDefault();
     if (redoStack.length > 0) {
       clearTimeout(_undoTimer);
@@ -1822,17 +1978,16 @@ document.addEventListener('keydown', e => {
       restoreState(next);
       _undoObserver.observe(canvas, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'data-w', 'data-h'] });
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
   if (e.key === 'y' || e.key === 'd') {
-    _viLastKey = e.key;
-    _viLastKeyTime = Date.now();
+    _viKeySeq = e.key;
     return;
   }
 
-  if (e.key === 'e' && _viLastKey === 'y' && Date.now() - _viLastKeyTime < 1000) {
+  if (e.key === 'e' && _viKeySeq === 'y') {
     // ye = copy element
     e.preventDefault();
     _clipboardElement = {
@@ -1843,11 +1998,11 @@ document.addEventListener('keydown', e => {
       h: parseInt(selected.dataset.h),
       text: selected.querySelector('.shape-text') ? selected.querySelector('.shape-text').textContent : ''
     };
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
-  if (e.key === 'e' && _viLastKey === 'd' && Date.now() - _viLastKeyTime < 1000) {
+  if (e.key === 'e' && _viKeySeq === 'd') {
     // de = delete element
     e.preventDefault();
     const deletedId = selected.dataset.elId;
@@ -1859,7 +2014,7 @@ document.addEventListener('keydown', e => {
         }
       });
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
@@ -1876,11 +2031,11 @@ document.addEventListener('keydown', e => {
       newEl.focus();
       _clipboardElement.x = x + 10;
     }
-    _viLastKey = null;
+    _viKeySeq = '';
     return;
   }
 
-  _viLastKey = null;
+  _viKeySeq = '';
 });
 
 // Cmd+Z undo, Cmd+R redo

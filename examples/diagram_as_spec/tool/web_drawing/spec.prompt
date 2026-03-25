@@ -51,6 +51,7 @@ spec {
     - when arrow elements are dropped into the canvas and between 2 elements, auto calculate the size of the arrows based on the distance between the 2 elements so that the 2 elements are connected visually and nicely, this should also apply to all 45 degree arrows
     - remove "Group Selected" and "Ungroup" menu items
     - for the actor element {
+      when the element is created, do not start the text editing
       when click on it, the editing textbox should be positions in the bottom of the element shape, with 3px top margin, align horiazontally
     }
     - decision_element_behavior: for the decision element {
@@ -71,10 +72,13 @@ spec {
         press de: delete an element 
         press co: create an oval (drop element on canvas) at the center of the canvas and set focus on it
         press cr: create a rectangle (drop element on canvas) at the center of the canvas and set focus on it
+        press cac: create actor (drop element on canvas) at the center of the canvas and set focus on it
         press u: undo
         press r: redo
         press i: start editing the text in this element
         press "esc": exit the element text editing
+        press carp: create an arrow to and connect to the "previous" element (the first element that is at top of the selected element, or on the left of the selected element), the arrow should be pointing to the "previous " element
+        press carn: create an arrow to and connect to the "next" element (the first element that is at the bottom of the selected element, or at the right of the selected element), the arrow should be pointing to the "next" element
       }
     }
   }
