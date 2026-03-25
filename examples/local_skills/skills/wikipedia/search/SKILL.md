@@ -11,19 +11,7 @@ question = "What is Quantum Computing"
 keyword = question //we should get the main entity from the question!
 num_of_results = 1
 save_to_file = "result.txt"
-results = {skill_name}.run(question, keyword, num_of_results, save_to_file)
-title = results[0]['title']
-url = results[0]['url']
-extract = results[0]['extract'] //this is the summary of the article
-```
-  content: read file content from url 
-  construct prompt: "
-  forget about your previous knowledge, based only on the following facts, answer the question: {user's question}
-  facts {
-    {content}
-  }
-  " 
-  send prompt to ollama model gemma3:latest with streaming
+{skill_name}.run(question, keyword, num_of_results, save_to_file)
 
 - if user's question does not start with "what","when","how","who"
 ```python
@@ -31,8 +19,5 @@ extract = results[0]['extract'] //this is the summary of the article
 keyword = "Quantum Computing"
 num_of_results = 1
 save_to_file = "result.txt"
-results = {skill_name}.run(keyword, num_of_results, save_to_file)
-title = results[0]['title']
-url = results[0]['url']
-extract = results[0]['extract'] //this is the summary of the article
+{skill_name}.run(keyword, num_of_results, save_to_file)
 ```

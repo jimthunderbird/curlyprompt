@@ -100,9 +100,6 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
             print(f"Extract: {r['extract']}")
             print()
 
-    return results
-
-
 def read_content_from_url(url):
     """
     Reads the plain text content from a Wikipedia page URL.
@@ -191,6 +188,9 @@ def is_question(text):
     Checks if the user's question starts with what, when, how, or who.
     """
     lower = text.strip().lower()
-    return lower.startswith(("what", "when", "how", "who"))
+    result = lower.startswith(("what", "when", "how", "who"))
+    if (result is False):
+        print("this is not a question")
+    return result
 
 
