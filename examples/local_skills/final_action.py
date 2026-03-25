@@ -1,6 +1,6 @@
 from skills.wikipedia.search import SKILL as skills_wikipedia_search
 
-persons = ["james cameron", "leopold aschenbrenner"]
+persons = ["George Washington", "John Adams", "John Tyler", "Franklin Pierce"]
 save_to_file = "result.txt"
 
 # empty the file first
