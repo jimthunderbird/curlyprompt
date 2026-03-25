@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "counter": 3,
+  "counter": 5,
   "elements": [
     {
       "elId": "1",
       "shape": "oval",
-      "x": 147,
-      "y": 93,
+      "x": 425,
+      "y": 250,
       "w": 120,
       "h": 80,
       "fromId": null,
@@ -17,8 +17,8 @@
     {
       "elId": "2",
       "shape": "rectangle",
-      "x": 354,
-      "y": 93,
+      "x": 632,
+      "y": 250,
       "w": 120,
       "h": 80,
       "fromId": null,
@@ -29,10 +29,34 @@
     {
       "elId": "3",
       "shape": "oval",
-      "x": 565,
-      "y": 98,
+      "x": 843,
+      "y": 255,
       "w": 120,
       "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "4",
+      "shape": "arrow-right",
+      "x": 549,
+      "y": 270,
+      "w": 79,
+      "h": 40,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "5",
+      "shape": "arrow-right",
+      "x": 756,
+      "y": 273,
+      "w": 83,
+      "h": 40,
       "fromId": null,
       "toId": null,
       "text": "",
