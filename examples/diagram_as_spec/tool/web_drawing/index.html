@@ -707,8 +707,10 @@ function makeDraggable(el) {
   el.addEventListener('pointermove', e => {
     if (!dragging) return;
     const rect = canvasArea.getBoundingClientRect();
-    const newX = e.clientX - rect.left + canvasArea.scrollLeft - offsetX;
-    const newY = e.clientY - rect.top + canvasArea.scrollTop - offsetY;
+    const rawX = e.clientX - rect.left + canvasArea.scrollLeft - offsetX;
+    const rawY = e.clientY - rect.top + canvasArea.scrollTop - offsetY;
+    const newX = Math.round(rawX / 5) * 5;
+    const newY = Math.round(rawY / 5) * 5;
     el.style.left = newX + 'px';
     el.style.top = newY + 'px';
     groupOffsets.forEach(o => {
@@ -976,8 +978,10 @@ canvas.addEventListener('pointerup', e => {
     const r = canvasArea.getBoundingClientRect();
     const cx = e.clientX - r.left + canvasArea.scrollLeft;
     const cy = e.clientY - r.top + canvasArea.scrollTop;
-    const dx = cx - groupAnchorX;
-    const dy = cy - groupAnchorY;
+    const rawDx = cx - groupAnchorX;
+    const rawDy = cy - groupAnchorY;
+    const dx = Math.round(rawDx / 5) * 5;
+    const dy = Math.round(rawDy / 5) * 5;
 
     // Move the selection rectangle
     selRect.style.left = (selRectStartX + dx) + 'px';
@@ -1035,8 +1039,10 @@ canvas.addEventListener('pointerup', e => {
       const r = canvasArea.getBoundingClientRect();
       const cx = ev.clientX - r.left + canvasArea.scrollLeft;
       const cy = ev.clientY - r.top + canvasArea.scrollTop;
-      const dx = cx - groupAnchorX;
-      const dy = cy - groupAnchorY;
+      const rawDx = cx - groupAnchorX;
+      const rawDy = cy - groupAnchorY;
+      const dx = Math.round(rawDx / 5) * 5;
+      const dy = Math.round(rawDy / 5) * 5;
       groupOffsets.forEach(o => {
         o.el.style.left = (o.startX + dx) + 'px';
         o.el.style.top = (o.startY + dy) + 'px';
