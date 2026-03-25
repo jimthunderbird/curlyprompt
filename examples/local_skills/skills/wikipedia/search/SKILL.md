@@ -26,20 +26,18 @@ for person in persons:
         skills_wikipedia_search.run(question, keyword, num_of_results)
 ```
 
-- if user's question starts with "what","when","how","who"
+- if the user's question involves multiple entities and would like to know how are they related
+  for each entity: 
+    - search wiki on what is {entity}
+    - save the findings on {entity}_findings.txt
+  based on the related *_findings.txt, use skills.research.find_answer_for_question_from_files
+
+- always search Wikipedia, read full content, and send to ollama regardless of whether it is a question or not
 ```python
 {skill_package_import}
 question = "What is Quantum Computing"
-keyword = question //we should get the main entity from the question!
+keyword = "Quantum Computing" //we should get the main entity from the question!
 num_of_results = 1
 save_to_file = "result.txt"
 {skill_name}.run(question, keyword, num_of_results, save_to_file)
-
-- if user's question does not start with "what","when","how","who"
-```python
-{skill_package_import}
-keyword = "Quantum Computing"
-num_of_results = 1
-save_to_file = "result.txt"
-{skill_name}.run(keyword, num_of_results, save_to_file)
 ```

@@ -71,34 +71,26 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
         print("No Wikipedia results found.")
         return results
 
-    if is_question(question):
-        # Read full content from the first result's URL
-        content = read_content_from_url(results[0]['url'])
+    # Read full content from the first result's URL
+    content = read_content_from_url(results[0]['url'])
 
-        # Construct the prompt
-        prompt = (
-            f"forget about your previous knowledge, based only on the following facts, "
-            f"extract the most related data to answer the following question: {question}\n"
-            f"facts {{\n"
-            f"  {content}\n"
-            f"}}"
-        )
+    # Construct the prompt
+    prompt = (
+        f"forget about your previous knowledge, based only on the following facts, "
+        f"extract the most related data to answer the following question: {question}\n"
+        f"facts {{\n"
+        f"  {content}\n"
+        f"}}"
+    )
 
-        # Send to ollama with streaming and wait for the result
-        ollama_result = send_to_ollama(prompt)
+    # Send to ollama with streaming and wait for the result
+    ollama_result = send_to_ollama(prompt)
 
-        # Save the result to file if save_to_file is specified
-        if save_to_file and ollama_result:
-            with open(save_to_file, 'a', encoding='utf-8') as f:
-                f.write(ollama_result)
-            print(f"Result saved to {save_to_file}")
-    else:
-        # Just return the search results
-        for r in results:
-            print(f"Title: {r['title']}")
-            print(f"URL: {r['url']}")
-            print(f"Extract: {r['extract']}")
-            print()
+    # Save the result to file if save_to_file is specified
+    if save_to_file and ollama_result:
+        with open(save_to_file, 'a', encoding='utf-8') as f:
+            f.write(ollama_result)
+        print(f"Result saved to {save_to_file}")
 
 def read_content_from_url(url):
     """
@@ -147,7 +139,7 @@ def read_content_from_url(url):
         return ''
 
 
-def send_to_ollama(prompt, model="gemma3:latest"):
+def send_to_ollama(prompt, model="qwen3-coder:30b"):
     """
     Sends a prompt to ollama and streams the response.
     """

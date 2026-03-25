@@ -1,0 +1,26 @@
+objective: generate python 3 code based on the spec
+
+spec {
+  file: SKILL.py
+  main_method: run(question, file1_path, files2_path, ...fileN_path), return nothing
+  logic {
+    prompt:"<context>"
+    for each file {file} from file1_path, files2_path, ...fileN_path {
+      prompt += get file content of {file}  
+    } 
+    prompt += "</context>\n\n"
+    
+    prompt += "based on <context> above, answer the following question:\n\n"
+
+    prompt += "<question>\n"
+    prompt += {question}
+    prompt += "</question>\n"
+    send the prompt to llm
+  }
+  llm {
+    privider: ollama
+    host: localhost
+    model: qwen3-coder:30b
+    streaming: true
+  }
+}

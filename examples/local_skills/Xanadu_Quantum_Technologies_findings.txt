@@ -1,0 +1,3 @@
+Based only on the provided facts, Xanadu Quantum Technologies is:
+
+A Canadian quantum computing company headquartered in Toronto, Ontario that develops cloud-accessible photonic quantum computers and open-source software for quantum machine learning and simulating quantum photonic devices. The company was founded in 2016 by Christian Weedbrook and has raised $245M in funding from investors including Bessemer Venture Partners, Tiger Global Management, and DARPA. Xanadu focuses on developing programmable Gaussian boson sampling (GBS) devices using squeezed states of light rather than single photons, and has demonstrated significant advances in photonic quantum computing scalability and fault tolerance.
