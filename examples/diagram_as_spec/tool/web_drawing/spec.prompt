@@ -80,7 +80,7 @@ spec {
     completed {
       when textbox is dropped to canvas, it shows "undefined"!
     }
-    {
+    completed {
       pay attention to behavior.element_copy
     }
   }
