@@ -1688,7 +1688,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     if (_clipboardElement) {
       const { shape, x, y, w, h, text } = _clipboardElement;
-      createCanvasElement(shape, x + 5, y + 5, w, h);
+      createCanvasElement(shape, x + 10, y, w, h);
       const newEl = canvas.lastElementChild;
       if (text && newEl.querySelector('.shape-text')) {
         newEl.querySelector('.shape-text').textContent = text;
@@ -1696,8 +1696,7 @@ document.addEventListener('keydown', e => {
       selectElement(newEl);
       newEl.focus();
       // Update clipboard position so next paste offsets further
-      _clipboardElement.x = x + 5;
-      _clipboardElement.y = y + 5;
+      _clipboardElement.x = x + 10;
     }
   }
 });
