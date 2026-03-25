@@ -58,12 +58,13 @@ def search(keyword, num_of_results=1):
         return []
 
 
-def run(question, keyword, num_of_results=1):
+def run(question, keyword, num_of_results=1, save_to_file=None):
     """
     Main entry point that implements the full SKILL.md logic.
     - If question starts with what/when/how/who: search Wikipedia, read full content,
       construct a fact-based prompt, and send to ollama gemma3:latest with streaming.
     - Otherwise: just return search results (title, url, extract).
+    - If save_to_file is provided, the ollama response is saved to that file.
     """
     results = search(keyword, num_of_results)
     if not results:
@@ -83,8 +84,14 @@ def run(question, keyword, num_of_results=1):
             f"}}"
         )
 
-        # Send to ollama with streaming
-        send_to_ollama(prompt)
+        # Send to ollama with streaming and wait for the result
+        ollama_result = send_to_ollama(prompt)
+
+        # Save the result to file if save_to_file is specified
+        if save_to_file and ollama_result:
+            with open(save_to_file, 'w', encoding='utf-8') as f:
+                f.write(ollama_result)
+            print(f"Result saved to {save_to_file}")
     else:
         # Just return the search results
         for r in results:

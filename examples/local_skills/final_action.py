@@ -1,16 +1,15 @@
-from skills.cnn.get_top_news import SKILL as skills_cnn_get_top_news
-from skills.cnn.summarize_news_article import SKILL as skills_cnn_summarize_news_article
+from skills.wikipedia.search import SKILL as skills_wikipedia_search
 
-# Get top 4 news articles
-number_of_news = 4
-top_news = skills_cnn_get_top_news.run(number_of_news)
+question = "what is donald trump's birthday"
+keyword = "Donald Trump"
+num_of_results = 1
+results = skills_wikipedia_search.run(question, keyword, num_of_results)
+title = results[0]['title']
+url = results[0]['url']
+extract = results[0]['extract']
 
-# Get the URL of the 4th news article
-fourth_news_url = top_news[3]['url']
-
-# Summarize the 4th news article with 50 words
-number_of_words = 50
-news_article_summary = skills_cnn_summarize_news_article.run(fourth_news_url, number_of_words)
-
-print("URL of 4th news:", fourth_news_url)
-print("Summary of 4th news:", news_article_summary)
+# Save to file
+with open("result.txt", mode="w", encoding="utf-8") as f:
+    f.write(f"Title: {title}\n")
+    f.write(f"URL: {url}\n")
+    f.write(f"Extract: {extract}\n")
