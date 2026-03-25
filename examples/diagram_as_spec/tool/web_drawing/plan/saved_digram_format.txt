@@ -1,0 +1,41 @@
+Recommended: JSON format                                                                                                                
+                                                            
+  The undo/redo state object is already the perfect save format:                                                                          
+                                                            
+  {                                                                                                                                       
+    "version": 1,                                           
+    "counter": 42,
+    "elements": [
+      {
+        "elId": "1",
+        "shape": "rectangle",
+        "x": 100, "y": 150,
+        "w": 120, "h": 80,                                                                                                                
+        "fromId": null,
+        "toId": null,                                                                                                                     
+        "text": "Hello",                                    
+        "svgHTML": ""
+      }                                                                                                                                   
+    ]
+  }                                                                                                                                       
+                                                            
+  This is exactly what captureState() already produces. Loading it back is what restoreState() already does. So save =                    
+  JSON.stringify(captureState()), load = restoreState(JSON.parse(...)).
+                                                                                                                                          
+  Two options to consider                                                                                                                 
+   
+  ┌─────────────────────────┬────────────────────────────────┬───────────────────────────────────────────────┐                            
+  │                         │       JSON (recommended)       │           SVG with custom metadata            │
+  ├─────────────────────────┼────────────────────────────────┼───────────────────────────────────────────────┤                            
+  │ Save complexity         │ Trivial — reuse captureState() │ Must embed data-attributes in SVG             │
+  ├─────────────────────────┼────────────────────────────────┼───────────────────────────────────────────────┤                            
+  │ Load complexity         │ Trivial — reuse restoreState() │ Must parse SVG, extract metadata, rebuild DOM │                            
+  ├─────────────────────────┼────────────────────────────────┼───────────────────────────────────────────────┤                            
+  │ Round-trip fidelity     │ Perfect                        │ Fragile, easy to lose data                    │                            
+  ├─────────────────────────┼────────────────────────────────┼───────────────────────────────────────────────┤                            
+  │ Viewable outside editor │ No (need the app)              │ Yes (browsers render SVG)                     │
+  ├─────────────────────────┼────────────────────────────────┼───────────────────────────────────────────────┤                            
+  │ File extension          │ .diagram.json or similar       │ .svg                                          │
+  └─────────────────────────┴────────────────────────────────┴───────────────────────────────────────────────┘                            
+                                                            
+  My recommendation: Use JSON as the native save format. Keep SVG export as a separate "export for sharing" feature.

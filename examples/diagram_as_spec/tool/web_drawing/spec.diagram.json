@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "counter": 3,
+  "elements": [
+    {
+      "elId": "1",
+      "shape": "oval",
+      "x": 147,
+      "y": 93,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "2",
+      "shape": "rectangle",
+      "x": 354,
+      "y": 93,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    },
+    {
+      "elId": "3",
+      "shape": "oval",
+      "x": 565,
+      "y": 98,
+      "w": 120,
+      "h": 80,
+      "fromId": null,
+      "toId": null,
+      "text": "",
+      "svgHTML": ""
+    }
+  ]
+}

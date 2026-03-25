@@ -33,7 +33,9 @@ spec {
     - all elements specified in left_column should be allowed to enlarge or shrink
     - when double click on all non-arrow shapes, allow user to enter text that will be aligned to the center of the shape
     - when right click on the canvas in the right column, shows a popup menu, with the following menu items {
-      - Save: when clicked, it will save all elmenets in the canvas into ./spec.svg
+      - Open: when clicked, open a .diagram.json file and load it to the canvas, learn from  ./plan/saved_digram_format.txt
+      - Save: when clicked, it will save all elmenets in the canvas into ./spec.diagram.json, learn from ./plan/saved_digram_format.txt
+      - Export: when clicked, it will export the current elemnts in the canvas into ./spec.svg
     }
     - the canvas should have horiazontal and vertical scroll bar so that we can scroll to view elements that are not in the viewport
     - the horiazontal and vertical scroll bars should always show up in the canvas

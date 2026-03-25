@@ -314,7 +314,9 @@
 <div id="canvas-area"><div id="canvas-inner"><div id="selection-rect"></div><svg id="connector-preview" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,4"/><polygon fill="#3b82f6"/></svg></div></div>
 
 <div id="context-menu">
+  <div class="menu-item" id="menu-open">Open</div>
   <div class="menu-item" id="menu-save">Save</div>
+  <div class="menu-item" id="menu-export">Export</div>
 </div>
 
 <script>
@@ -1071,10 +1073,60 @@ document.addEventListener('click', () => {
   contextMenu.style.display = 'none';
 });
 
+document.getElementById('menu-open').addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+  openDiagramJSON();
+});
+
 document.getElementById('menu-save').addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+  saveDiagramJSON();
+});
+
+document.getElementById('menu-export').addEventListener('click', () => {
   contextMenu.style.display = 'none';
   exportToSVG();
 });
+
+function openDiagramJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.diagram.json,.json';
+  input.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data && data.elements) {
+          restoreState(data);
+          undoStack.length = 0;
+          redoStack.length = 0;
+          undoStack.push(captureState());
+        } else {
+          alert('Invalid diagram file format.');
+        }
+      } catch (err) {
+        alert('Failed to parse file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  });
+  input.click();
+}
+
+function saveDiagramJSON() {
+  const state = captureState();
+  const data = { version: 1, counter: state.counter, elements: state.elements };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'spec.diagram.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 function exportToSVG() {
   const elements = canvas.querySelectorAll('.canvas-element');
