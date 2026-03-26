@@ -1,9 +1,8 @@
-import requests
+import aiohttp
 import json
-import sys
 
 
-def run(question, *file_paths):
+async def run(question, *file_paths):
     prompt = "<context>\n"
     for file_path in file_paths:
         with open(file_path, "r") as f:
@@ -15,23 +14,22 @@ def run(question, *file_paths):
     prompt += question
     prompt += "\n</question>\n"
 
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={
-            "model": "qwen3-coder:30b",
-            "prompt": prompt,
-            "stream": True,
-        },
-        stream=True,
-    )
-    response.raise_for_status()
-
-    for line in response.iter_lines():
-        if line:
-            data = json.loads(line)
-            if "response" in data:
-                print(data["response"], end="", flush=True)
-            if data.get("done"):
-                break
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "qwen3-coder:30b",
+                "prompt": prompt,
+                "stream": True,
+            },
+        ) as response:
+            response.raise_for_status()
+            async for line in response.content:
+                if line:
+                    data = json.loads(line.decode("utf-8"))
+                    if "response" in data:
+                        print(data["response"], end="", flush=True)
+                    if data.get("done"):
+                        break
 
     print()

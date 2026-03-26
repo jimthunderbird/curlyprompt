@@ -1,7 +1,0 @@
-Based only on the provided facts, D-Wave Systems is:
-
-A quantum computing company that claims to be the world's first company to sell computers that exploit quantum effects in their operation. D-Wave specializes in quantum annealing rather than universal quantum computing, and its computers are designed to solve optimization problems. The company was founded in 1999 by Haig Farris, Geordie Rose, Bob Wiens, and Alexandre Zagoskin, with locations in Palo Alto, California and Burnaby, British Columbia. D-Wave's early customers include Lockheed Martin, the University of Southern California, Google/NASA, and Los Alamos National Laboratory.
-
-The company's quantum computers use superconducting flux qubits and have evolved from a 16-qubit prototype (Orion) to systems with over 7000 qubits (Advantage2). D-Wave has released several commercial systems including the D-Wave One (128 qubits), D-Wave Two (512 qubits), D-Wave 2X (1000+ qubits), and D-Wave 2000Q, with the latest Advantage series offering up to 5760 qubits. The company also provides cloud-based quantum computing services through its Leap platform.
-
-D-Wave's approach to quantum computing originated from experimental condensed matter physics research in quantum annealing, particularly work related to spin glasses and magnetic systems, rather than conventional quantum information theory approaches.

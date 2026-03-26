@@ -1,0 +1,23 @@
+Based only on the provided facts, cancer is defined as:
+
+**A group of diseases involving uncontrolled cell growth typically resulting in tumors with the potential to invade or spread to other parts of the body.**
+
+Key characteristics include:
+- Uncontrolled cell growth
+- Formation of tumors that can be malignant (spreading) or benign (non-spreading)
+- Over 100 types affecting humans
+- Malignant tumors contrast with benign tumors which do not spread
+
+The text also notes that cancer is fundamentally a disease of tissue growth regulation where genes that control cell growth and differentiation become altered, leading to the six hallmarks of cancer including sustained cell growth, avoidance of programmed cell death, and metastasis (spread to other parts of the body).Based only on the provided facts, cancer is defined as:
+
+**A group of diseases involving uncontrolled cell growth typically resulting in tumors with the potential to invade or spread to other parts of the body.**
+
+Key characteristics include:
+- Uncontrolled cell growth
+- Formation of tumors that can be malignant (spreading) or benign (non-spreading)
+- Over 100 types affecting humans
+- Can occur anywhere in the body
+- May spread through the blood or lymphatic system (metastasis)
+- Often detected through signs, symptoms, medical imaging, and biopsy
+
+The most fundamental characteristic is that cancer involves abnormal, uncontrolled cell growth that can potentially spread throughout the body.

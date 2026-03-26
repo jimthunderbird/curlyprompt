@@ -1,14 +1,16 @@
-import urllib.request
 import urllib.parse
 import json
+import aiohttp
 
-def search(keyword, num_of_results=1):
+async def search(keyword, num_of_results=1):
     """
     Searches Wikipedia for a keyword and returns page summaries.
     :param keyword: The search term to look up on Wikipedia.
     :param num_of_results: Number of results to return.
     """
     try:
+        headers = {'User-Agent': 'CurlyPromptBot/1.0 (https://github.com/curlyprompt; curlyprompt@example.com)'}
+
         # Search for matching titles using opensearch
         search_params = urllib.parse.urlencode({
             'action': 'opensearch',
@@ -17,9 +19,9 @@ def search(keyword, num_of_results=1):
             'format': 'json'
         })
         search_url = f"https://en.wikipedia.org/w/api.php?{search_params}"
-        req = urllib.request.Request(search_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode('utf-8'))
+        async with aiohttp.ClientSession() as session:
+            async with session.get(search_url, headers=headers) as response:
+                data = await response.json(content_type=None)
 
         titles = data[1] if len(data) > 1 else []
         if not titles:
@@ -35,9 +37,9 @@ def search(keyword, num_of_results=1):
             'format': 'json'
         })
         extract_url = f"https://en.wikipedia.org/w/api.php?{extract_params}"
-        req = urllib.request.Request(extract_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode('utf-8'))
+        async with aiohttp.ClientSession() as session:
+            async with session.get(extract_url, headers=headers) as response:
+                data = await response.json(content_type=None)
 
         pages = data.get('query', {}).get('pages', {})
         results = []
@@ -58,7 +60,7 @@ def search(keyword, num_of_results=1):
         return []
 
 
-def run(question, keyword, num_of_results=1, save_to_file=None):
+async def run(question, keyword, num_of_results=1, save_to_file=None):
     """
     Main entry point that implements the full SKILL.md logic.
     - If question starts with what/when/how/who: search Wikipedia, read full content,
@@ -66,13 +68,13 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
     - Otherwise: just return search results (title, url, extract).
     - If save_to_file is provided, the ollama response is saved to that file.
     """
-    results = search(keyword, num_of_results)
+    results = await search(keyword, num_of_results)
     if not results:
         print("No Wikipedia results found.")
         return results
 
     # Read full content from the first result's URL
-    content = read_content_from_url(results[0]['url'])
+    content = await read_content_from_url(results[0]['url'])
 
     # Construct the prompt
     prompt = (
@@ -84,15 +86,16 @@ def run(question, keyword, num_of_results=1, save_to_file=None):
     )
 
     # Send to ollama with streaming and wait for the result
-    ollama_result = send_to_ollama(prompt)
+    ollama_result = await send_to_ollama(prompt)
 
     # Save the result to file if save_to_file is specified
     if save_to_file and ollama_result:
-        with open(save_to_file, 'a', encoding='utf-8') as f:
-            f.write(ollama_result)
+        import aiofiles
+        async with aiofiles.open(save_to_file, 'a', encoding='utf-8') as f:
+            await f.write(ollama_result)
         print(f"Result saved to {save_to_file}")
 
-def read_content_from_url(url):
+async def read_content_from_url(url):
     """
     Reads the plain text content from a Wikipedia page URL.
     """
@@ -122,9 +125,9 @@ def read_content_from_url(url):
                 return ''
 
         api_url = f"https://en.wikipedia.org/w/api.php?{urllib.parse.urlencode(query_params)}"
-        req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode('utf-8'))
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_url, headers={'User-Agent': 'CurlyPromptBot/1.0 (https://github.com/curlyprompt; curlyprompt@example.com)'}) as response:
+                data = await response.json(content_type=None)
 
         pages = data.get('query', {}).get('pages', {})
         for page_id, page in pages.items():
@@ -139,36 +142,33 @@ def read_content_from_url(url):
         return ''
 
 
-def send_to_ollama(prompt, model="qwen3-coder:30b"):
+async def send_to_ollama(prompt, model="qwen3-coder:30b"):
     """
     Sends a prompt to ollama and streams the response.
     """
     try:
-        payload = json.dumps({
+        payload = {
             "model": model,
             "prompt": prompt,
             "stream": True
-        }).encode('utf-8')
+        }
 
-        req = urllib.request.Request(
-            "http://localhost:11434/api/generate",
-            data=payload,
-            headers={'Content-Type': 'application/json'},
-            method='POST'
-        )
-
-        with urllib.request.urlopen(req) as response:
-            full_response = ""
-            for line in response:
-                chunk = json.loads(line.decode('utf-8'))
-                token = chunk.get('response', '')
-                if token:
-                    print(token, end='', flush=True)
-                    full_response += token
-                if chunk.get('done', False):
-                    break
-            print()  # newline after streaming
-            return full_response
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "http://localhost:11434/api/generate",
+                json=payload
+            ) as response:
+                full_response = ""
+                async for line in response.content:
+                    chunk = json.loads(line.decode('utf-8'))
+                    token = chunk.get('response', '')
+                    if token:
+                        print(token, end='', flush=True)
+                        full_response += token
+                    if chunk.get('done', False):
+                        break
+                print()  # newline after streaming
+                return full_response
 
     except Exception as e:
         print(f"Error communicating with ollama: {e}")
