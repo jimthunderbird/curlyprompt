@@ -1,6 +1,10 @@
 import urllib.parse
 import json
 import aiohttp
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
 
 async def search(keyword, num_of_results=1):
     """
@@ -175,13 +179,84 @@ async def send_to_ollama(prompt, model="qwen3-coder:30b"):
         return ''
 
 
+def summarize_paragraph(paragraph, num_words=10):
+    """
+    Summarizes a paragraph by extracting the most important sentences
+    that fit within the target word count, using nltk frequency-based
+    extractive summarization.
+    """
+    sentences = sent_tokenize(paragraph)
+    if not sentences:
+        return ''
+
+    # If the paragraph is already short enough, return as-is
+    words = word_tokenize(paragraph)
+    if len(words) <= num_words:
+        return paragraph
+
+    # Score sentences by word frequency (excluding stopwords)
+    stop_words = set(stopwords.words('english'))
+    word_freq = Counter(
+        w.lower() for w in word_tokenize(paragraph)
+        if w.isalnum() and w.lower() not in stop_words
+    )
+
+    sentence_scores = []
+    for sent in sentences:
+        score = sum(word_freq.get(w.lower(), 0) for w in word_tokenize(sent) if w.isalnum())
+        sentence_scores.append((score, sent))
+
+    # Pick the top-scoring sentence(s) up to num_words
+    sentence_scores.sort(key=lambda x: x[0], reverse=True)
+    summary_words = []
+    for _, sent in sentence_scores:
+        sent_words = word_tokenize(sent)
+        if len(summary_words) + len(sent_words) <= num_words:
+            summary_words.extend(sent_words)
+        else:
+            # Take partial words from this sentence to fill remaining budget
+            remaining = num_words - len(summary_words)
+            if remaining > 0 and not summary_words:
+                summary_words.extend(sent_words[:remaining])
+            break
+
+    return ' '.join(summary_words) if summary_words else ' '.join(word_tokenize(sentences[0])[:num_words])
+
+
+def summarize_article(article_content):
+    """
+    Splits article content into paragraphs, counts words in each paragraph,
+    and summarizes each to approximately half its word count using nltk.
+    """
+    paragraphs = [p.strip() for p in article_content.split('\n') if p.strip()]
+    article_summary = []
+    for paragraph in paragraphs:
+        num_of_words_in_paragraph = len(word_tokenize(paragraph))
+        num_of_words_in_paragraph_summary = max(1, num_of_words_in_paragraph // 2)
+        paragraph_summary = summarize_paragraph(paragraph, num_words=num_of_words_in_paragraph_summary)
+        if paragraph_summary:
+            article_summary.append(paragraph_summary)
+    return '\n'.join(article_summary)
+
+
+def _ensure_nltk_data():
+    """Download required nltk data if not already present."""
+    for resource in ['punkt_tab', 'stopwords']:
+        try:
+            nltk.data.find(f'tokenizers/{resource}' if 'punkt' in resource else f'corpora/{resource}')
+        except LookupError:
+            nltk.download(resource, quiet=True)
+
+
 async def run_related(question, entities):
     """
     Handles questions involving multiple entities where the user wants to know
-    how they are related. For each entity, fetches the Wikipedia content URL
-    and reads its content. Then combines all facts and asks a single question
-    about whether the entities are related.
+    how they are related. For each entity, fetches the Wikipedia content,
+    summarizes each paragraph to 10 words using nltk, then combines all
+    summarized facts and asks a single relationship question.
     """
+    _ensure_nltk_data()
+
     all_facts = {}
     for entity in entities:
         results = await search(entity, 1)
@@ -194,8 +269,10 @@ async def run_related(question, entities):
             print(f"No content found for '{entity}', skipping.")
             continue
 
-        all_facts[entity] = content
-        print(f"Fetched content for '{entity}'")
+        # Summarize each paragraph to 10 words and merge
+        summarized_content = summarize_article(content)
+        all_facts[entity] = summarized_content
+        print(f"Fetched and summarized content for '{entity}'")
 
     if not all_facts:
         print("No content collected for any entity.")
