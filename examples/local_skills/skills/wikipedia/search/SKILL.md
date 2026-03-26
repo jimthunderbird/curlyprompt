@@ -10,6 +10,9 @@ Searches Wikipedia using the opensearch API and returns a list of results with `
 ### `run(question, keyword, num_of_results=1, save_to_file=None)`
 Main entry point. Searches Wikipedia for `keyword`, reads the full content of the first result, constructs a fact-based prompt, and streams it to ollama (`qwen3-coder:30b`) for an answer. If `save_to_file` is provided, the response is appended to that file.
 
+### `run_related(question, entities)`
+Handles questions involving multiple entities where the user wants to know how they are related. For each entity, searches Wikipedia and reads the full content. Then combines all facts into a single prompt and asks ollama whether and how the entities are related.
+
 ### `read_content_from_url(url)`
 Reads the full plain text content from a Wikipedia page URL (supports `curid`, `title`, and `/wiki/` path formats).
 
@@ -48,25 +51,19 @@ asyncio.run(main())
 ```
 
 - if the user's question involves multiple entities and would like to know how are they related:
-  for each entity:
-    - search wiki on what is {entity}
-    - entity: replace " " in {entity} with "_"
-    - save the findings to {entity}_findings.txt
-  based on the related *_findings.txt, use skills.research.find_answer_for_question_from_files.run(...)
-  Note: all async calls must be inside an `async def` function and run via `asyncio.run()`.
-
-### Basic usage
-
+  use `run_related(question, entities)` which handles fetching content for each entity and asking ollama about their relationship.
+  example:
+- question: how are salt, sugar, and cancer related?
+- code:
 ```python
 import asyncio
 {skill_package_import}
 
 async def main():
-    question = "What is Quantum Computing"
-    keyword = "Quantum Computing"
-    num_of_results = 1
-    save_to_file = "result.txt"
-    await {skill_name}.run(question, keyword, num_of_results, save_to_file)
+    question = "how are salt, sugar, and cancer related?"
+    entities = ["salt", "sugar", "cancer"]
+    await {skill_name}.run_related(question, entities)
 
 asyncio.run(main())
 ```
+  Note: all async calls must be inside an `async def` function and run via `asyncio.run()`.

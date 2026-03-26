@@ -175,6 +175,49 @@ async def send_to_ollama(prompt, model="qwen3-coder:30b"):
         return ''
 
 
+async def run_related(question, entities):
+    """
+    Handles questions involving multiple entities where the user wants to know
+    how they are related. For each entity, fetches the Wikipedia content URL
+    and reads its content. Then combines all facts and asks a single question
+    about whether the entities are related.
+    """
+    all_facts = {}
+    for entity in entities:
+        results = await search(entity, 1)
+        if not results:
+            print(f"No Wikipedia results found for '{entity}', skipping.")
+            continue
+
+        content = await read_content_from_url(results[0]['url'])
+        if not content:
+            print(f"No content found for '{entity}', skipping.")
+            continue
+
+        all_facts[entity] = content
+        print(f"Fetched content for '{entity}'")
+
+    if not all_facts:
+        print("No content collected for any entity.")
+        return
+
+    # Combine all facts and ask a single relationship question
+    facts_block = "\n\n".join(
+        f"--- {entity} ---\n{content}" for entity, content in all_facts.items()
+    )
+    entity_names = ", ".join(all_facts.keys())
+    prompt = (
+        f"forget about your previous knowledge, based only on the following facts, "
+        f"answer the following question: {question}\n"
+        f"Are all these entities related: {entity_names}? If so, how?\n"
+        f"facts {{\n"
+        f"  {facts_block}\n"
+        f"}}"
+    )
+
+    await send_to_ollama(prompt)
+
+
 def is_question(text):
     """
     Checks if the user's question starts with what, when, how, or who.
