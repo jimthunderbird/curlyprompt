@@ -1,308 +1,260 @@
-import urllib.parse
+import asyncio
 import json
-import aiohttp
-import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.corpus import stopwords
-from collections import Counter
+import math
+import re
+import httpx
 
-async def search(keyword, num_of_results=1):
-    """
-    Searches Wikipedia for a keyword and returns page summaries.
-    :param keyword: The search term to look up on Wikipedia.
-    :param num_of_results: Number of results to return.
-    """
-    try:
-        headers = {'User-Agent': 'CurlyPromptBot/1.0 (https://github.com/curlyprompt; curlyprompt@example.com)'}
-
-        # Search for matching titles using opensearch
-        search_params = urllib.parse.urlencode({
-            'action': 'opensearch',
-            'search': keyword,
-            'limit': num_of_results,
-            'format': 'json'
-        })
-        search_url = f"https://en.wikipedia.org/w/api.php?{search_params}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(search_url, headers=headers) as response:
-                data = await response.json(content_type=None)
-
-        titles = data[1] if len(data) > 1 else []
-        if not titles:
-            return []
-
-        # Fetch extracts using titles query as described in SKILL.md
-        extract_params = urllib.parse.urlencode({
-            'action': 'query',
-            'titles': '|'.join(titles),
-            'prop': 'extracts',
-            'exintro': True,
-            'explaintext': True,
-            'format': 'json'
-        })
-        extract_url = f"https://en.wikipedia.org/w/api.php?{extract_params}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(extract_url, headers=headers) as response:
-                data = await response.json(content_type=None)
-
-        pages = data.get('query', {}).get('pages', {})
-        results = []
-        for page_id, page in pages.items():
-            if page_id == '-1':
-                continue
-            title = page.get('title', '')
-            results.append({
-                'title': title,
-                'url': f"https://en.wikipedia.org/?curid={page_id}",
-                'extract': page.get('extract', '')
-            })
-
-        return results
-
-    except Exception as e:
-        print(f"Error searching Wikipedia: {e}")
-        return []
+OLLAMA_BASE = "http://localhost:11434"
+EMBED_MODEL = "nomic-embed-text"
+CHAT_MODEL = "qwen3:30b-a3b"
+WIKI_UA = "WikiSemanticSkill/1.0 (https://github.com/example; contact@example.com)"
 
 
-async def run(question, keyword, num_of_results=1, save_to_file=None):
-    """
-    Main entry point that implements the full SKILL.md logic.
-    - If question starts with what/when/how/who: search Wikipedia, read full content,
-      construct a fact-based prompt, and send to ollama gemma3:latest with streaming.
-    - Otherwise: just return search results (title, url, extract).
-    - If save_to_file is provided, the ollama response is saved to that file.
-    """
-    results = await search(keyword, num_of_results)
-    if not results:
-        print("No Wikipedia results found.")
-        return results
-
-    # Read full content from the first result's URL
-    content = await read_content_from_url(results[0]['url'])
-
-    # Construct the prompt
+async def extract_entities(question: str) -> list:
+    """Use Ollama to extract entities from the question."""
     prompt = (
-        f"forget about your previous knowledge, based only on the following facts, "
-        f"extract the most related data to answer the following question: {question}\n"
-        f"facts {{\n"
-        f"  {content}\n"
-        f"}}"
+        "Extract the key entities (people, places, concepts, things) from this question. "
+        "Return ONLY a JSON array of strings, nothing else.\n\n"
+        f"Question: {question}\n\n"
+        "JSON array:"
     )
+    async with httpx.AsyncClient(timeout=60.0) as http:
+        resp = await http.post(
+            f"{OLLAMA_BASE}/api/generate",
+            json={"model": CHAT_MODEL, "prompt": prompt, "stream": False},
+        )
+        if resp.status_code == 200:
+            text = resp.json().get("response", "").strip()
+            # Extract JSON array from response
+            match = re.search(r'\[.*?\]', text, re.DOTALL)
+            if match:
+                return json.loads(match.group())
+    return []
 
-    # Send to ollama with streaming and wait for the result
-    ollama_result = await send_to_ollama(prompt)
 
-    # Save the result to file if save_to_file is specified
-    if save_to_file and ollama_result:
-        import aiofiles
-        async with aiofiles.open(save_to_file, 'a', encoding='utf-8') as f:
-            await f.write(ollama_result)
-        print(f"Result saved to {save_to_file}")
-
-async def read_content_from_url(url):
-    """
-    Reads the plain text content from a Wikipedia page URL.
-    """
+async def search_wikipedia_candidates(query: str, limit: int = 5) -> list:
+    """Search Wikipedia and return top candidate results with snippets."""
     try:
-        # Extract page title or curid from the URL and use the API to get full text
-        parsed = urllib.parse.urlparse(url)
-        params = urllib.parse.parse_qs(parsed.query)
-
-        query_params = {
-            'action': 'query',
-            'prop': 'extracts',
-            'explaintext': True,
-            'format': 'json'
-        }
-
-        if 'curid' in params:
-            query_params['pageids'] = params['curid'][0]
-        elif 'title' in params:
-            query_params['titles'] = params['title'][0]
-        else:
-            # Try to get title from path
-            path = parsed.path
-            if '/wiki/' in path:
-                title = path.split('/wiki/')[-1]
-                query_params['titles'] = urllib.parse.unquote(title)
+        async with httpx.AsyncClient(timeout=30.0) as http:
+            params = {
+                "action": "query",
+                "list": "search",
+                "srsearch": query,
+                "srlimit": limit,
+                "format": "json",
+            }
+            resp = await http.get(
+                "https://en.wikipedia.org/w/api.php",
+                params=params,
+                headers={"User-Agent": WIKI_UA},
+            )
+            if resp.status_code == 200:
+                return resp.json().get("query", {}).get("search", [])
             else:
-                return ''
-
-        api_url = f"https://en.wikipedia.org/w/api.php?{urllib.parse.urlencode(query_params)}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url, headers={'User-Agent': 'CurlyPromptBot/1.0 (https://github.com/curlyprompt; curlyprompt@example.com)'}) as response:
-                data = await response.json(content_type=None)
-
-        pages = data.get('query', {}).get('pages', {})
-        for page_id, page in pages.items():
-            if page_id == '-1':
-                continue
-            return page.get('extract', '')
-
-        return ''
-
+                print(f"Wikipedia search returned HTTP {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
-        print(f"Error reading content from URL: {e}")
-        return ''
+        print(f"Wikipedia search error: {e}")
+    return []
 
 
-async def send_to_ollama(prompt, model="qwen3-coder:30b"):
+async def fetch_wikipedia_summary(pageid: int) -> str:
+    """Fetch the intro summary for a Wikipedia page by ID."""
+    async with httpx.AsyncClient(timeout=30.0) as http:
+        params = {
+            "action": "query",
+            "pageids": pageid,
+            "prop": "extracts",
+            "exintro": 1,
+            "explaintext": 1,
+            "format": "json",
+        }
+        resp = await http.get(
+            "https://en.wikipedia.org/w/api.php",
+            params=params,
+            headers={"User-Agent": WIKI_UA},
+        )
+        if resp.status_code == 200:
+            pages = resp.json().get("query", {}).get("pages", {})
+            for page in pages.values():
+                return page.get("extract", "")
+    return ""
+
+
+async def fetch_wikipedia_full_content(pageid: int) -> str:
+    """Fetch the full Wikipedia article content as plain text via curid URL."""
+    async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as http:
+        url = f"https://en.wikipedia.org/?curid={pageid}"
+        resp = await http.get(url, headers={"User-Agent": WIKI_UA})
+        if resp.status_code == 200:
+            html = resp.text
+            text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
+            text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL)
+            text = re.sub(r'<[^>]+>', ' ', text)
+            text = re.sub(r'\s+', ' ', text).strip()
+            return text
+    return ""
+
+
+async def get_embeddings(texts: list) -> list:
+    """Get embeddings from Ollama for a list of texts."""
+    async with httpx.AsyncClient(timeout=60.0) as http:
+        resp = await http.post(
+            f"{OLLAMA_BASE}/api/embed",
+            json={"model": EMBED_MODEL, "input": texts},
+        )
+        if resp.status_code == 200:
+            return resp.json().get("embeddings", [])
+    return []
+
+
+def cosine_similarity(a, b):
+    dot = sum(x * y for x, y in zip(a, b))
+    na = math.sqrt(sum(x * x for x in a))
+    nb = math.sqrt(sum(x * x for x in b))
+    return dot / (na * nb) if na and nb else 0.0
+
+
+def condense_article(content: str) -> str:
+    """Keep first 30 words per paragraph."""
+    paragraphs = content.split("\n")
+    simplified = []
+    for p in paragraphs:
+        words = p.split()
+        if words:
+            simplified.append(" ".join(words[:30]))
+    return "\n".join(simplified)
+
+
+async def research_entity(entity: str, question: str) -> str:
+    """Search Wikipedia for an entity, pick best match via embeddings, return condensed article."""
+    print(f"\n--- Researching entity: {entity} ---")
+
+    # Search Wikipedia for candidates
+    candidates = await search_wikipedia_candidates(entity)
+    if not candidates:
+        print(f"  No Wikipedia results for: {entity}")
+        return ""
+
+    print(f"  Found {len(candidates)} candidates: {[c['title'] for c in candidates]}")
+
+    # Fetch intro summaries
+    summaries = await asyncio.gather(
+        *[fetch_wikipedia_summary(c["pageid"]) for c in candidates]
+    )
+    valid = [(c, s) for c, s in zip(candidates, summaries) if s]
+    if not valid:
+        print(f"  No summaries available for: {entity}")
+        return ""
+
+    # Embed entity + summaries, find best match
+    texts = [entity] + [s for _, s in valid]
+    embeddings = await get_embeddings(texts)
+    if len(embeddings) < 2:
+        print(f"  Embedding failed for: {entity}")
+        return ""
+
+    q_emb = embeddings[0]
+    best_idx = 0
+    best_score = -1.0
+    for i, emb in enumerate(embeddings[1:]):
+        score = cosine_similarity(q_emb, emb)
+        print(f"    {valid[i][0]['title']}: similarity = {score:.4f}")
+        if score > best_score:
+            best_score = score
+            best_idx = i
+
+    best_candidate = valid[best_idx][0]
+    best_pageid = best_candidate["pageid"]
+    best_title = best_candidate["title"]
+    print(f"  Best match: {best_title} (score: {best_score:.4f}, curid: {best_pageid})")
+
+    # Fetch full content and condense
+    full_content = await fetch_wikipedia_full_content(best_pageid)
+    if not full_content:
+        print(f"  Could not fetch full content for: {best_title}")
+        return ""
+
+    condensed = condense_article(full_content)
+    print(f"  Fetched and condensed: {len(full_content)} -> {len(condensed)} chars")
+    return f"## {best_title}\n{condensed}"
+
+
+async def ask_ollama(prompt: str) -> str:
+    """Send a prompt to Ollama for answering, with streaming."""
+    payload = {
+        "model": CHAT_MODEL,
+        "prompt": prompt,
+        "stream": True,
+    }
+    full_response = ""
+    async with httpx.AsyncClient(timeout=120.0) as http:
+        async with http.stream("POST", f"{OLLAMA_BASE}/api/generate", json=payload) as resp:
+            if resp.status_code != 200:
+                await resp.aread()
+                return f"Ollama error (HTTP {resp.status_code}): {resp.text}"
+            async for line in resp.aiter_lines():
+                if line:
+                    chunk = json.loads(line)
+                    token = chunk.get("response", "")
+                    if token:
+                        print(token, end="", flush=True)
+                        full_response += token
+    print()
+    return full_response
+
+
+async def run(question):
     """
-    Sends a prompt to ollama and streams the response.
+    Multi-entity semantic Wikipedia search and answer:
+    1. Use Ollama to extract entities from the question.
+    2. For each entity, search Wikipedia, pick best match via embeddings.
+    3. Fetch and condense each article.
+    4. Merge all condensed articles into a prompt context.
+    5. Ask Ollama to answer the question.
     """
     try:
-        payload = {
-            "model": model,
-            "prompt": prompt,
-            "stream": True
-        }
+        # STEP 1: Extract entities from question
+        print(f"Extracting entities from: {question}")
+        entities = await extract_entities(question)
+        if not entities:
+            msg = "Could not extract any entities from the question."
+            print(msg)
+            return msg
+        print(f"Entities found: {entities}")
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                "http://localhost:11434/api/generate",
-                json=payload
-            ) as response:
-                full_response = ""
-                async for line in response.content:
-                    chunk = json.loads(line.decode('utf-8'))
-                    token = chunk.get('response', '')
-                    if token:
-                        print(token, end='', flush=True)
-                        full_response += token
-                    if chunk.get('done', False):
-                        break
-                print()  # newline after streaming
-                return full_response
+        # STEP 2: Research each entity in parallel
+        research_tasks = [research_entity(entity, question) for entity in entities]
+        articles = await asyncio.gather(*research_tasks)
+
+        # Filter out empty results
+        articles = [a for a in articles if a]
+        if not articles:
+            msg = "Could not find Wikipedia content for any entity."
+            print(msg)
+            return msg
+
+        # STEP 3: Merge into prompt context and ask Ollama
+        context = "\n\n".join(articles)
+        prompt = (
+            f"Based on the following Wikipedia article content, answer the question.\n\n"
+            f"## Question\n{question}\n\n"
+            f"## Wikipedia Articles\n{context}\n\n"
+            f"## Answer\n"
+        )
+        print(f"\nMerged {len(articles)} articles ({len(context)} chars total)")
+        print("Querying Ollama...")
+        answer = await ask_ollama(prompt)
+        result = f"# Answer (via Ollama {CHAT_MODEL})\n{answer}"
+        print(result)
+        return result
 
     except Exception as e:
-        print(f"Error communicating with ollama: {e}")
-        return ''
+        error_msg = f"Error: {str(e)}"
+        print(error_msg)
+        return error_msg
 
 
-def summarize_paragraph(paragraph, num_words=10):
-    """
-    Summarizes a paragraph by extracting the most important sentences
-    that fit within the target word count, using nltk frequency-based
-    extractive summarization.
-    """
-    sentences = sent_tokenize(paragraph)
-    if not sentences:
-        return ''
-
-    # If the paragraph is already short enough, return as-is
-    words = word_tokenize(paragraph)
-    if len(words) <= num_words:
-        return paragraph
-
-    # Score sentences by word frequency (excluding stopwords)
-    stop_words = set(stopwords.words('english'))
-    word_freq = Counter(
-        w.lower() for w in word_tokenize(paragraph)
-        if w.isalnum() and w.lower() not in stop_words
-    )
-
-    sentence_scores = []
-    for sent in sentences:
-        score = sum(word_freq.get(w.lower(), 0) for w in word_tokenize(sent) if w.isalnum())
-        sentence_scores.append((score, sent))
-
-    # Pick the top-scoring sentence(s) up to num_words
-    sentence_scores.sort(key=lambda x: x[0], reverse=True)
-    summary_words = []
-    for _, sent in sentence_scores:
-        sent_words = word_tokenize(sent)
-        if len(summary_words) + len(sent_words) <= num_words:
-            summary_words.extend(sent_words)
-        else:
-            # Take partial words from this sentence to fill remaining budget
-            remaining = num_words - len(summary_words)
-            if remaining > 0 and not summary_words:
-                summary_words.extend(sent_words[:remaining])
-            break
-
-    return ' '.join(summary_words) if summary_words else ' '.join(word_tokenize(sentences[0])[:num_words])
-
-
-def summarize_article(article_content):
-    """
-    Splits article content into paragraphs, counts words in each paragraph,
-    and summarizes each to approximately half its word count using nltk.
-    """
-    paragraphs = [p.strip() for p in article_content.split('\n') if p.strip()]
-    article_summary = []
-    for paragraph in paragraphs:
-        num_of_words_in_paragraph = len(word_tokenize(paragraph))
-        num_of_words_in_paragraph_summary = max(1, num_of_words_in_paragraph // 2)
-        paragraph_summary = summarize_paragraph(paragraph, num_words=num_of_words_in_paragraph_summary)
-        if paragraph_summary:
-            article_summary.append(paragraph_summary)
-    return '\n'.join(article_summary)
-
-
-def _ensure_nltk_data():
-    """Download required nltk data if not already present."""
-    for resource in ['punkt_tab', 'stopwords']:
-        try:
-            nltk.data.find(f'tokenizers/{resource}' if 'punkt' in resource else f'corpora/{resource}')
-        except LookupError:
-            nltk.download(resource, quiet=True)
-
-
-async def run_related(question, entities):
-    """
-    Handles questions involving multiple entities where the user wants to know
-    how they are related. For each entity, fetches the Wikipedia content,
-    summarizes each paragraph to 10 words using nltk, then combines all
-    summarized facts and asks a single relationship question.
-    """
-    _ensure_nltk_data()
-
-    all_facts = {}
-    for entity in entities:
-        results = await search(entity, 1)
-        if not results:
-            print(f"No Wikipedia results found for '{entity}', skipping.")
-            continue
-
-        content = await read_content_from_url(results[0]['url'])
-        if not content:
-            print(f"No content found for '{entity}', skipping.")
-            continue
-
-        # Summarize each paragraph to 10 words and merge
-        summarized_content = summarize_article(content)
-        all_facts[entity] = summarized_content
-        print(f"Fetched and summarized content for '{entity}'")
-
-    if not all_facts:
-        print("No content collected for any entity.")
-        return
-
-    # Combine all facts and ask a single relationship question
-    facts_block = "\n\n".join(
-        f"--- {entity} ---\n{content}" for entity, content in all_facts.items()
-    )
-    entity_names = ", ".join(all_facts.keys())
-    prompt = (
-        f"forget about your previous knowledge, based only on the following facts, "
-        f"answer the following question: {question}\n"
-        f"Are all these entities related: {entity_names}? If so, how?\n"
-        f"facts {{\n"
-        f"  {facts_block}\n"
-        f"}}"
-    )
-
-    await send_to_ollama(prompt)
-
-
-def is_question(text):
-    """
-    Checks if the user's question starts with what, when, how, or who.
-    """
-    lower = text.strip().lower()
-    result = lower.startswith(("what", "when", "how", "who"))
-    if (result is False):
-        print("this is not a question")
-    return result
-
-
+if __name__ == "__main__":
+    query = "How is salted fish related to cancer?"
+    result = asyncio.run(run(query))
+    print(result)

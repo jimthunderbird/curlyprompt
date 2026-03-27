@@ -1,0 +1,3 @@
+Based only on the facts provided, the current President of the United States is Donald Trump.
+
+The relevant fact is stated in this sentence: "Donald Trump is the 47th and current president since January 20, 2025."
