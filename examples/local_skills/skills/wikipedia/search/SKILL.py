@@ -3,6 +3,10 @@ import json
 import math
 import re
 import httpx
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
 
 OLLAMA_BASE = "http://localhost:11434"
 EMBED_MODEL = "nomic-embed-text"
@@ -114,14 +118,57 @@ def cosine_similarity(a, b):
     return dot / (na * nb) if na and nb else 0.0
 
 
+def _ensure_nltk_data():
+    """Download required nltk data if not already present."""
+    for resource in ["punkt", "punkt_tab", "stopwords"]:
+        try:
+            nltk.data.find(f"tokenizers/{resource}" if "punkt" in resource else f"corpora/{resource}")
+        except LookupError:
+            nltk.download(resource, quiet=True)
+
+
+def _summarize_paragraph(text: str, max_words: int = 30) -> str:
+    """Extractive summary of a paragraph: score sentences by word frequency, pick top ones up to max_words."""
+    sentences = sent_tokenize(text)
+    if not sentences:
+        return ""
+    # If already short enough, return as-is
+    words_all = word_tokenize(text.lower())
+    if len(text.split()) <= max_words:
+        return text
+    # Score words by frequency (excluding stopwords)
+    stop_words = set(stopwords.words("english"))
+    filtered = [w for w in words_all if w.isalnum() and w not in stop_words]
+    freq = Counter(filtered)
+    # Score each sentence
+    scored = []
+    for i, sent in enumerate(sentences):
+        tokens = word_tokenize(sent.lower())
+        score = sum(freq.get(t, 0) for t in tokens if t.isalnum())
+        scored.append((score, i, sent))
+    # Pick top sentences in original order until we hit max_words
+    scored.sort(reverse=True)
+    selected = []
+    total_words = 0
+    for score, idx, sent in scored:
+        sent_words = len(sent.split())
+        if total_words + sent_words > max_words and selected:
+            break
+        selected.append((idx, sent))
+        total_words += sent_words
+    selected.sort()  # restore original order
+    return " ".join(sent for _, sent in selected)
+
+
 def condense_article(content: str) -> str:
-    """Keep first 30 words per paragraph."""
+    """Summarize each paragraph to ~30 words using nltk extractive summarization."""
+    _ensure_nltk_data()
     paragraphs = content.split("\n")
     simplified = []
     for p in paragraphs:
-        words = p.split()
-        if words:
-            simplified.append(" ".join(words[:30]))
+        stripped = p.strip()
+        if stripped:
+            simplified.append(_summarize_paragraph(stripped, max_words=30))
     return "\n".join(simplified)
 
 
