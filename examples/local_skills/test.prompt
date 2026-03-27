@@ -1,0 +1,9 @@
+I have a question: how is tesla related to nvidia
+There are 2 entities in this question: 
+Related wikipedia items for each entity:
+entity nvidia: 'Nvidia', 'List of Nvidia graphics processing units', 'Nvidia GTC', 'GeForce RTX 40 series', 'GeForce RTX 30 series'
+entity tesla: 'Nikola Tesla', 'Tesla, Inc.', 'Tesla Cybertruck', 'Tesla', 'Tesla Model 3'
+return only the one most related wiki item for each entity
+format:
+item1, item2
+return the items only, no explanation and no extra words.
