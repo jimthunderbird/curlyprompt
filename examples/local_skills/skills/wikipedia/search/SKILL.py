@@ -28,8 +28,47 @@ CHAT_MODEL = "qwen3:30b-a3b"
 WIKI_UA = "WikiSemanticSkill/1.0 (https://github.com/example; contact@example.com)"
 
 
+async def _analyze_entity_count(question: str) -> str | None:
+    """Ask LLM whether the question is about one main entity or multiple.
+    Returns the single main entity if the question is about one, or None if multiple."""
+    prompt = (
+        "Analyze this question and determine if it is really about one main entity or multiple distinct entities.\n\n"
+        f"Question: {question}\n\n"
+        "If the question is about ONE main entity, respond with: ONE: <entity>\n"
+        "If the question involves MULTIPLE distinct entities, respond with: MULTIPLE\n\n"
+        "Examples:\n"
+        "- 'What is the current version of PHP?' -> ONE: PHP\n"
+        "- 'How old is Elon Musk?' -> ONE: Elon Musk\n"
+        "- 'How is Tesla related to Nvidia?' -> MULTIPLE\n"
+        "- 'What is the capital of France?' -> ONE: France\n"
+        "- 'Compare Python and Java' -> MULTIPLE\n\n"
+        "Respond with ONE or MULTIPLE only, no explanation."
+    )
+    async with httpx.AsyncClient(timeout=60.0) as http:
+        resp = await http.post(
+            f"{OLLAMA_BASE}/api/generate",
+            json={"model": CHAT_MODEL, "prompt": prompt, "stream": False},
+        )
+        if resp.status_code == 200:
+            text = resp.json().get("response", "").strip()
+            print(f"  Entity analysis: {text}")
+            if text.upper().startswith("ONE:"):
+                entity = text.split(":", 1)[1].strip().strip("'\"")
+                return entity
+    return None
+
+
 async def extract_entities(question: str) -> list:
-    """Use Ollama to extract entities from the question."""
+    """Use Ollama to extract entities from the question.
+    First checks if the question is about a single main entity."""
+    # First, analyze if the question is about one main entity
+    print("Analyzing question for entity count...")
+    single_entity = await _analyze_entity_count(question)
+    if single_entity:
+        print(f"  Question is about one main entity: {single_entity}")
+        return [single_entity]
+
+    print("  Question involves multiple entities, extracting all...")
     prompt = (
         "Extract the key entities (people, places, concepts, things) from this question. "
         "Return ONLY a JSON array of strings, nothing else.\n\n"
@@ -263,7 +302,7 @@ async def fetch_and_condense(entity: str, candidate: dict) -> str:
 
 
 async def search_article_paragraphs(question: str, entity: str, candidate: dict) -> dict:
-    """Fetch a Wikipedia article, split into paragraphs, and search 5 at a time for the answer.
+    """Fetch a Wikipedia article, split into paragraphs, and search 8 at a time for the answer.
     Returns a dict with 'answer' (str|None) and 'summary' (str)."""
     pageid = candidate["pageid"]
     title = candidate["title"]
@@ -278,11 +317,11 @@ async def search_article_paragraphs(question: str, entity: str, candidate: dict)
     paragraphs = [p.strip() for p in full_content.split("\n") if p.strip()]
     print(f"  Article has {len(paragraphs)} paragraphs")
 
-    # Process in batches of 5
-    total_batches = (len(paragraphs) + 4) // 5
+    # Process in batches of 8
+    total_batches = (len(paragraphs) + 7) // 8
     found_answer = None
-    for i in range(0, len(paragraphs), 5):
-        batch = paragraphs[i:i + 5]
+    for i in range(0, len(paragraphs), 8):
+        batch = paragraphs[i:i + 8]
         batch_text = "\n\n".join(batch)
         batch_num = i // 5 + 1
         print(f"\n  --- Checking paragraphs {i+1}-{i+len(batch)} (batch {batch_num}/{total_batches}) ---")
@@ -426,7 +465,7 @@ async def run(question):
         print(f"Selected candidates: { {e: c['title'] for e, c in selected.items()} }")
 
         # STEP 4: Search articles paragraph by paragraph for the answer
-        print("\n--- Searching articles for answer (5 paragraphs at a time) ---")
+        print("\n--- Searching articles for answer (8 paragraphs at a time) ---")
         all_answers = []
         all_summaries = []
         for entity, candidate in selected.items():

@@ -1,20 +1,8 @@
-def process_data(data):
-    result = []
-    for item in data:
-        if isinstance(item, dict):
-            processed = {key: value.upper() if key == 'name' else value 
-                       for key, value in item.items()}
-            result.append(processed)
-        elif isinstance(item, str):
-            result.append(item.upper())
-    return result
+import asyncio
+from skills.wikipedia.search import SKILL as skills_wikipedia_search
 
-# Example usage
-input_data = [
-    {'name': 'john', 'age': 30},
-    {'name': 'jane', 'age': 25},
-    'hello world'
-]
+async def main():
+    question = "how old is Demis Hassabis"
+    await skills_wikipedia_search.run(question)
 
-output = process_data(input_data)
-print(output)
+asyncio.run(main())

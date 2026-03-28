@@ -1,4 +1,7 @@
-##Usage: 
+## Config
+- batch size of paragraphs: 8
+
+## Usage
 ```python
 question = "what is sugar"
 

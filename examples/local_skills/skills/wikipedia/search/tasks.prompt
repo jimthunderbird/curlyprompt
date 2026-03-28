@@ -51,3 +51,10 @@ task (completed) {
 task (completed) {
   if the user's question is about how old is a person, get the current year/month/day with python, use that in the process of the searching to find the answer
 }
+
+task (completed) {
+  when the user ask a question, use qwen3:30b-a3b to analyze the question
+  - if the question is really about one main entity, do not need to extract multiple entities
+  example: what is the current version of PHP, "PHP" is the main entity
+
+}
