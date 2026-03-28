@@ -1,9 +1,20 @@
-import asyncio
-from skills.wikipedia.search import SKILL as skills_wikipedia_search
+def process_data(data):
+    result = []
+    for item in data:
+        if isinstance(item, dict):
+            processed = {key: value.upper() if key == 'name' else value 
+                       for key, value in item.items()}
+            result.append(processed)
+        elif isinstance(item, str):
+            result.append(item.upper())
+    return result
 
-async def main():
-    question = "is the novel time machine and artificial intelligence related"
-    result = await skills_wikipedia_search.run(question)
-    print(result)
+# Example usage
+input_data = [
+    {'name': 'john', 'age': 30},
+    {'name': 'jane', 'age': 25},
+    'hello world'
+]
 
-asyncio.run(main())
+output = process_data(input_data)
+print(output)

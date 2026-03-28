@@ -83,6 +83,10 @@ related_skill_file_paths = [p.strip() for p in related_skill_file_paths_raw.stri
 # Build final_prompt
 final_prompt = "contex {\n"
 for file_path in related_skill_file_paths:
+    skill_py_path = re.sub(r'/SKILL\.md$', '/SKILL.py', file_path)
+    if not os.path.exists(skill_py_path):
+        print(f"skipping {file_path}: {skill_py_path} does not exist")
+        continue
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             skill_file_content = f.read()
