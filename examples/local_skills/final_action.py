@@ -2,7 +2,8 @@ import asyncio
 from skills.wikipedia.search import SKILL as skills_wikipedia_search
 
 async def main():
-    question = "how old is Demis Hassabis"
-    await skills_wikipedia_search.run(question)
+    question = "salted fish nasophary cancer relationship"
+    result = await skills_wikipedia_search.run(question)
+    print(result)
 
 asyncio.run(main())

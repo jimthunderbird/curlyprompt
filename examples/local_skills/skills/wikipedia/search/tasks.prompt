@@ -58,3 +58,12 @@ task (completed) {
   example: what is the current version of PHP, "PHP" is the main entity
 
 }
+
+task (completed) {
+  remove all unused functions
+}
+
+task (completed) {
+  when the users question tries to find out connections between N entities
+  learn from ./find_inner_relationship.py and integrate the logic
+}

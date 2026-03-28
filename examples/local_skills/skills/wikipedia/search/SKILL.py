@@ -1,13 +1,19 @@
 import asyncio
 import json
-import math
 import re
 from datetime import date
 import httpx
-import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.corpus import stopwords
-from collections import Counter
+
+def _is_relationship_question(question: str) -> bool:
+    """Detect if the question is about finding connections/relationships between entities."""
+    q = question.lower()
+    patterns = [
+        "related to", "connection between", "connected to", "relationship between",
+        "relate to", "linked to", "link between", "how is", "how are",
+        "what connects", "what links", "in common",
+    ]
+    return any(p in q for p in patterns)
+
 
 def _is_age_question(question: str) -> bool:
     """Detect if the question is about a person's age."""
@@ -23,7 +29,6 @@ def _get_today_str() -> str:
 
 
 OLLAMA_BASE = "http://localhost:11434"
-EMBED_MODEL = "nomic-embed-text"
 CHAT_MODEL = "qwen3:30b-a3b"
 WIKI_UA = "WikiSemanticSkill/1.0 (https://github.com/example; contact@example.com)"
 
@@ -114,28 +119,6 @@ async def search_wikipedia_candidates(query: str, limit: int = 5) -> list:
     return []
 
 
-async def fetch_wikipedia_summary(pageid: int) -> str:
-    """Fetch the intro summary for a Wikipedia page by ID."""
-    async with httpx.AsyncClient(timeout=30.0) as http:
-        params = {
-            "action": "query",
-            "pageids": pageid,
-            "prop": "extracts",
-            "exintro": 1,
-            "explaintext": 1,
-            "format": "json",
-        }
-        resp = await http.get(
-            "https://en.wikipedia.org/w/api.php",
-            params=params,
-            headers={"User-Agent": WIKI_UA},
-        )
-        if resp.status_code == 200:
-            pages = resp.json().get("query", {}).get("pages", {})
-            for page in pages.values():
-                return page.get("extract", "")
-    return ""
-
 
 async def fetch_wikipedia_full_content(pageid: int) -> str:
     """Fetch the full Wikipedia article content as plain text via the MediaWiki API."""
@@ -159,77 +142,93 @@ async def fetch_wikipedia_full_content(pageid: int) -> str:
     return ""
 
 
-async def get_embeddings(texts: list) -> list:
-    """Get embeddings from Ollama for a list of texts."""
-    async with httpx.AsyncClient(timeout=60.0) as http:
-        resp = await http.post(
-            f"{OLLAMA_BASE}/api/embed",
-            json={"model": EMBED_MODEL, "input": texts},
+
+
+async def fetch_wikipedia_categories(pageid: int) -> dict:
+    """Fetch Wikipedia categories for an article by page ID."""
+    async with httpx.AsyncClient(timeout=30.0) as http:
+        params = {
+            "action": "query",
+            "pageids": pageid,
+            "prop": "categories",
+            "cllimit": "max",
+            "format": "json",
+        }
+        resp = await http.get(
+            "https://en.wikipedia.org/w/api.php",
+            params=params,
+            headers={"User-Agent": WIKI_UA},
         )
         if resp.status_code == 200:
-            return resp.json().get("embeddings", [])
-    return []
+            pages = resp.json().get("query", {}).get("pages", {})
+            for page in pages.values():
+                cats = page.get("categories", [])
+                return {c["title"]: "" for c in cats}
+    return {}
 
 
-def cosine_similarity(a, b):
-    dot = sum(x * y for x, y in zip(a, b))
-    na = math.sqrt(sum(x * x for x in a))
-    nb = math.sqrt(sum(x * x for x in b))
-    return dot / (na * nb) if na and nb else 0.0
+def _find_intersection(text: str, target_entity: str) -> str:
+    """Find paragraphs in text that mention the target entity."""
+    paragraphs = text.split('\n')
+    relevant = [p for p in paragraphs if re.search(rf"\b{re.escape(target_entity)}\b", p, re.IGNORECASE)]
+    return "\n".join(relevant[:3])
 
 
-def _ensure_nltk_data():
-    """Download required nltk data if not already present."""
-    for resource in ["punkt", "punkt_tab", "stopwords"]:
-        try:
-            nltk.data.find(f"tokenizers/{resource}" if "punkt" in resource else f"corpora/{resource}")
-        except LookupError:
-            nltk.download(resource, quiet=True)
+async def _analyze_relationship(entity_a: str, entity_b: str, context: str) -> str:
+    """Use LLM to analyze the relationship between two entities given Wikipedia context."""
+    print(f"--- Analyzing connection between '{entity_a}' and '{entity_b}' via LLM ---")
+    prompt = (
+        f"Using Wikipedia as the sole source of truth, explain the relationship between '{entity_a}' and '{entity_b}'.\n\n"
+        f"WIKIPEDIA CONTEXT:\n{context}\n\n"
+        f"If the context mentions specific chemicals, historical events, or biological processes linking them, emphasize those."
+    )
+    async with httpx.AsyncClient(timeout=120.0) as http:
+        resp = await http.post(
+            f"{OLLAMA_BASE}/api/generate",
+            json={"model": CHAT_MODEL, "prompt": prompt, "stream": False},
+        )
+        if resp.status_code == 200:
+            return resp.json().get("response", "").strip()
+    return ""
 
 
-def _summarize_paragraph(text: str, max_words: int = 200) -> str:
-    """Extractive summary of a paragraph: score sentences by word frequency, pick top ones up to max_words."""
-    sentences = sent_tokenize(text)
-    if not sentences:
-        return ""
-    # If already short enough, return as-is
-    words_all = word_tokenize(text.lower())
-    if len(text.split()) <= max_words:
-        return text
-    # Score words by frequency (excluding stopwords)
-    stop_words = set(stopwords.words("english"))
-    filtered = [w for w in words_all if w.isalnum() and w not in stop_words]
-    freq = Counter(filtered)
-    # Score each sentence
-    scored = []
-    for i, sent in enumerate(sentences):
-        tokens = word_tokenize(sent.lower())
-        score = sum(freq.get(t, 0) for t in tokens if t.isalnum())
-        scored.append((score, i, sent))
-    # Pick top sentences in original order until we hit max_words
-    scored.sort(reverse=True)
-    selected = []
-    total_words = 0
-    for score, idx, sent in scored:
-        sent_words = len(sent.split())
-        if total_words + sent_words > max_words and selected:
-            break
-        selected.append((idx, sent))
-        total_words += sent_words
-    selected.sort()  # restore original order
-    return " ".join(sent for _, sent in selected)
+async def find_entity_relationship(question: str, entity_a: str, entity_b: str, pageid_a: int, pageid_b: int) -> str:
+    """Find the relationship between two entities using Wikipedia content and categories."""
+    print(f"\n--- Finding relationship between '{entity_a}' and '{entity_b}' ---")
 
+    # Fetch full content and categories for both entities in parallel
+    text_a, text_b, cats_a, cats_b = await asyncio.gather(
+        fetch_wikipedia_full_content(pageid_a),
+        fetch_wikipedia_full_content(pageid_b),
+        fetch_wikipedia_categories(pageid_a),
+        fetch_wikipedia_categories(pageid_b),
+    )
 
-def condense_article(content: str) -> str:
-    """Summarize each paragraph to 30 words using nltk extractive summarization."""
-    _ensure_nltk_data()
-    paragraphs = content.split("\n")
-    simplified = []
-    for p in paragraphs:
-        stripped = p.strip()
-        if stripped:
-            simplified.append(_summarize_paragraph(stripped, max_words=30))
-    return "\n".join(simplified)
+    if not text_a or not text_b:
+        return "One or both Wikipedia articles could not be found."
+
+    # 1. Direct Mention Check (A -> B)
+    print(f"  Checking if '{entity_a}' article mentions '{entity_b}'...")
+    bridge_context = _find_intersection(text_a, entity_b)
+
+    # 2. Reverse Mention Check (B -> A)
+    if not bridge_context:
+        print(f"  Checking if '{entity_b}' article mentions '{entity_a}'...")
+        bridge_context = _find_intersection(text_b, entity_a)
+
+    # 3. Category Overlap Check
+    if not bridge_context:
+        print(f"  Checking for shared Wikipedia categories...")
+        common_cats = set(cats_a.keys()) & set(cats_b.keys())
+        if common_cats:
+            bridge_context = f"Both entities share Wikipedia categories: {', '.join(list(common_cats)[:3])}"
+            print(f"  Found {len(common_cats)} shared categories")
+
+    if bridge_context:
+        analysis = await _analyze_relationship(entity_a, entity_b, bridge_context)
+        return analysis
+    else:
+        return f"No direct or categorical link found on Wikipedia between {entity_a} and {entity_b}."
 
 
 async def select_best_candidates(question: str, entities: list, all_candidates: dict) -> dict:
@@ -283,22 +282,6 @@ async def select_best_candidates(question: str, entities: list, all_candidates: 
             return result
     return {}
 
-
-async def fetch_and_condense(entity: str, candidate: dict) -> str:
-    """Fetch full Wikipedia content for a candidate and return condensed article."""
-    pageid = candidate["pageid"]
-    title = candidate["title"]
-    print(f"\n--- Fetching article for entity '{entity}': {title} (curid: {pageid}) ---")
-
-    full_content = await fetch_wikipedia_full_content(pageid)
-    if not full_content:
-        print(f"  Could not fetch full content for: {title}")
-        return ""
-
-    condensed = condense_article(full_content)
-    print(condensed)
-    print(f"  Fetched and condensed: {len(full_content)} -> {len(condensed)} chars")
-    return f"## {title}\n{condensed}"
 
 
 async def search_article_paragraphs(question: str, entity: str, candidate: dict) -> dict:
@@ -394,29 +377,6 @@ async def _check_batch_for_answer(question: str, title: str, batch_text: str, ba
     return None
 
 
-async def ask_ollama(prompt: str) -> str:
-    """Send a prompt to Ollama for answering, with streaming."""
-    payload = {
-        "model": CHAT_MODEL,
-        "prompt": prompt,
-        "stream": True,
-    }
-    full_response = ""
-    async with httpx.AsyncClient(timeout=120.0) as http:
-        async with http.stream("POST", f"{OLLAMA_BASE}/api/generate", json=payload) as resp:
-            if resp.status_code != 200:
-                await resp.aread()
-                return f"Ollama error (HTTP {resp.status_code}): {resp.text}"
-            async for line in resp.aiter_lines():
-                if line:
-                    chunk = json.loads(line)
-                    token = chunk.get("response", "")
-                    if token:
-                        print(token, end="", flush=True)
-                        full_response += token
-    print()
-    return full_response
-
 
 async def run(question):
     """
@@ -463,6 +423,26 @@ async def run(question):
             return msg
 
         print(f"Selected candidates: { {e: c['title'] for e, c in selected.items()} }")
+
+        # STEP 3.5: If this is a relationship question with N entities, find connections between all pairs
+        if _is_relationship_question(question) and len(selected) >= 2:
+            entity_keys = list(selected.keys())
+            pairs = [(entity_keys[i], entity_keys[j]) for i in range(len(entity_keys)) for j in range(i + 1, len(entity_keys))]
+            print(f"\n--- Relationship question detected with {len(selected)} entities, checking {len(pairs)} pair(s) ---")
+
+            relationship_parts = []
+            for entity_a, entity_b in pairs:
+                candidate_a, candidate_b = selected[entity_a], selected[entity_b]
+                print(f"\n--- Finding connection between '{candidate_a['title']}' and '{candidate_b['title']}' ---")
+                relationship_result = await find_entity_relationship(
+                    question, candidate_a["title"], candidate_b["title"],
+                    candidate_a["pageid"], candidate_b["pageid"],
+                )
+                relationship_parts.append(f"## {candidate_a['title']} ↔ {candidate_b['title']}\n\n{relationship_result}")
+
+            final_output = "# Relationships\n\n" + "\n\n---\n\n".join(relationship_parts)
+            print(final_output)
+            return final_output
 
         # STEP 4: Search articles paragraph by paragraph for the answer
         print("\n--- Searching articles for answer (8 paragraphs at a time) ---")
