@@ -1,0 +1,49 @@
+objective: perform tasks related to ./SKILL.py
+
+constraint {
+  after each task is completed, mark it as completed in ./tasks.prompt, example: task (completed) {...}
+  do not run completed tasks
+}
+
+task (completed) {
+  in search_wikipedia_candidates(), after getting the candidates for each entity in the question, do not do the vector comparison logic, instead {
+    construct a prompt similar to this:
+    "I have a question: how is tesla related to nvidia
+    There are 2 entities in this question:
+    Related wikipedia items for each entity:
+    entity nvidia: 'Nvidia', 'List of Nvidia graphics processing units', 'Nvidia GTC', 'GeForce RTX 40 series', 'GeForce RTX 30 series'
+    entity tesla: 'Nikola Tesla', 'Tesla, Inc.', 'Tesla Cybertruck', 'Tesla', 'Tesla Model 3'
+    return only the one most related wiki item for each entity
+    format:
+    item1, item2
+    return the items only, no explanation and no extra words"
+    send the prompt to ollama local model qwen3:30b-a3b and get the answer, remember to trim the new lines and spaces in the result
+    use the {result} to map the final candidates and its related wiki_page_id
+  }
+}
+
+task (completed) {
+  print(f"Selected candidates: SyntaxError: unterminated string literal (detected at line 304")
+}
+
+task (completed) {
+  make sure we fetch content for every single final candidate, based on their pageId
+}
+
+task (completed) {
+  Selected candidates: {'php': 'PHP', 'current version': 'Software versioning'}
+  --- Fetching article for entity 'php': PHP (curid: 24131) ---
+  (why is this empty?)
+}
+
+task (completed) {
+  after getting the wikipedia's article, split the article content into paragraphs (split by "\n")
+  every time, only load maximum 5 paragraphs and see if we can find the answer to the question
+  if the answer is found in a batch {
+    stop immediately, say that we found the answer and then display the answer
+    do a summary of 200 words using ollama qwen3:30b-a3b regardless whether the answer is found or not
+    DO NOT continue on other entities
+  } else {
+    load the next 5 or remaining paragraph
+  }
+}
