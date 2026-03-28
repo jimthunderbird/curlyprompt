@@ -47,3 +47,7 @@ task (completed) {
     load the next 5 or remaining paragraph
   }
 }
+
+task (completed) {
+  if the user's question is about how old is a person, get the current year/month/day with python, use that in the process of the searching to find the answer
+}

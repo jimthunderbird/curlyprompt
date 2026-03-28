@@ -2,11 +2,25 @@ import asyncio
 import json
 import math
 import re
+from datetime import date
 import httpx
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
+
+def _is_age_question(question: str) -> bool:
+    """Detect if the question is about a person's age."""
+    q = question.lower()
+    age_patterns = ["how old", "what age", "age of", "current age", "years old"]
+    return any(p in q for p in age_patterns)
+
+
+def _get_today_str() -> str:
+    """Return today's date as a formatted string."""
+    today = date.today()
+    return today.strftime("%Y-%m-%d")
+
 
 OLLAMA_BASE = "http://localhost:11434"
 EMBED_MODEL = "nomic-embed-text"
@@ -309,10 +323,15 @@ async def _generate_summary(title: str, full_content: str) -> str:
 
 async def _check_batch_for_answer(question: str, title: str, batch_text: str, batch_label) -> str | None:
     """Check a batch of paragraphs for the answer to a question via LLM."""
+    date_context = ""
+    if _is_age_question(question):
+        date_context = f"\nToday's date is {_get_today_str()}. Use this to calculate the person's current age from their birth date if found in the excerpt.\n"
+
     prompt = (
         f"Based on the following excerpt from the Wikipedia article '{title}', "
         f"can you answer this question?\n\n"
-        f"Question: {question}\n\n"
+        f"Question: {question}\n"
+        f"{date_context}\n"
         f"Excerpt:\n{batch_text}\n\n"
         f"If the excerpt contains enough information to answer the question, "
         f"respond with: ANSWER: <your answer>\n"
