@@ -115,7 +115,7 @@ def stream_question(article_text: str, entity_name: str, question: str) -> str:
         f"answer this question: {question}\n\n"
         f"If the article does NOT contain enough information to answer the question, "
         f"respond with exactly 'NO_ANSWER'. Otherwise, provide a concise answer.\n\n"
-        f"{article_text[:4000]}"
+        f"{article_text}"
     )
     return _stream_ollama(MODEL, prompt)
 
