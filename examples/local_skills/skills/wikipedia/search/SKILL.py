@@ -144,93 +144,6 @@ async def fetch_wikipedia_full_content(pageid: int) -> str:
 
 
 
-async def fetch_wikipedia_categories(pageid: int) -> dict:
-    """Fetch Wikipedia categories for an article by page ID."""
-    async with httpx.AsyncClient(timeout=30.0) as http:
-        params = {
-            "action": "query",
-            "pageids": pageid,
-            "prop": "categories",
-            "cllimit": "max",
-            "format": "json",
-        }
-        resp = await http.get(
-            "https://en.wikipedia.org/w/api.php",
-            params=params,
-            headers={"User-Agent": WIKI_UA},
-        )
-        if resp.status_code == 200:
-            pages = resp.json().get("query", {}).get("pages", {})
-            for page in pages.values():
-                cats = page.get("categories", [])
-                return {c["title"]: "" for c in cats}
-    return {}
-
-
-def _find_intersection(text: str, target_entity: str) -> str:
-    """Find paragraphs in text that mention the target entity."""
-    paragraphs = text.split('\n')
-    relevant = [p for p in paragraphs if re.search(rf"\b{re.escape(target_entity)}\b", p, re.IGNORECASE)]
-    return "\n".join(relevant[:3])
-
-
-async def _analyze_relationship(entity_a: str, entity_b: str, context: str) -> str:
-    """Use LLM to analyze the relationship between two entities given Wikipedia context."""
-    print(f"--- Analyzing connection between '{entity_a}' and '{entity_b}' via LLM ---")
-    prompt = (
-        f"Using Wikipedia as the sole source of truth, explain the relationship between '{entity_a}' and '{entity_b}'.\n\n"
-        f"WIKIPEDIA CONTEXT:\n{context}\n\n"
-        f"If the context mentions specific chemicals, historical events, or biological processes linking them, emphasize those."
-    )
-    async with httpx.AsyncClient(timeout=120.0) as http:
-        resp = await http.post(
-            f"{OLLAMA_BASE}/api/generate",
-            json={"model": CHAT_MODEL, "prompt": prompt, "stream": False},
-        )
-        if resp.status_code == 200:
-            return resp.json().get("response", "").strip()
-    return ""
-
-
-async def find_entity_relationship(question: str, entity_a: str, entity_b: str, pageid_a: int, pageid_b: int) -> str:
-    """Find the relationship between two entities using Wikipedia content and categories."""
-    print(f"\n--- Finding relationship between '{entity_a}' and '{entity_b}' ---")
-
-    # Fetch full content and categories for both entities in parallel
-    text_a, text_b, cats_a, cats_b = await asyncio.gather(
-        fetch_wikipedia_full_content(pageid_a),
-        fetch_wikipedia_full_content(pageid_b),
-        fetch_wikipedia_categories(pageid_a),
-        fetch_wikipedia_categories(pageid_b),
-    )
-
-    if not text_a or not text_b:
-        return "One or both Wikipedia articles could not be found."
-
-    # 1. Direct Mention Check (A -> B)
-    print(f"  Checking if '{entity_a}' article mentions '{entity_b}'...")
-    bridge_context = _find_intersection(text_a, entity_b)
-
-    # 2. Reverse Mention Check (B -> A)
-    if not bridge_context:
-        print(f"  Checking if '{entity_b}' article mentions '{entity_a}'...")
-        bridge_context = _find_intersection(text_b, entity_a)
-
-    # 3. Category Overlap Check
-    if not bridge_context:
-        print(f"  Checking for shared Wikipedia categories...")
-        common_cats = set(cats_a.keys()) & set(cats_b.keys())
-        if common_cats:
-            bridge_context = f"Both entities share Wikipedia categories: {', '.join(list(common_cats)[:3])}"
-            print(f"  Found {len(common_cats)} shared categories")
-
-    if bridge_context:
-        analysis = await _analyze_relationship(entity_a, entity_b, bridge_context)
-        return analysis
-    else:
-        return f"No direct or categorical link found on Wikipedia between {entity_a} and {entity_b}."
-
-
 async def select_best_candidates(question: str, entities: list, all_candidates: dict) -> dict:
     """Use Ollama to select the best Wikipedia candidate for each entity given the question context."""
     entity_lines = []
@@ -424,24 +337,53 @@ async def run(question):
 
         print(f"Selected candidates: { {e: c['title'] for e, c in selected.items()} }")
 
-        # STEP 3.5: If this is a relationship question with N entities, find connections between all pairs
+        # STEP 3.5: If this is a relationship question with N entities, fetch articles and ask LLM with streaming
         if _is_relationship_question(question) and len(selected) >= 2:
             entity_keys = list(selected.keys())
             pairs = [(entity_keys[i], entity_keys[j]) for i in range(len(entity_keys)) for j in range(i + 1, len(entity_keys))]
             print(f"\n--- Relationship question detected with {len(selected)} entities, checking {len(pairs)} pair(s) ---")
 
-            relationship_parts = []
-            for entity_a, entity_b in pairs:
-                candidate_a, candidate_b = selected[entity_a], selected[entity_b]
-                print(f"\n--- Finding connection between '{candidate_a['title']}' and '{candidate_b['title']}' ---")
-                relationship_result = await find_entity_relationship(
-                    question, candidate_a["title"], candidate_b["title"],
-                    candidate_a["pageid"], candidate_b["pageid"],
-                )
-                relationship_parts.append(f"## {candidate_a['title']} ↔ {candidate_b['title']}\n\n{relationship_result}")
+            # Fetch all unique articles in parallel
+            unique_pageids = {c["pageid"]: c["title"] for c in selected.values()}
+            fetch_tasks = {pid: fetch_wikipedia_full_content(pid) for pid in unique_pageids}
+            fetched_texts = {}
+            for pid, task in fetch_tasks.items():
+                fetched_texts[pid] = await task
 
-            final_output = "# Relationships\n\n" + "\n\n---\n\n".join(relationship_parts)
-            print(final_output)
+            # Build context from each pair's articles
+            context_parts = []
+            for entity_a, entity_b in pairs:
+                ca, cb = selected[entity_a], selected[entity_b]
+                text_a = fetched_texts.get(ca["pageid"], "")
+                text_b = fetched_texts.get(cb["pageid"], "")
+                # Truncate each article to keep prompt manageable
+                context_parts.append(f"### {ca['title']}\n{text_a[:6000]}")
+                context_parts.append(f"### {cb['title']}\n{text_b[:6000]}")
+
+            prompt = (
+                f"<context>\n" + "\n\n".join(context_parts) + "\n</context>\n\n"
+                f"<question>{question}</question>\n\n"
+                f"Based on <context>, answer question <question>."
+            )
+
+            print(f"\n--- Sending relationship prompt to {CHAT_MODEL} (streaming) ---")
+            final_output = ""
+            async with httpx.AsyncClient(timeout=180.0) as http:
+                async with http.stream(
+                    "POST",
+                    f"{OLLAMA_BASE}/api/generate",
+                    json={"model": CHAT_MODEL, "prompt": prompt, "stream": True},
+                ) as resp:
+                    async for line in resp.aiter_lines():
+                        if line:
+                            chunk = json.loads(line)
+                            token = chunk.get("response", "")
+                            if token:
+                                print(token, end="", flush=True)
+                                final_output += token
+                            if chunk.get("done"):
+                                break
+            print()  # newline after streaming
             return final_output
 
         # STEP 4: Search articles paragraph by paragraph for the answer

@@ -1,9 +1,40 @@
-I have a question: how is tesla related to nvidia
-There are 2 entities in this question: 
-Related wikipedia items for each entity:
-entity nvidia: 'Nvidia', 'List of Nvidia graphics processing units', 'Nvidia GTC', 'GeForce RTX 40 series', 'GeForce RTX 30 series'
-entity tesla: 'Nikola Tesla', 'Tesla, Inc.', 'Tesla Cybertruck', 'Tesla', 'Tesla Model 3'
-return only the one most related wiki item for each entity
-format:
-item1, item2
-return the items only, no explanation and no extra words.
+objective: write a python 3 script ./test.py based on spec
+
+spec {
+  purpose: given a word, find its most related wikipedia items
+  logic {
+    word: cli argument 1
+    learn from reference.python.search_wikipedia_candidates {
+      items: find 10 most related wikipedia items's page_id and page_title for {word}, sorted by similarity in descending order
+      for each {item} in {items} {
+        output: {item.page_id}:{item.page_title}."\n"
+      }
+    }
+  }
+  reference.python.search_wikipedia_candidates {
+    async def search_wikipedia_candidates(query: str, limit: int = 5) -> list:
+        """Search Wikipedia and return top candidate results with snippets."""
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as http:
+                params = {
+                    "action": "query",
+                    "list": "search",
+                    "srsearch": query,
+                    "srlimit": limit,
+                    "format": "json",
+                }
+                resp = await http.get(
+                    "https://en.wikipedia.org/w/api.php",
+                    params=params,
+                    headers={"User-Agent": WIKI_UA},
+                )
+                if resp.status_code == 200:
+                    return resp.json().get("query", {}).get("search", [])
+                else:
+                    print(f"Wikipedia search returned HTTP {resp.status_code}: {resp.text[:200]}")
+        except Exception as e:
+            print(f"Wikipedia search error: {e}")
+      return []
+
+  }
+}

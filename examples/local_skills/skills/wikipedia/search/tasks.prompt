@@ -63,7 +63,17 @@ task (completed) {
   remove all unused functions
 }
 
-task (completed) {
+task.multi_entities (completed) {
   when the users question tries to find out connections between N entities
   learn from ./find_inner_relationship.py and integrate the logic
+}
+
+task (completed) {
+  based on task.multi_entities, perform the following logic {
+    prompt: ""
+    prompt += <context>{for each pair of related wiki entities, get both entities' related wikipedia articles}</context>
+    prompt += <question>{the user question}</question>
+    prompt += "based on <context>, answer question <question>"
+    send prompt to ollama local model qwen3:30b-a3b with streaming
+  }
 }
