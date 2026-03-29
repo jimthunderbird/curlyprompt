@@ -1,40 +1,83 @@
 objective: write a python 3 script ./test.py based on spec
 
 spec {
-  purpose: given a word, find its most related wikipedia items
+  purpose: given a question, find related wikipedia articles for each entity and answer the question using their content as context
   logic {
-    word: cli argument 1
-    learn from reference.python.search_wikipedia_candidates {
-      items: find 10 most related wikipedia items's page_id and page_title for {word}, sorted by similarity in descending order
-      for each {item} in {items} {
-        output: {item.page_id}:{item.page_title}."\n"
+    question: cli argument 1
+    words: extract_all_entities_from_question(question)
+    for each {word} in {words} {
+      learn from reference.python.search_wikipedia_candidates {
+        items: find 1 most related wikipedia items's page_id and page_title for {word}, sorted by similarity in descending order
+        for each {item} in {items} {
+          article: learn from reference.python.fetch_article for {item.page_id}
+          paragraphs: split {article} by "\n", filter out empty lines
+          chunk_size: 8
+          for each {chunk} of {chunk_size} paragraphs in {paragraphs} {
+            context: join {chunk} with "\n"
+            prompt: <context>{context}</context><question>{question}</question>based on <context>, answer the question {question}. If the context does not contain relevant information to answer the question, reply with exactly NO_ANSWER
+            stream_ollama(prompt): send {prompt} to ollama localhost model qwen3:30b-a3b, stream and display the output, filtering out <think>...</think> tags, return the full output text
+            if output does not contain "NO_ANSWER": exit, do not proceed with remaining chunks or entities
+          }
+        }
       }
     }
   }
+  extract_all_entities_from_question(question) {
+    host: ollama localhost
+    model: qwen3:30b-a3b
+    prompt: "
+    <phrase>{question}</phrase>, extract all peoples, things and places from <phrase>, output csv version
+    example {
+      question: how is salt and sugar related
+      output: salt,sugar
+    }
+    "
+    post-process: strip <think>...</think> from response if present
+  }
   reference.python.search_wikipedia_candidates {
     async def search_wikipedia_candidates(query: str, limit: int = 5) -> list:
-        """Search Wikipedia and return top candidate results with snippets."""
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as http:
-                params = {
-                    "action": "query",
-                    "list": "search",
-                    "srsearch": query,
-                    "srlimit": limit,
-                    "format": "json",
-                }
-                resp = await http.get(
-                    "https://en.wikipedia.org/w/api.php",
-                    params=params,
-                    headers={"User-Agent": WIKI_UA},
-                )
-                if resp.status_code == 200:
-                    return resp.json().get("query", {}).get("search", [])
-                else:
-                    print(f"Wikipedia search returned HTTP {resp.status_code}: {resp.text[:200]}")
-        except Exception as e:
-            print(f"Wikipedia search error: {e}")
-      return []
+    """Search Wikipedia and return top candidate results with snippets."""
+    try:
+    async with httpx.AsyncClient(timeout=30.0) as http:
+    params = {
+      "action": "query",
+      "list": "search",
+      "srsearch": query,
+      "srlimit": limit,
+      "format": "json",
+    }
+    resp = await http.get(
+    "https://en.wikipedia.org/w/api.php",
+    params=params,
+    headers={"User-Agent": WIKI_UA},
+    )
+    if resp.status_code == 200:
+    return resp.json().get("query", {}).get("search", [])
+    else:
+    print(f"Wikipedia search returned HTTP {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+    print(f"Wikipedia search error: {e}")
+    return []
+
+  }
+  reference.python.fetch_article {
+    async def fetch_article(page_id: int) -> str:
+    """Fetch the full article content from Wikipedia."""
+    async with httpx.AsyncClient(timeout=30.0) as http:
+    params = {
+      "action": "parse",
+      "pageid": page_id,
+      "prop": "text",
+      "formatversion": 2,
+      "format": "json",
+    }
+    resp = await http.get(
+    "https://en.wikipedia.org/w/api.php",
+    params=params,
+    headers={"User-Agent": WIKI_UA},
+    )
+    html = resp.json().get("parse", {}).get("text", "")
+    return strip_html_tags(html)
 
   }
 }
