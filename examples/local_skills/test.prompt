@@ -4,14 +4,17 @@ spec {
   purpose: given a question, find related wikipedia articles for each entity and answer the question using their content as context
   logic {
     question: cli argument 1
+    related_terms: fetch_related_wiki_terms(question)
+    display: show 10 related wiki terms for the question
     words: extract_all_entities_from_question(question)
     for each {word} in {words} {
       learn from reference.python.search_wikipedia_candidates {
         items: find 1 most related wikipedia items's page_id and page_title for {word}, sorted by similarity in descending order
         for each {item} in {items} {
           article: learn from reference.python.fetch_article for {item.page_id}
+          article: strip all html tags in {article}
           paragraphs: split {article} by "\n", filter out empty lines
-          chunk_size: 8
+          chunk_size: 32
           for each {chunk} of {chunk_size} paragraphs in {paragraphs} {
             context: join {chunk} with "\n"
             prompt: <context>{context}</context><question>{question}</question>based on <context>, answer the question {question}. If the context does not contain relevant information to answer the question, reply with exactly NO_ANSWER
@@ -21,6 +24,12 @@ spec {
         }
       }
     }
+  }
+  fetch_related_wiki_terms(question) {
+    api: Wikipedia opensearch API
+    endpoint: https://en.wikipedia.org/w/api.php
+    params: action=opensearch, search={question}, limit=10, namespace=0, format=json
+    returns: list of up to 10 related Wikipedia article titles
   }
   extract_all_entities_from_question(question) {
     host: ollama localhost

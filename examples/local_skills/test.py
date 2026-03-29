@@ -3,6 +3,8 @@ import sys
 import asyncio
 import re
 import json
+import html
+from html.parser import HTMLParser
 import httpx
 import requests
 WIKI_UA = "WikiSemanticSkill/1.0 (https://github.com/example; contact@example.com)"
@@ -29,8 +31,22 @@ def extract_all_entities_from_question(question: str) -> list[str]:
     return entities
 
 
-def strip_html_tags(html: str) -> str:
-    return re.sub(r"<[^>]+>", "", html)
+class _HTMLStripper(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self._parts: list[str] = []
+
+    def handle_data(self, data):
+        self._parts.append(data)
+
+    def get_text(self) -> str:
+        return html.unescape("".join(self._parts))
+
+
+def strip_html_tags(raw: str) -> str:
+    s = _HTMLStripper()
+    s.feed(raw)
+    return s.get_text()
 
 
 async def fetch_article(page_id: int) -> str:
@@ -105,9 +121,40 @@ def stream_ollama(prompt: str) -> str:
     return "".join(output)
 
 
+async def fetch_related_wiki_terms(query: str, limit: int = 10) -> list[str]:
+    """Fetch related terms from Wikipedia using opensearch API."""
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as http:
+            params = {
+                "action": "opensearch",
+                "search": query,
+                "limit": limit,
+                "namespace": 0,
+                "format": "json",
+            }
+            resp = await http.get(
+                "https://en.wikipedia.org/w/api.php",
+                params=params,
+                headers={"User-Agent": WIKI_UA},
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                return data[1] if len(data) > 1 else []
+    except Exception as e:
+        print(f"Wikipedia related terms error: {e}")
+    return []
+
+
 async def main():
     question = sys.argv[1]
     print(f"Question: {question}\n")
+
+    related_terms = await fetch_related_wiki_terms(question)
+    if related_terms:
+        print("Related Wiki Terms:")
+        for i, term in enumerate(related_terms, 1):
+            print(f"  {i}. {term}")
+        print()
 
     words = extract_all_entities_from_question(question)
     print(f"Entities: {words}\n")
@@ -123,7 +170,7 @@ async def main():
             article = await fetch_article(page_id)
             paragraphs = [p for p in article.split("\n") if p.strip()]
 
-            chunk_size = 8
+            chunk_size = 32
             for i in range(0, len(paragraphs), chunk_size):
                 chunk = paragraphs[i : i + chunk_size]
                 context = "\n".join(chunk)
