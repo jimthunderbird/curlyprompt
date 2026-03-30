@@ -109,15 +109,20 @@ async def fetch_article_extract(page_id: int) -> str:
 
 
 def stream_question(article_text: str, entity_name: str, question: str) -> str:
-    """Stream an answer to a question based on a Wikipedia article. Returns full text."""
-    prompt = (
-        f"Based on the following Wikipedia article about '{entity_name}', "
-        f"answer this question: {question}\n\n"
-        f"If the article does NOT contain enough information to answer the question, "
-        f"respond with exactly 'NO_ANSWER'. Otherwise, provide a concise answer.\n\n"
-        f"{article_text}"
-    )
-    return _stream_ollama(MODEL, prompt)
+    """Stream an answer by searching through article paragraphs."""
+    paragraphs = [p.strip() for p in article_text.split("\n") if p.strip()]
+    for i, paragraph in enumerate(paragraphs):
+        prompt = (
+            f"Based on the following paragraph from a Wikipedia article about '{entity_name}', "
+            f"answer this question: {question}\n\n"
+            f"If the paragraph does NOT contain enough information to answer the question, "
+            f"respond with exactly 'NO_ANSWER'. Otherwise, provide a concise answer.\n\n"
+            f"{paragraph}"
+        )
+        answer = _stream_ollama(MODEL, prompt)
+        if "NO_ANSWER" not in answer:
+            return answer
+    return "NO_ANSWER"
 
 
 def _stream_ollama(model: str, prompt: str) -> str:
