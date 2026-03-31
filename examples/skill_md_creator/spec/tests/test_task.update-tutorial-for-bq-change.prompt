@@ -1,0 +1,6 @@
+skill {
+  name: BQ Change
+  content {
+    bq:Remember to save your work
+  }
+}

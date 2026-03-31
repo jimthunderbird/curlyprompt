@@ -8,7 +8,7 @@ for f in tests/*.prompt; do
   base=$(basename "$f" .prompt)
   num_total=$((num_total + 1))
 
-  node converter.js "tests/${base}.prompt" "tests/${base}.tmpoutput.md" 2>/dev/null
+  python3.11 converter.py "tests/${base}.prompt" "tests/${base}.tmpoutput.md" 2>/dev/null
 
   if diff -q "tests/${base}.tmpoutput.md" "tests/${base}.md" > /dev/null 2>&1; then
     num_passed=$((num_passed + 1))

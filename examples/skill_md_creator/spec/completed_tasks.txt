@@ -19,12 +19,12 @@ task.shortcuts-i-italic-b-bold-strong.prompt
 task.simple-paragraph-multiline-support.prompt
 task.support-h4-h5-h6-header-tags.prompt
 task.table-header-th-tag-support.prompt
-task.tag-open-effect-until-end-line.prompt
-task.tutorial-header-braces-code-example.prompt
 task.tutorial-inline-code-sample-section.prompt
 task.update-tutorial-code-inline-brace.prompt
 task.update-tutorial-for-bq-change.prompt
+task.tag-open-effect-until-end-line.prompt
 task.italic-can-have-alias-it.prompt
 task.support-html-line-break.prompt
 task.br-symbol-with-colon-only.prompt
+task.tutorial-header-braces-code-example.prompt
 task.code-block-language-tag.prompt

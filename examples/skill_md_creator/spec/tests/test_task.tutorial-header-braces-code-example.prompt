@@ -1,0 +1,13 @@
+skill {
+  name: Header Braces Example
+  content {
+    h1:Instruction {
+    p:this is a very strong:important instruction
+    ul {
+      li:step 1
+      li:step 2
+      li:step 3
+    }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 let completed_tasks_list = ./tasks/completed_tasks.txt
+let converter_file = ./converter.py
 
 logic.update_tutorial {
   apply only most relevant updates to ./tutorial's index.html, do not change tutorial's UI/UX
@@ -21,7 +22,7 @@ logic.run_tests(task_prompt_file_name) {
       add task_prompt_file_name to {completed_tasks_list}, if task_prompt_file_name already exists in {completed_tasks_list}, update {completed_tasks_list}, remove it and append it at the end of the list
       break
     } else {
-      update ./converter.js and try to fix the issues
+      update {converter_file} and try to fix the issues
     }
   }
 }

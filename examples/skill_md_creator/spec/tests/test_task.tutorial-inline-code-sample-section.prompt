@@ -1,0 +1,6 @@
+skill {
+  name: Inline Code Sample
+  content {
+    p:Use code{docker build} to build the image
+  }
+}

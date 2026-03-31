@@ -1,0 +1,6 @@
+skill {
+  name: Test Creation
+  content {
+    p:Basic converter test
+  }
+}
