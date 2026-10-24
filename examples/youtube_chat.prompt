@@ -1,0 +1,223 @@
+objective: perform the following tasks
+
+restrictions: DO NOT perform tasks that are marked as completed, after a task is completed, in ./init.prompt, mark the task as completed
+
+task.import_japn_knowledge (completed) {
+  txt_files: run cli command: find ~/airesearch/japan_knowledge/knowledge/japan/youtube_transcript/ -type f -name "*.txt" -depth 1
+  youtube_video_hashes: for all the txt_files, extract all the youtube video ids 
+  save youtube_video_hashes into ./japan.knowledge.youtube_video_hashes
+}
+
+group: generate_tags.py {
+  task (completed) {
+    create ./generate_tags.py:
+    logic:
+    - tags: examine all files in ./tags
+    - titles: execulte command "find youtube_transcript/*.title"
+      for each {title} in {titles} {
+        youtube_video_hash: youtube_video_hash_related_to_{title}
+        for each {tag} in {tags} {
+          if {youtube_video_hash} does not exist in ./tags/{tag} {
+            use ollama local model ornith:35b to find out if {youtube_video_hash} is related to {tag}
+            if yes {
+              append youtube_video_hash_related_to_{title} to ./tags/{tag} with new line at the end 
+            }
+          }
+        }
+      }  
+  }
+
+  task (completed) {
+    add a new flag --youtube_video_hash <youtube_video_hash>
+    logic:
+    - tags: examine all files in ./tags
+    for each {tag} in {tags} {
+      if {youtube_video_hash} does not exist in ./tags/{tag} {
+        use ollama local model ornith:35b to find out if {youtube_video_hash} is related to {tag}
+        if yes {
+          append youtube_video_hash_related_to_{title} to ./tags/{tag} with new line at the end 
+        }
+      }
+    }
+  }
+}
+
+group: chat.py {
+  task (completed) {
+    create chat.py:
+    - it should behave like a chatbot
+    - all_embeddings: when the chatbot is started, load all the embeddings from ./youtube_transcript/<youtube_video_hash>.*.embedding into memory
+    - main logic for answer generation for <question>
+    - question_embedding: use ollama local model embeddinggemma-2:570m to create the embedding for <question>
+    - top_embeddings:perform consine similarity between {question_embedding} and every single embedding in {all_embeddings}, pick the top 10 embeddings 
+    - find {the corresponding trunk contents} for {top_embeddings}
+    - add all corresponding trunk contents to {context}
+    - question_prompt: <context>{context}</context> based on <context>, perform the instruction or answer the following question: {question}
+    - send {question_prompt} to ollama local model ornith:35b, stream output
+  }
+
+  task (completed) {
+    update ./chat.py:
+    - for {top_embeddings}, pick the top 30 embeddings 
+  }
+
+  task (completed) {
+    when displaying the source of the matching chunks, also show (<the cosine similarity score>)
+  }
+
+  task (completed) {
+    - for {top_embeddings}, pick the top N embeddings that has cosine similarity score > 0.75
+  }
+
+  task (completed) {
+    - for {top_embeddings}, if there are no embeddings with cosine similarity score > 0.75, simply pick the top 10 embeddings
+  }
+
+  task (completed) {
+    bug: 
+    question: show me a list of small towns
+    answer: The provided context does not contain a list of small towns...
+    we should have enough data for list of small towns
+  }
+
+  task.terminal_ux_improvement (completed) {
+    - tell of the memory usage of all the loaded embeddings
+    - inside the chatbot, allow me to use vim like shortcuts:
+    - visual mode with the following functionalities:
+    - delete a word, delete a line, use vim shortcut to move the cursor left and right
+    - please keep track of the answers that are asked in ./.chat/question_history.txt, every time agent.py starts, it will load ./.chat/question_history.txt
+    - allow me to navigate all asked questions backward using the up arrow key, forward using the down arrow key
+  }
+
+  task.dictionary_and_wiki_command (completed) {
+    - add a new command:
+    /wiki <word>
+    - it should call https://en.wikipedia.org/api/rest_v1/page/summary/<word>
+    - /wiki, after typing the command, append one extra space so that we can immediately enter the <word>
+    - add new command: 
+    /dict <word>
+    - it should accept an argument <word>
+    - it should call https://api.datamuse.com/words?sp=<word>&md=d&max=1 and then return the word's definition in the chat
+    - after typing the command, append one extra space so that we can immediately enter the <word>
+  }
+
+  task.commands_auto_complete (completed) {
+    for all commands in chatbot, allow tab completion
+  }
+
+  task (completed) {
+    use ollama local model qwen3:1.7b as the chat model
+  }
+
+  task (completed) {
+    bug: 
+    question: show me list of airports
+    - the answer should contain more airports
+  }
+
+  task (completed) {
+    add new cli flag --tag {tag}
+    - default value: japan
+    - instead of loading all embeddings in memory, only load all corresponding embeddings of video hashes in ./tags/{tag}
+  }
+
+  task (completed) {
+    implement autocomplete on tags in cli, for example:
+    if i type:
+    python chat.py --tag, it then will look up ./tags and allow me to tab autocomplete the tag
+  }
+
+  task (completed) {
+    add new command: /tag:
+    - allow me to switch to another tag
+    - reset all the embeddings in memory, load all the embeddings related to a new tag
+  }
+
+  task (completed) {
+    add new command: /learn:
+    - achieve similar effect as running ./learn.py
+    - output the result in chat
+  }
+
+  task (completed) {
+    add new command: /transcript, allowing me ask a question only on a specific transcript
+    - /transcript <youtube_video_hash> (reset in-memory embeddings to all the embeddings of this transcript only, then any subsequent question will only have answer from this specific transcript)
+  }
+
+  task (completed) {
+    update command: /transcript 
+    - it should use ag to perform keyword search against "./youtube_transcript/*.title" files
+    - it should return list of <youtube_video_hash> <title> in the hinting list
+    - once selected an entry in the list:
+      reset in-memory embeddings to all the embeddings of this transcript only, then any subsequent question will only have answer from this specific transcript
+  }
+}
+
+group learn.py {
+  task (completed) {
+    create ./learn.py:
+    - it should have one cil argument <youtube_video_hash>
+    - logic:
+    1. run ./fetch_youtube_transcript.py <youtube_video_hash>
+    2. run ./rewrite.py <youtube_video_hash>
+    3. run ./create_trunks.py <youtube_video_hash>
+    4. run ./create_embeddings.py <youtube_video_hash>
+    5. run ./generate_tags.py --youtube_video_hash <youtube_video_hash>
+  }
+
+  task (completed) {
+    allow the cli argument to be in formats like: https://www.youtube.com/watch?v=T594Cg4sTq4, or even https://youtu.be/T594Cg4sTq4?t=227
+    we need to smart way to extract the <youtube_video_hash> from the urls
+  }
+
+  task (completed) {
+    bug:
+    we can not download the transcript for https://www.youtube.com/watch?v=-PcBFgkrR2o 
+  }
+}
+
+task (completed) {
+  create ./create_embeddings.py:
+  - it should have one cil argument <youtube_video_hash>
+  - logic:
+  - remove all existing ./youtube_transcript/<youtube_video_hash>.*.embedding files
+  - for all {trunk_file}, {trunk_file_index_starting_from_1} in ./youtube_transcript/<youtube_video_hash>.*.trunk:
+  - embedding: use ollama local model embeddinggemma-2:570m to create an embedding for {the content of {trunk_file}}
+  - save {embedding} to ./youtube_transcript/<youtube_video_hash>.{trunk_file_index_starting_from_1}.embedding
+}
+
+task (completed) {
+  create ./create_trunks.py:
+  - it should have one cil argument <youtube_video_hash>
+  - logic:
+  - remove all existing ./youtube_transcript/<youtube_video_hash>.*.trunk files
+  - rewritten_content: read the content of ./youtube_transcript/<youtube_video_hash>.rewrite
+  for each {paragraph}, {paragraph_index_starting_from_1} in {rewritten_content}:
+  - paragraph: trim all spaces and new lines around {paragraph}
+  - trunk: 
+  <article><title>{content of ./youtube_transcript/<youtube_video_hash>.title}</title><paragraph>{paragraph}</paragraph></article>
+  - save {trunk} to ./youtube_transcript/<youtube_video_hash>.{paragraph_index_starting_from_1}.trunk
+}
+
+task (completed) {
+  create ./rewrite.py:
+  - it should have one cil argument <youtube_video_hash>
+  - logic:
+  - transcript_content: take .youtube_transcript/<youtube_video_hash>.transcript 
+  - rewritten_content: use ollama model ornith:35b to rewrite {transcript_content}
+  - note: 
+  - during the transcript rewriting process, extract all the detail knowledges
+  - during the transcript rewriting process, stream the rewritten content to the terminal
+  - the rewritten_content should contain short paragraphs, each paragraph should serve as a piece of knowlege, the paragraph will be used as a trunk that will be used in RAG
+  - save {rewritten_content} to ./youtube_transcript/<youtube_video_hash>.rewrite 
+}
+
+task (completed) {
+  create ./fetch_youtube_transcript.py:
+  - it should have one cli argument <youtube_video_hash>
+  example: FTwxtyOEGyM
+  we then fetch the english transcript of https://www.youtube.com/watch?v=FTwxtyOEGyM
+  - it should use free youtube api to fetch the transcript of a youtube video
+  - use ollama model ornith:35b to summarize transcript into 20 words and store into ./youtube_transcript/<youtube_video_hash>.title
+  - the transcript should be stored in ./youtube_transcript/<youtube_video_hash>.transcript
+}
